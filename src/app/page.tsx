@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -428,18 +429,21 @@ function ProjectsSection() {
       category: "Mobile App Design",
       color: "from-[#8b4049] to-[#6b2a33]",
       image: "/waveeatz.png",
+      href: "/projects/waveeatz",
     },
     {
       name: "SchooPata",
       category: "Educational Platform",
       color: "from-[#5c3a2e] to-[#3d2518]",
       image: "/schoolpata.png",
+      href: null,
     },
     {
       name: "Shamba Rahisi",
       category: "AgriTech Solution",
       color: "from-[#6b4b3a] to-[#4a3328]",
       image: "/shamba-rahisi.png",
+      href: null,
     },
   ];
 
@@ -463,6 +467,7 @@ function ProjectsSection() {
         <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, i) => (
             <FadeInSection key={project.name} delay={i * 0.15}>
+              <Link href={project.href || "#"} className={project.href ? "" : "pointer-events-none"}>
               <div className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer">
                 {/* Gradient overlay */}
                 <div
@@ -501,6 +506,7 @@ function ProjectsSection() {
                   </div>
                 </div>
               </div>
+              </Link>
             </FadeInSection>
           ))}
         </div>
