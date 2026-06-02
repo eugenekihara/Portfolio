@@ -13,12 +13,10 @@ import {
   X,
   ChevronDown,
   Send,
-  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 
 /* ─── Animated Section Wrapper ─── */
@@ -635,77 +633,591 @@ function AboutSection() {
 }
 
 /* ─── Skills Section ─── */
-function SkillBar({
-  label,
+
+/* ── SVG Icon Components ── */
+function FigmaIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M8 24c2.2 0 4-1.8 4-4v-4H8c-2.2 0-4 1.8-4 4s1.8 4 4 4zM4 12c0-2.2 1.8-4 4-4h4v8H8c-2.2 0-4-1.8-4-4zM4 4c0-2.2 1.8-4 4-4h4v8H8C5.8 8 4 6.2 4 4zM12 0h4c2.2 0 4 1.8 4 4s-1.8 4-4 4h-4V0zM20 12c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4 4 1.8 4 4zM12 16h4c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4v-4z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function SketchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L2 9l10 13L22 9 12 2z" fill="currentColor" opacity="0.6"/>
+      <path d="M12 2L2 9h20L12 2z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function PrototypeIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M9 3v18"/>
+      <path d="M3 9h6"/>
+      <path d="M3 15h6"/>
+    </svg>
+  );
+}
+
+function UiUxIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
+      <rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+  );
+}
+
+function DesignSystemIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+    </svg>
+  );
+}
+
+function ReactIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" strokeWidth="1.5" fill="none" transform="rotate(60 12 12)"/>
+      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" strokeWidth="1.5" fill="none" transform="rotate(120 12 12)"/>
+    </svg>
+  );
+}
+
+function NextjsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" fill="currentColor"/>
+      <path d="M15.5 7.5L10 17H8.5L14 7.5h1.5z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function TailwindIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C13.33 10.79 14.5 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C15.67 7.21 14.5 6 12 6zm-5 8c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C8.33 18.79 9.5 20 12 20c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C11.67 15.21 10.5 14 7 14z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function TypescriptIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="2" width="20" height="20" rx="3" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+      <path d="M9 8v8M6 8h6M15 13h4M17 11v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function HtmlIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16 18 22 12 16 6"/>
+      <polyline points="8 6 2 12 8 18"/>
+    </svg>
+  );
+}
+
+function NodejsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+      <path d="M12 22V12M12 12L3 7M12 12l9-5" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+
+function GitIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="18" r="3"/>
+      <circle cx="6" cy="6" r="3"/>
+      <circle cx="18" cy="6" r="3"/>
+      <path d="M6 9v3c0 1.66 1.34 3 3 3h6c1.66 0 3-1.34 3-3V9"/>
+    </svg>
+  );
+}
+
+function ApiIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+      <line x1="4" y1="22" x2="4" y2="15"/>
+    </svg>
+  );
+}
+
+function SupabaseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M13.5 21.3c-.4.6-1.3.3-1.3-.4L12 14l-7.5.3c-.7 0-1-.9-.4-1.3L18.5 3c.6-.4 1.3.2 1.1.9L16 14h4.5c.6 0 .9.7.5 1.2L13.5 21.3z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function FramerIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M5 2h14l-7 8h7l-9 12v-8H5L12 4H5V2z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function WebflowIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M22 8.5L18 17l-4-6.5L10 17 6 8.5h2.5l1.5 3 2-5 2 5 1.5-3L18 12l2-3.5H22z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function VercelIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L2 20h20L12 2z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function VscodeIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 3l-8 5-5-2v12l5-2 8 5V3z"/>
+    </svg>
+  );
+}
+
+function PmIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M3 9h18M9 21V9"/>
+    </svg>
+  );
+}
+
+function ResearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="M21 21l-4.35-4.35"/>
+    </svg>
+  );
+}
+
+function StrategyIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20V10"/>
+      <path d="M18 20V4"/>
+      <path d="M6 20v-4"/>
+    </svg>
+  );
+}
+
+function MotionIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+  );
+}
+
+function A11yIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="4" r="2"/>
+      <path d="M5 8l3.5 1L12 14l3.5-5L19 8"/>
+      <path d="M12 14v8"/>
+      <path d="M8 22h8"/>
+    </svg>
+  );
+}
+
+function CommIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  );
+}
+
+/* Category icon helper */
+function getCategoryIcon(title: string): React.ReactNode {
+  switch (title) {
+    case "Design":
+      return <UiUxIcon />;
+    case "Frontend":
+      return <ReactIcon />;
+    case "Backend":
+      return <NodejsIcon />;
+    case "Soft Skills":
+      return <CommIcon />;
+    default:
+      return <UiUxIcon />;
+  }
+}
+
+/* Circular Progress Ring */
+function CircularMeter({
   value,
+  size = 72,
+  strokeWidth = 4,
   delay = 0,
+  gradientId,
 }: {
-  label: string;
   value: number;
+  size?: number;
+  strokeWidth?: number;
   delay?: number;
+  gradientId: string;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const isInView = useInView(ref, { once: true, margin: "-30px" });
+  const radius = (size - strokeWidth * 2) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const center = size / 2;
 
   return (
-    <div ref={ref} className="space-y-2">
-      <div className="flex justify-between items-center">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm text-muted-foreground font-mono">
-          {value}%
+    <svg
+      ref={ref}
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      className="transform -rotate-90"
+    >
+      {/* Track */}
+      <circle
+        cx={center}
+        cy={center}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        className="text-foreground/8"
+      />
+      {/* Progress */}
+      <motion.circle
+        cx={center}
+        cy={center}
+        r={radius}
+        fill="none"
+        stroke={`url(#${gradientId})`}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        initial={{ strokeDashoffset: circumference }}
+        animate={
+          isInView
+            ? { strokeDashoffset: circumference - (value / 100) * circumference }
+            : { strokeDashoffset: circumference }
+        }
+        transition={{ duration: 1.4, delay: delay * 0.08, ease: "easeOut" }}
+      />
+      {/* Gradient definition */}
+      <defs>
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#8b4049" />
+          <stop offset="100%" stopColor="#c4666f" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+/* Individual Skill Chip with glassmorphism */
+function SkillChip({
+  name,
+  value,
+  icon,
+  index,
+}: {
+  name: string;
+  value: number;
+  icon: React.ReactNode;
+  index: number;
+}) {
+  const gradientId = `grad-${name.replace(/\s+/g, "-").toLowerCase()}-${index}`;
+
+  return (
+    <FadeInSection delay={index * 0.04}>
+      <div className="group relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-md border border-white/30 dark:border-white/10 transition-all duration-300 hover:scale-[1.03] hover:bg-white/60 dark:hover:bg-white/10 hover:shadow-lg hover:shadow-accent/5 hover:border-accent/30 cursor-default">
+        {/* Subtle glow on hover */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 pointer-events-none" />
+
+        {/* Icon container */}
+        <div className="relative shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-background/60 dark:bg-white/10 text-foreground/70 group-hover:text-accent transition-colors duration-300">
+          {icon}
+        </div>
+
+        {/* Name + meter */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-medium truncate">{name}</span>
+            <span className="text-xs font-mono text-muted-foreground/70 shrink-0">
+              {value}%
+            </span>
+          </div>
+          {/* Thin progress bar under name */}
+          <div className="mt-1.5 h-1 rounded-full bg-foreground/6 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${value}%` }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 1.2, delay: index * 0.06, ease: "easeOut" }}
+              className="h-full rounded-full bg-gradient-to-r from-accent to-accent/60"
+            />
+          </div>
+        </div>
+
+        {/* Circular meter */}
+        <div className="shrink-0 relative">
+          <CircularMeter
+            value={value}
+            size={44}
+            strokeWidth={3}
+            delay={index}
+            gradientId={gradientId}
+          />
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-accent">
+            {value}
+          </span>
+        </div>
+      </div>
+    </FadeInSection>
+  );
+}
+
+/* Category Card with glassmorphism */
+function SkillCategoryCard({
+  title,
+  description,
+  icon,
+  color,
+  skills,
+  categoryIndex,
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  skills: { name: string; value: number; icon: React.ReactNode }[];
+  categoryIndex: number;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const displaySkills = expanded ? skills : skills.slice(0, 3);
+
+  return (
+    <FadeInSection delay={categoryIndex * 0.12}>
+      <div className="relative group/card rounded-3xl overflow-hidden">
+        {/* Glassmorphism card */}
+        <div className="relative bg-white/30 dark:bg-white/[0.04] backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-3xl p-6 lg:p-8 transition-all duration-500 hover:bg-white/40 dark:hover:bg-white/[0.07] hover:shadow-2xl hover:shadow-accent/5">
+
+          {/* Gradient accent bar at top */}
+          <div
+            className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${color} opacity-60 group-hover/card:opacity-100 transition-opacity duration-300`}
+          />
+
+          {/* Header */}
+          <div className="flex items-start gap-4 mb-6">
+            <div
+              className={`shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-white shadow-lg`}
+            >
+              {icon}
+            </div>
+            <div>
+              <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)]">
+                {title}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
+                {description}
+              </p>
+            </div>
+          </div>
+
+          {/* Skills list */}
+          <div className="space-y-2.5">
+            {displaySkills.map((skill, i) => (
+              <SkillChip
+                key={skill.name}
+                name={skill.name}
+                value={skill.value}
+                icon={skill.icon}
+                index={categoryIndex * 10 + i}
+              />
+            ))}
+          </div>
+
+          {/* Show more/less */}
+          {skills.length > 3 && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="mt-4 text-sm font-medium text-accent hover:text-accent/80 transition-colors flex items-center gap-1.5"
+            >
+              {expanded ? "Show less" : `+${skills.length - 3} more`}
+              <motion.span
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown size={14} />
+              </motion.span>
+            </button>
+          )}
+        </div>
+      </div>
+    </FadeInSection>
+  );
+}
+
+/* Tool badge with glassmorphism + hover glow */
+function ToolBadge({
+  name,
+  icon,
+  index,
+}: {
+  name: string;
+  icon: React.ReactNode;
+  index: number;
+}) {
+  return (
+    <FadeInSection delay={index * 0.03}>
+      <div className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl bg-white/25 dark:bg-white/[0.04] backdrop-blur-lg border border-white/30 dark:border-white/10 transition-all duration-300 hover:scale-105 hover:bg-white/50 dark:hover:bg-white/[0.08] hover:shadow-lg hover:shadow-accent/8 hover:border-accent/30 cursor-default">
+        {/* Glow effect */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
+            background: "radial-gradient(circle at center, rgba(139,64,73,0.08) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* Icon */}
+        <div className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 dark:bg-white/10 text-foreground/70 group-hover:text-accent transition-all duration-300 group-hover:shadow-md">
+          {icon}
+        </div>
+
+        {/* Label */}
+        <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors text-center leading-tight">
+          {name}
         </span>
       </div>
-      <div className="h-2 bg-secondary rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={isInView ? { width: `${value}%` } : { width: 0 }}
-          transition={{ duration: 1, delay: delay * 0.1, ease: "easeOut" }}
-          className="h-full bg-accent rounded-full"
-        />
+    </FadeInSection>
+  );
+}
+
+/* Education card with glass effect */
+function EducationCard({
+  degree,
+  school,
+  year,
+  desc,
+  index,
+}: {
+  degree: string;
+  school: string;
+  year: string;
+  desc?: string;
+  index: number;
+}) {
+  return (
+    <FadeInSection delay={index * 0.1}>
+      <div className="group relative flex items-start gap-5 p-5 rounded-2xl bg-white/30 dark:bg-white/[0.04] backdrop-blur-lg border border-white/30 dark:border-white/10 transition-all duration-300 hover:bg-white/50 dark:hover:bg-white/[0.07] hover:border-accent/20">
+        {/* Year badge */}
+        <div className="shrink-0 px-3 py-1.5 rounded-xl bg-gradient-to-br from-accent to-accent/70 text-white text-xs font-bold self-center">
+          {year}
+        </div>
+
+        <div className="min-w-0">
+          <h4 className="font-bold font-[family-name:var(--font-poppins)] text-sm lg:text-base">
+            {degree}
+          </h4>
+          <p className="text-muted-foreground text-sm mt-0.5">{school}</p>
+          {desc && (
+            <p className="text-muted-foreground/60 text-xs mt-1 leading-relaxed">
+              {desc}
+            </p>
+          )}
+        </div>
       </div>
-    </div>
+    </FadeInSection>
   );
 }
 
 function SkillsSection() {
-  const designSkills = [
-    { label: "Figma", value: 95 },
-    { label: "Sketch", value: 85 },
-    { label: "Prototyping", value: 92 },
-    { label: "UI/UX Design", value: 95 },
-    { label: "Design Systems", value: 88 },
-  ];
-
-  const devSkills = [
-    { label: "React", value: 93 },
-    { label: "Next.js", value: 87 },
-    { label: "Tailwind CSS", value: 95 },
-    { label: "Node.js", value: 82 },
-    { label: "Git", value: 88 },
-  ];
-
-  const otherSkills = [
-    { label: "Project Management", value: 85 },
-    { label: "User Research", value: 80 },
-    { label: "Brand Strategy", value: 78 },
-    { label: "Motion Design", value: 75 },
-    { label: "Accessibility", value: 88 },
-    { label: "Communication", value: 92 },
+  /* ── Skill categories with icons ── */
+  const skillCategories = [
+    {
+      title: "Design",
+      description: "Crafting interfaces that delight",
+      color: "from-[#8b4049] to-[#c4666f]",
+      skills: [
+        { name: "Figma", value: 95, icon: <FigmaIcon /> },
+        { name: "Sketch", value: 85, icon: <SketchIcon /> },
+        { name: "Prototyping", value: 92, icon: <PrototypeIcon /> },
+        { name: "UI/UX Design", value: 95, icon: <UiUxIcon /> },
+        { name: "Design Systems", value: 88, icon: <DesignSystemIcon /> },
+      ],
+    },
+    {
+      title: "Frontend",
+      description: "Building performant interfaces",
+      color: "from-[#5c3a2e] to-[#9b7b6a]",
+      skills: [
+        { name: "React", value: 93, icon: <ReactIcon /> },
+        { name: "Next.js", value: 87, icon: <NextjsIcon /> },
+        { name: "Tailwind CSS", value: 95, icon: <TailwindIcon /> },
+        { name: "TypeScript", value: 84, icon: <TypescriptIcon /> },
+        { name: "HTML/CSS", value: 96, icon: <HtmlIcon /> },
+      ],
+    },
+    {
+      title: "Backend",
+      description: "Architecting reliable systems",
+      color: "from-[#3d5a3e] to-[#6d9a6e]",
+      skills: [
+        { name: "Node.js", value: 82, icon: <NodejsIcon /> },
+        { name: "Git", value: 88, icon: <GitIcon /> },
+        { name: "REST APIs", value: 86, icon: <ApiIcon /> },
+        { name: "Supabase", value: 78, icon: <SupabaseIcon /> },
+      ],
+    },
+    {
+      title: "Soft Skills",
+      description: "Driving collaboration forward",
+      color: "from-[#6b4b3a] to-[#a0785c]",
+      skills: [
+        { name: "Project Management", value: 85, icon: <PmIcon /> },
+        { name: "User Research", value: 80, icon: <ResearchIcon /> },
+        { name: "Brand Strategy", value: 78, icon: <StrategyIcon /> },
+        { name: "Motion Design", value: 75, icon: <MotionIcon /> },
+        { name: "Accessibility", value: 88, icon: <A11yIcon /> },
+        { name: "Communication", value: 92, icon: <CommIcon /> },
+      ],
+    },
   ];
 
   const tools = [
-    "Figma",
-    "React",
-    "Next.js",
-    "Tailwind CSS",
-    "Sketch",
-    "Node.js",
-    "Git",
-    "Framer",
-    "Webflow",
-    "Supabase",
-    "Vercel",
-    "VS Code",
+    { name: "Figma", icon: <FigmaIcon /> },
+    { name: "React", icon: <ReactIcon /> },
+    { name: "Next.js", icon: <NextjsIcon /> },
+    { name: "Tailwind CSS", icon: <TailwindIcon /> },
+    { name: "Sketch", icon: <SketchIcon /> },
+    { name: "Node.js", icon: <NodejsIcon /> },
+    { name: "Git", icon: <GitIcon /> },
+    { name: "Framer", icon: <FramerIcon /> },
+    { name: "Webflow", icon: <WebflowIcon /> },
+    { name: "Supabase", icon: <SupabaseIcon /> },
+    { name: "Vercel", icon: <VercelIcon /> },
+    { name: "VS Code", icon: <VscodeIcon /> },
   ];
 
   const education = [
@@ -728,122 +1240,93 @@ function SkillsSection() {
   ];
 
   return (
-    <section id="skills" className="py-24 lg:py-32">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section id="skills" className="py-24 lg:py-32 relative overflow-hidden">
+      {/* Background decoration - subtle radial glows */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-1/4 w-[500px] h-[500px] rounded-full bg-accent/[0.03] blur-[100px]" />
+        <div className="absolute bottom-40 right-1/4 w-[400px] h-[400px] rounded-full bg-accent/[0.04] blur-[80px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        {/* Header */}
         <FadeInSection>
-          <span className="text-sm font-medium tracking-widest uppercase text-accent">
-            Expertise
-          </span>
-          <h2 className="mt-3 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-            Skills
-          </h2>
-          <p className="mt-4 text-muted-foreground max-w-2xl leading-relaxed">
-            A comprehensive overview of my technical abilities and design
-            expertise, developed through years of hands-on experience and
-            continuous learning.
-          </p>
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 text-sm font-medium tracking-widest uppercase text-accent mb-3">
+              <span className="w-8 h-px bg-accent" />
+              Expertise
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight">
+              Skills & <span className="text-accent">Proficiency</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground leading-relaxed">
+              A comprehensive overview of my technical abilities and design
+              expertise, developed through years of hands-on experience and
+              continuous learning. Every skill tells a story of dedication.
+            </p>
+          </div>
         </FadeInSection>
 
-        {/* Skill bars */}
-        <div className="mt-16 grid md:grid-cols-3 gap-12">
-          <FadeInSection>
-            <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-6 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-accent" />
-              Design
-            </h3>
-            <div className="space-y-5">
-              {designSkills.map((skill, i) => (
-                <SkillBar
-                  key={skill.label}
-                  label={skill.label}
-                  value={skill.value}
-                  delay={i}
-                />
-              ))}
-            </div>
-          </FadeInSection>
-
-          <FadeInSection delay={0.1}>
-            <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-6 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-foreground/60" />
-              Development
-            </h3>
-            <div className="space-y-5">
-              {devSkills.map((skill, i) => (
-                <SkillBar
-                  key={skill.label}
-                  label={skill.label}
-                  value={skill.value}
-                  delay={i}
-                />
-              ))}
-            </div>
-          </FadeInSection>
-
-          <FadeInSection delay={0.2}>
-            <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-6 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-foreground/30" />
-              Other
-            </h3>
-            <div className="space-y-5">
-              {otherSkills.map((skill, i) => (
-                <SkillBar
-                  key={skill.label}
-                  label={skill.label}
-                  value={skill.value}
-                  delay={i}
-                />
-              ))}
-            </div>
-          </FadeInSection>
+        {/* Skill Category Cards */}
+        <div className="mt-16 grid md:grid-cols-2 gap-6">
+          {skillCategories.map((category, i) => (
+            <SkillCategoryCard
+              key={category.title}
+              title={category.title}
+              description={category.description}
+              icon={getCategoryIcon(category.title)}
+              color={category.color}
+              skills={category.skills}
+              categoryIndex={i}
+            />
+          ))}
         </div>
 
-        {/* Tools grid */}
+        {/* Tools & Technologies */}
         <FadeInSection className="mt-20">
-          <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-8">
-            Tools & Technologies
-          </h3>
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 text-sm font-medium tracking-widest uppercase text-accent mb-3">
+              <span className="w-8 h-px bg-accent" />
+              Toolkit
+              <span className="w-8 h-px bg-accent" />
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-bold font-[family-name:var(--font-poppins)]">
+              Tools & Technologies
+            </h3>
+          </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {tools.map((tool, i) => (
-              <FadeInSection key={tool} delay={i * 0.05}>
-                <div className="group border border-border rounded-xl p-4 text-center transition-all duration-300 hover:bg-foreground hover:text-background hover:border-foreground cursor-default">
-                  <span className="text-sm font-medium group-hover:text-background">
-                    {tool}
-                  </span>
-                </div>
-              </FadeInSection>
+              <ToolBadge
+                key={tool.name}
+                name={tool.name}
+                icon={tool.icon}
+                index={i}
+              />
             ))}
           </div>
         </FadeInSection>
 
         {/* Education */}
         <FadeInSection className="mt-20">
-          <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-8">
-            Education & Certifications
-          </h3>
-          <div className="space-y-0">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 text-sm font-medium tracking-widest uppercase text-accent mb-3">
+              <span className="w-8 h-px bg-accent" />
+              Background
+              <span className="w-8 h-px bg-accent" />
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-bold font-[family-name:var(--font-poppins)]">
+              Education & Certifications
+            </h3>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-3">
             {education.map((edu, i) => (
-              <div
+              <EducationCard
                 key={i}
-                className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-border py-6 last:border-b-0"
-              >
-                <div>
-                  <h4 className="font-bold font-[family-name:var(--font-poppins)]">
-                    {edu.degree}
-                  </h4>
-                  <p className="text-muted-foreground text-sm mt-1">
-                    {edu.school}
-                  </p>
-                  {edu.desc && (
-                    <p className="text-muted-foreground/70 text-xs mt-1">
-                      {edu.desc}
-                    </p>
-                  )}
-                </div>
-                <span className="text-sm font-medium text-accent mt-2 sm:mt-0 shrink-0">
-                  {edu.year}
-                </span>
-              </div>
+                degree={edu.degree}
+                school={edu.school}
+                year={edu.year}
+                desc={edu.desc}
+                index={i}
+              />
             ))}
           </div>
         </FadeInSection>
