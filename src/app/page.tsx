@@ -863,6 +863,14 @@ function CopilotIcon() {
   );
 }
 
+function ZaiIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M3 4h18l-7 8h7l-11 12 3-8H4l7-8H3V4z" fill="currentColor"/>
+    </svg>
+  );
+}
+
 function VscodeIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1050,6 +1058,7 @@ function SkillsSection() {
         { name: "Gemini", icon: <GeminiIcon /> },
         { name: "GitHub Copilot", icon: <CopilotIcon /> },
         { name: "VS Code", icon: <VscodeIcon /> },
+        { name: "Z AI", icon: <ZaiIcon /> },
       ],
     },
   ];
