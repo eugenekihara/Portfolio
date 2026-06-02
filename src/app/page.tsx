@@ -898,7 +898,26 @@ function getCategoryIcon(title: string): React.ReactNode {
 }
 
 /* Skill Tile — clean interactive badge with icon, no percentages */
-function SkillTile({ name, icon, index }: { name: string; icon: React.ReactNode; index: number }) {
+function SkillTile({ name, icon, index, featured = false }: { name: string; icon: React.ReactNode; index: number; featured?: boolean }) {
+  if (featured) {
+    return (
+      <FadeInSection delay={index * 0.04}>
+        <div className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-white/50 dark:bg-white/[0.08] backdrop-blur-md border border-white/40 dark:border-white/[0.1] transition-all duration-300 hover:scale-[1.05] hover:bg-white/80 dark:hover:bg-white/[0.15] hover:shadow-xl hover:shadow-accent/10 hover:border-accent/40 cursor-default">
+          {/* Hover glow ring */}
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/8 via-transparent to-accent/8 pointer-events-none" />
+
+          {/* Icon */}
+          <div className="relative shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 dark:from-accent/20 dark:to-accent/10 text-accent transition-all duration-300 group-hover:from-accent/20 group-hover:to-accent/10 group-hover:shadow-lg group-hover:shadow-accent/20">
+            {icon}
+          </div>
+
+          {/* Name */}
+          <span className="relative text-sm font-semibold text-center leading-tight">{name}</span>
+        </div>
+      </FadeInSection>
+    );
+  }
+
   return (
     <FadeInSection delay={index * 0.03}>
       <div className="group relative flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-white/40 dark:bg-white/[0.06] backdrop-blur-md border border-white/30 dark:border-white/[0.08] transition-all duration-300 hover:scale-[1.04] hover:bg-white/70 dark:hover:bg-white/[0.12] hover:shadow-lg hover:shadow-accent/8 hover:border-accent/30 cursor-default">
@@ -917,7 +936,67 @@ function SkillTile({ name, icon, index }: { name: string; icon: React.ReactNode;
   );
 }
 
-/* Category Block */
+/* Featured Design Category Block — hero-style with gradient backdrop */
+function FeaturedDesignBlock({
+  title,
+  description,
+  color,
+  skills,
+  categoryIndex,
+}: {
+  title: string;
+  description: string;
+  color: string;
+  skills: { name: string; icon: React.ReactNode }[];
+  categoryIndex: number;
+}) {
+  return (
+    <FadeInSection delay={categoryIndex * 0.1}>
+      <div className="relative rounded-3xl overflow-hidden">
+        {/* Gradient backdrop */}
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.06] via-accent/[0.02] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,64,73,0.08),transparent_60%)] pointer-events-none" />
+
+        {/* Decorative floating shapes */}
+        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-accent/[0.06] blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-accent/[0.04] blur-2xl pointer-events-none" />
+
+        <div className="relative p-6 sm:p-8 lg:p-10 border border-accent/10 rounded-3xl backdrop-blur-sm">
+          {/* Category header */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className={`shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-white shadow-lg shadow-accent/20`}>
+              <FigmaIcon />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <h3 className="text-xl sm:text-2xl font-bold font-[family-name:var(--font-poppins)]">{title}</h3>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-accent/10 text-accent border border-accent/20">
+                  Core Focus
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{description}</p>
+            </div>
+          </div>
+
+          {/* Featured skill tiles - 3 cols on desktop, 2 on mobile */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {skills.map((skill, i) => (
+              <SkillTile
+                key={skill.name}
+                name={skill.name}
+                icon={skill.icon}
+                index={categoryIndex * 10 + i}
+                featured
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </FadeInSection>
+  );
+}
+
+/* Category Block — standard layout for non-featured categories */
 function SkillCategoryBlock({
   title,
   description,
@@ -998,6 +1077,21 @@ function EducationCard({
 }
 
 function SkillsSection() {
+  // Design category is first & featured
+  const designCategory = {
+    title: "Design",
+    description: "Crafting intuitive and delightful user experiences — the core of everything I do",
+    color: "from-[#8b4049] to-[#c4666f]",
+    skills: [
+      { name: "Figma", icon: <FigmaIcon /> },
+      { name: "Adobe XD", icon: <AdobeXdIcon /> },
+      { name: "Wireframing", icon: <WireframeIcon /> },
+      { name: "Prototyping", icon: <PrototypeIcon /> },
+      { name: "UX Research", icon: <UxResearchIcon /> },
+      { name: "UI Design", icon: <UiDesignIcon /> },
+    ],
+  };
+
   const skillCategories = [
     {
       title: "Frontend",
@@ -1030,19 +1124,6 @@ function SkillsSection() {
       skills: [
         { name: "MySQL", icon: <MysqlIcon /> },
         { name: "SQL", icon: <SqlIcon /> },
-      ],
-    },
-    {
-      title: "Design",
-      description: "Crafting intuitive and delightful experiences",
-      color: "from-[#8b4049] to-[#c4666f]",
-      skills: [
-        { name: "Figma", icon: <FigmaIcon /> },
-        { name: "Adobe XD", icon: <AdobeXdIcon /> },
-        { name: "Wireframing", icon: <WireframeIcon /> },
-        { name: "Prototyping", icon: <PrototypeIcon /> },
-        { name: "UX Research", icon: <UxResearchIcon /> },
-        { name: "UI Design", icon: <UiDesignIcon /> },
       ],
     },
     {
@@ -1108,8 +1189,19 @@ function SkillsSection() {
           </div>
         </FadeInSection>
 
-        {/* Skill Categories */}
-        <div className="mt-16 space-y-12">
+        {/* Design — Featured Category */}
+        <div className="mt-16">
+          <FeaturedDesignBlock
+            title={designCategory.title}
+            description={designCategory.description}
+            color={designCategory.color}
+            skills={designCategory.skills}
+            categoryIndex={0}
+          />
+        </div>
+
+        {/* Other Skill Categories */}
+        <div className="mt-14 space-y-12">
           {skillCategories.map((category, i) => (
             <SkillCategoryBlock
               key={category.title}
@@ -1117,7 +1209,7 @@ function SkillsSection() {
               description={category.description}
               color={category.color}
               skills={category.skills}
-              categoryIndex={i}
+              categoryIndex={i + 1}
             />
           ))}
         </div>
