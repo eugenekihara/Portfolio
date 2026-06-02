@@ -50,5 +50,22 @@ test
 prompt
 
 server.log
-# Skills directory
+
+# Skills directory (internal tooling, not part of portfolio)
 /skills/
+
+# Download directory (generated files)
+/download/
+
+# Worklog
+/worklog.md
+
+# Agent context
+/agent-ctx/
+
+# Database
+/db/
+
+# Screenshots & temp files
+*.png.bak
+waveeatz-page.json
