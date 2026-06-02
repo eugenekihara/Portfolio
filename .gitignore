@@ -70,6 +70,7 @@ server.log
 *.png.bak
 waveeatz-page.json
 skills-section-*.png
+skills-top.png
 
 # Z scripts (internal tooling)
 /.zscripts/

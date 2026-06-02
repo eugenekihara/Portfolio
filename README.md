@@ -1,16 +1,22 @@
-# Eugene — Portfolio
+# Eugene Kihara — Portfolio
 
-A modern, responsive portfolio website built with Next.js 16, React 19, Tailwind CSS 4, and Framer Motion. Designed and developed by **Eugene Kihara** — a Kenya-based UI/UX designer and front-end developer.
+A modern, responsive portfolio website built with **Next.js 16**, **React 19**, **Tailwind CSS 4**, and **Framer Motion**. Designed and developed by [Eugene Kihara](https://github.com/eugenekihara) — a Kenya-based UI/UX designer and front-end developer.
+
+---
 
 ## Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Language**: TypeScript
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) + custom CSS variables
-- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Fonts**: Inter (body) + Poppins (headings)
+| Technology | Purpose |
+|------------|---------|
+| [Next.js 16](https://nextjs.org/) | React framework with App Router |
+| TypeScript | Type-safe development |
+| [Tailwind CSS 4](https://tailwindcss.com/) | Utility-first styling + custom CSS variables |
+| [shadcn/ui](https://ui.shadcn.com/) | Accessible UI component library |
+| [Framer Motion](https://www.framer.com/motion/) | Smooth page & element animations |
+| [Lucide React](https://lucide.dev/) | Consistent icon system |
+| Inter + Poppins | Typography (body + headings) |
+
+---
 
 ## Sections
 
@@ -22,9 +28,11 @@ A modern, responsive portfolio website built with Next.js 16, React 19, Tailwind
 | **Marquee** | Scrolling service ticker banner |
 | **Projects** | 3 project cards with hover reveal (WAVEEATZ links to detail page) |
 | **About** | Bio, experience, and "What I Do" grid |
-| **Skills** | Design (featured), Frontend, Backend, Database, Tools & Technologies |
+| **Skills** | Design (featured hero block), Frontend, Backend, Database, Tools & Technologies |
 | **Contact** | Contact form with toast notifications |
 | **Footer** | Social links + second marquee |
+
+---
 
 ## Project Detail Pages
 
@@ -32,18 +40,67 @@ A modern, responsive portfolio website built with Next.js 16, React 19, Tailwind
 |-------|---------|
 | `/projects/waveeatz` | WAVEEATZ — Mobile App Design case study |
 
-The WAVEEATZ detail page includes:
-- Hero title with accent color split
+The WAVEEATZ detail page features:
+
+- Hero title with accent-color split typography
 - Project metadata grid (Client, Role, Timeline, Platform)
 - Two-column layout: app mockup + problem/solution narrative
 - Color palette showcase
-- "Next Project" navigation
+- "Next Project" navigation CTA
+- Animated marquee footer
+
+---
+
+## Design System
+
+### Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--background` | `#f5f0eb` | Page background (warm beige) |
+| `--foreground` | `#1a1a1a` | Primary text |
+| `--accent` | `#8b4049` | Brand accent (maroon) |
+| `--card` | `#ffffff` | Card backgrounds |
+| `--secondary` | `#e8e4e1` | Secondary surfaces |
+| `--muted-foreground` | `#6b6b6b` | Secondary text |
+
+### Typography
+
+- **Headings**: Poppins (weights 300–700)
+- **Body**: Inter (variable weight)
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── page.tsx              # Main portfolio page (all sections)
+│   ├── layout.tsx            # Root layout with fonts & metadata
+│   ├── globals.css           # CSS variables, animations, scrollbar
+│   └── projects/
+│       └── waveeatz/
+│           └── page.tsx      # WAVEEATZ project detail page
+├── components/
+│   └── ui/                   # shadcn/ui components
+├── hooks/                    # Custom React hooks
+├── lib/                      # Utility functions
+└── public/
+    ├── waveeatz.png          # Project screenshots
+    ├── schoolpata.png
+    ├── shamba-rahisi.png
+    ├── about-studio.png
+    └── logo.svg
+```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ or Bun
+- Node.js 18+ or [Bun](https://bun.sh/)
 - npm, yarn, or bun
 
 ### Installation
@@ -71,46 +128,7 @@ npm run build
 npm run start
 ```
 
-## Design System
-
-### Colors
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--background` | `#f5f0eb` | Page background |
-| `--foreground` | `#1a1a1a` | Primary text |
-| `--accent` | `#8b4049` | Brand accent (maroon) |
-| `--card` | `#ffffff` | Card backgrounds |
-| `--secondary` | `#e8e4e1` | Secondary surfaces |
-| `--muted-foreground` | `#6b6b6b` | Secondary text |
-
-### Typography
-
-- **Headings**: Poppins (300–700)
-- **Body**: Inter (variable)
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── page.tsx              # Main portfolio page (all sections)
-│   ├── layout.tsx            # Root layout with fonts & metadata
-│   ├── globals.css           # CSS variables, animations, scrollbar
-│   └── projects/
-│       └── waveeatz/
-│           └── page.tsx      # WAVEEATZ project detail page
-├── components/
-│   └── ui/                   # shadcn/ui components
-├── hooks/                    # Custom React hooks
-├── lib/                      # Utility functions
-└── public/
-    ├── waveeatz.png          # Project images
-    ├── schoolpata.png
-    ├── shamba-rahisi.png
-    ├── about-studio.png
-    └── logo.svg
-```
+---
 
 ## License
 
