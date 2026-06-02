@@ -69,3 +69,22 @@ server.log
 # Screenshots & temp files
 *.png.bak
 waveeatz-page.json
+skills-section-*.png
+
+# Z scripts (internal tooling)
+/.zscripts/
+
+# Mini services (internal tooling)
+/mini-services/
+
+# Examples (internal tooling)
+/examples/
+
+# Caddy config (internal tooling)
+Caddyfile
+
+# Prisma generated
+node_modules/.prisma/
+
+# Lock files (optional - keep bun.lock for reproducibility)
+# bun.lock
