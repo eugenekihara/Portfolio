@@ -453,11 +453,11 @@ function ProjectsSection() {
       category: "Product Design",
       categoryTag: "AgriTech",
       description:
-        "An agritech solution empowering smallholder farmers with real-time market data, weather insights, and direct buyer connections. Designed for low-bandwidth rural environments.",
-      impact: "500+ farmers onboarded",
+        "A digital ecosystem bridging high-tech soil data and farm execution for African cooperatives. Translates IoT sensor data into localized voice-based tasks and cost blueprints.",
+      impact: "IoT-to-action for farmers",
       techStack: ["Figma", "Adobe XD", "Wireframing", "UX Audit"],
       image: "/shamba-rahisi.png",
-      href: null,
+      href: "/projects/shamba-rahisi",
       featured: false,
     },
   ];
