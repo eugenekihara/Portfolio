@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 /* ─── Fade-in Wrapper ─── */
@@ -16,7 +16,7 @@ function FadeIn({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay, ease: "easeOut" }}
       className={className}
@@ -40,15 +40,15 @@ function FooterMarquee() {
   const doubled = [...items, ...items];
 
   return (
-    <div className="bg-foreground text-background py-4 overflow-hidden">
+    <div className="bg-foreground text-background py-3 overflow-hidden">
       <div className="flex animate-marquee whitespace-nowrap">
         {doubled.map((item, i) => (
           <span
             key={i}
-            className="mx-8 text-lg font-bold tracking-[0.3em] flex items-center gap-8"
+            className="mx-8 text-sm font-medium tracking-wider flex items-center gap-8"
           >
             {item}
-            <span className="text-accent text-sm">◆</span>
+            <span className="text-accent">✦</span>
           </span>
         ))}
       </div>
@@ -65,12 +65,12 @@ export default function WaveeatzPage() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background border-b-2 border-foreground"
+        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
             <Link
-              href="/#projects"
+              href="/"
               className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
             >
               Eugene<span className="text-accent">.</span>
@@ -78,46 +78,46 @@ export default function WaveeatzPage() {
             <div className="hidden md:flex items-center gap-8">
               <Link
                 href="/"
-                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
-                HOME
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
+                Home
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
               <Link
                 href="/#projects"
-                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
-                PROJECTS
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
+                Projects
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
               <Link
                 href="/#about"
-                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
-                ABOUT
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
+                About
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
               <Link
                 href="/#contact"
-                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
-                CONTACT
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
+                Contact
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
             </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Back Link */}
+      {/* Back Button */}
       <FadeIn delay={0.1}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8">
           <Link
             href="/#projects"
-            className="inline-flex items-center gap-2 font-bold tracking-[0.15em] uppercase text-xs text-muted-foreground hover:text-accent transition-colors group"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
           >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            BACK TO PROJECTS
+            <ArrowLeft className="w-4 h-4" />
+            Back
           </Link>
         </div>
       </FadeIn>
@@ -135,7 +135,7 @@ export default function WaveeatzPage() {
 
         {/* Project Metadata Bar */}
         <FadeIn delay={0.3}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 border-2 border-foreground overflow-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4 border border-foreground/10 rounded-2xl overflow-hidden">
             {[
               { label: "Client", value: "School Project", dark: false },
               { label: "Role", value: "App Design", dark: false },
@@ -148,10 +148,10 @@ export default function WaveeatzPage() {
                   item.dark
                     ? "bg-foreground text-background"
                     : "bg-background text-foreground"
-                } ${i < 3 ? "border-r-2 border-foreground" : ""}`}
+                } ${i < 3 ? "border-r border-foreground/10" : ""}`}
               >
                 <p
-                  className={`text-xs tracking-[0.2em] uppercase mb-1 font-bold ${
+                  className={`text-xs tracking-[0.2em] uppercase mb-1 font-medium ${
                     item.dark
                       ? "text-background/60"
                       : "text-muted-foreground"
@@ -175,7 +175,7 @@ export default function WaveeatzPage() {
         <div className="mt-10 grid lg:grid-cols-2 gap-8 items-start">
           {/* Left: Phone Mockup */}
           <FadeIn delay={0.4}>
-            <div className="border-2 border-foreground overflow-hidden bg-[#36170E]">
+            <div className="rounded-3xl overflow-hidden shadow-2xl bg-[#36170E]">
               <img
                 src="/waveeatz.png"
                 alt="WAVEEATZ App Design"
@@ -186,9 +186,9 @@ export default function WaveeatzPage() {
 
           {/* Right: Description */}
           <FadeIn delay={0.5}>
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Problem */}
-              <div className="border-2 border-foreground p-8">
+              <div className="bg-secondary/50 rounded-2xl p-8">
                 <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-accent mb-4">
                   The Problem
                 </h3>
@@ -202,7 +202,7 @@ export default function WaveeatzPage() {
               </div>
 
               {/* Solution */}
-              <div className="border-2 border-foreground p-8">
+              <div className="bg-secondary/50 rounded-2xl p-8">
                 <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-accent mb-4">
                   The Solution
                 </h3>
@@ -217,6 +217,17 @@ export default function WaveeatzPage() {
                   platform reduces per-user costs and streamlines last-mile
                   logistics.
                 </p>
+
+                {/* CTA link */}
+                <div className="mt-6">
+                  <a
+                    href="/projects/waveeatz"
+                    className="inline-flex items-center gap-2 text-accent text-sm font-medium hover:gap-3 transition-all duration-300"
+                  >
+                    Read full case study
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
             </div>
           </FadeIn>
@@ -226,28 +237,28 @@ export default function WaveeatzPage() {
         <FadeIn delay={0.6}>
           <div className="mt-16 flex flex-col lg:flex-row gap-8 items-start">
             {/* Color Palette Card */}
-            <div className="lg:ml-auto bg-foreground p-8 border-2 border-foreground w-full lg:w-[480px]">
+            <div className="lg:ml-auto bg-foreground rounded-2xl p-8 w-full lg:w-[480px]">
               <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-background mb-6">
                 Color Palette
               </h3>
               <div className="space-y-0">
                 {[
                   {
-                    name: "DEEP COFFEE BROWN",
+                    name: "Deep Coffee Brown",
                     hex: "#36170E",
                     color: "#36170E",
                   },
-                  { name: "ARROWWOOD", hex: "#642714", color: "#642714" },
-                  { name: "SILVER PINK", hex: "#C1A9A1", color: "#C1A9A1" },
+                  { name: "Arrowwood", hex: "#642714", color: "#642714" },
+                  { name: "Silver Pink", hex: "#C1A9A1", color: "#C1A9A1" },
                 ].map((item, i) => (
                   <div key={item.name}>
                     <div className="flex items-center justify-between py-4">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 border-2 border-white/20"
+                          className="w-10 h-10 rounded-xl border-2 border-white/20"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-background font-bold text-base">
+                        <span className="text-background font-medium text-sm">
                           {item.name}
                         </span>
                       </div>
@@ -268,9 +279,9 @@ export default function WaveeatzPage() {
           <div className="mt-20 flex justify-start">
             <Link
               href="/projects/schoolpata"
-              className="group inline-flex items-center gap-4 px-8 py-5 border-2 border-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+              className="group inline-flex items-center gap-4 px-8 py-5 bg-[#696969] hover:bg-[#696969]/80 rounded-2xl border border-foreground/10 text-white transition-all duration-300"
             >
-              <span className="font-bold tracking-[0.2em] uppercase text-sm">
+              <span className="font-medium text-sm">
                 Next Project
               </span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
