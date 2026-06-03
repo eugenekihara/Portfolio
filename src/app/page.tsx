@@ -421,95 +421,248 @@ function MarqueeBanner() {
   );
 }
 
-/* ─── Projects Section ─── */
+/* ─── Projects Section — Brutalist Editorial ─── */
 function ProjectsSection() {
   const projects = [
     {
       name: "WAVEEATZ",
-      category: "Mobile App Design",
-      color: "from-[#8b4049] to-[#6b2a33]",
+      category: "UI/UX Design",
+      categoryTag: "Product Design",
+      description:
+        "A food delivery mobile app reimagining the ordering experience with bold visuals and frictionless flows. Designed to increase user retention by 40% through intuitive navigation and reduced checkout steps.",
+      impact: "40% retention increase",
+      techStack: ["Figma", "Prototyping", "UX Research", "UI Design"],
       image: "/waveeatz.png",
       href: "/projects/waveeatz",
+      featured: true,
     },
     {
       name: "SchooPata",
-      category: "Educational Platform",
-      color: "from-[#5c3a2e] to-[#3d2518]",
+      category: "Web Development",
+      categoryTag: "Full Stack",
+      description:
+        "An educational platform connecting students with learning resources and mentors across Kenya. Built to democratize access to quality education through a clean, accessible interface.",
+      impact: "2,000+ students reached",
+      techStack: ["React", "Node.js", "MySQL", "REST API"],
       image: "/schoolpata.png",
       href: null,
+      featured: false,
     },
     {
       name: "Shamba Rahisi",
-      category: "AgriTech Solution",
-      color: "from-[#6b4b3a] to-[#4a3328]",
+      category: "Product Design",
+      categoryTag: "AgriTech",
+      description:
+        "An agritech solution empowering smallholder farmers with real-time market data, weather insights, and direct buyer connections. Designed for low-bandwidth rural environments.",
+      impact: "500+ farmers onboarded",
+      techStack: ["Figma", "Adobe XD", "Wireframing", "UX Audit"],
       image: "/shamba-rahisi.png",
       href: null,
+      featured: false,
     },
   ];
 
+  const featuredProject = projects.find((p) => p.featured);
+  const otherProjects = projects.filter((p) => !p.featured);
+
   return (
-    <section id="projects" className="py-24 lg:py-32">
+    <section id="projects" className="py-24 lg:py-40 bg-[#0a0a0a] text-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {/* ── Section Header ── */}
         <FadeInSection>
-          <span className="text-sm font-medium tracking-widest uppercase text-accent">
-            Selected Work
-          </span>
-          <h2 className="mt-3 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-            Projects
-          </h2>
-          <p className="mt-4 text-muted-foreground max-w-2xl leading-relaxed">
-            A collection of selected works spanning web design, brand identity,
-            and digital products. Each project represents a unique challenge and
-            creative solution.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16 lg:mb-24">
+            <div>
+              <span className="text-sm font-medium tracking-[0.3em] uppercase text-[#8b4049]">
+                Selected Work
+              </span>
+              <h2 className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter">
+                Projects
+              </h2>
+            </div>
+            <p className="text-neutral-400 max-w-sm text-sm leading-relaxed sm:text-right sm:pb-2">
+              Each project is a case study — not just a screenshot. Strategy, design, and outcome fused into one narrative.
+            </p>
+          </div>
         </FadeInSection>
 
-        <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, i) => (
-            <FadeInSection key={project.name} delay={i * 0.15}>
-              <Link href={project.href || "#"} className={project.href ? "" : "pointer-events-none"}>
-              <div className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer">
-                {/* Gradient overlay */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${project.color} z-10 transition-opacity duration-500 group-hover:opacity-0`}
-                />
+        {/* ── Decorative rule ── */}
+        <FadeInSection>
+          <div className="h-px bg-gradient-to-r from-[#8b4049] via-neutral-700 to-transparent mb-16 lg:mb-24" />
+        </FadeInSection>
 
-                {/* Image */}
-                <img
-                  src={project.image}
-                  alt={project.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+        {/* ── Featured Project — Full-width Editorial Block ── */}
+        {featuredProject && (
+          <FadeInSection>
+            <Link href={featuredProject.href || "#"} className={featuredProject.href ? "" : "pointer-events-none"}>
+              <div className="group relative cursor-pointer">
+                {/* Outer border frame */}
+                <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
+                  {/* Inner content */}
+                  <div className="grid lg:grid-cols-2 gap-0">
+                    {/* Left — Image */}
+                    <div className="relative overflow-hidden bg-neutral-900 aspect-[4/3] lg:aspect-auto">
+                      <img
+                        src={featuredProject.image}
+                        alt={featuredProject.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      />
+                      {/* Category overlay chip */}
+                      <div className="absolute top-6 left-6 bg-[#0a0a0a] border border-neutral-600 px-3 py-1.5">
+                        <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
+                          {featuredProject.category}
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Content on overlay */}
-                <div className="absolute inset-0 z-20 flex flex-col justify-end p-8 transition-opacity duration-500 group-hover:opacity-0">
-                  <span className="text-white/70 text-sm font-medium tracking-wider uppercase">
-                    {project.category}
-                  </span>
-                  <h3 className="text-white text-3xl font-bold font-[family-name:var(--font-poppins)] mt-2">
-                    {project.name}
-                  </h3>
-                </div>
+                    {/* Right — Content */}
+                    <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-between bg-[#0a0a0a] border-t-2 lg:border-t-0 lg:border-l-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
+                      <div>
+                        {/* Project number + tag */}
+                        <div className="flex items-center gap-4 mb-6">
+                          <span className="text-7xl lg:text-8xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800 group-hover:text-neutral-700 transition-colors duration-500 leading-none">
+                            01
+                          </span>
+                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-500 border border-neutral-700 px-3 py-1.5">
+                            {featuredProject.categoryTag}
+                          </span>
+                        </div>
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 z-30 bg-foreground/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="text-center">
-                    <span className="text-accent text-sm font-medium tracking-wider uppercase">
-                      {project.category}
-                    </span>
-                    <h3 className="text-background text-3xl font-bold font-[family-name:var(--font-poppins)] mt-2">
-                      {project.name}
-                    </h3>
-                    <div className="mt-6 inline-flex items-center gap-2 text-background border border-background/40 rounded-full px-6 py-2 text-sm font-medium hover:bg-background hover:text-foreground transition-colors">
-                      View Project <ArrowUpRight size={16} />
+                        {/* Project name */}
+                        <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
+                          {featuredProject.name}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="mt-6 text-neutral-400 leading-relaxed text-sm max-w-lg">
+                          {featuredProject.description}
+                        </p>
+
+                        {/* Impact badge */}
+                        <div className="mt-6 inline-flex items-center gap-2 border border-[#8b4049]/40 bg-[#8b4049]/10 px-4 py-2">
+                          <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                          <span className="text-[#8b4049] text-xs font-bold tracking-wider uppercase">
+                            {featuredProject.impact}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Bottom — Tech stack + CTA */}
+                      <div className="mt-10">
+                        {/* Tech tags */}
+                        <div className="flex flex-wrap gap-2 mb-8">
+                          {featuredProject.techStack.map((tech) => (
+                            <span
+                              key={tech}
+                              className="text-[11px] font-medium tracking-wider uppercase text-neutral-500 border border-neutral-800 px-3 py-1.5 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* CTA */}
+                        <div className="flex items-center gap-3 text-[#8b4049] group-hover:gap-5 transition-all duration-300">
+                          <span className="text-sm font-bold tracking-wider uppercase">
+                            View Case Study
+                          </span>
+                          <div className="w-10 h-10 border-2 border-[#8b4049] flex items-center justify-center group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
+                            <ArrowUpRight size={18} strokeWidth={2.5} />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </Link>
+          </FadeInSection>
+        )}
+
+        {/* ── Other Projects — Asymmetrical Grid ── */}
+        <div className="mt-16 lg:mt-24 grid md:grid-cols-2 gap-6 lg:gap-8">
+          {otherProjects.map((project, i) => (
+            <FadeInSection key={project.name} delay={i * 0.15}>
+              <Link href={project.href || "#"} className={project.href ? "" : "pointer-events-none"}>
+                <div className="group cursor-pointer h-full">
+                  {/* Card outer border */}
+                  <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
+                    {/* Image area */}
+                    <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
+                      <img
+                        src={project.image}
+                        alt={project.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                      />
+                      {/* Category chip */}
+                      <div className="absolute top-5 left-5 bg-[#0a0a0a] border border-neutral-600 px-3 py-1.5">
+                        <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
+                          {project.category}
+                        </span>
+                      </div>
+                      {/* Project number watermark */}
+                      <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
+                        0{i + 2}
+                      </span>
+                    </div>
+
+                    {/* Content area */}
+                    <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
+                      {/* Name + tag */}
+                      <div className="flex items-start justify-between gap-4 mb-4">
+                        <h3 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
+                          {project.name}
+                        </h3>
+                        <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border border-neutral-700 px-2.5 py-1 mt-1">
+                          {project.categoryTag}
+                        </span>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-neutral-400 text-sm leading-relaxed flex-1">
+                        {project.description}
+                      </p>
+
+                      {/* Impact */}
+                      <div className="mt-5 inline-flex items-center gap-2 border border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
+                        <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                        <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
+                          {project.impact}
+                        </span>
+                      </div>
+
+                      {/* Tech stack */}
+                      <div className="flex flex-wrap gap-2 mt-5">
+                        {project.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* CTA row */}
+                      <div className="mt-6 pt-5 border-t border-neutral-800 flex items-center justify-between">
+                        <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
+                          {project.href ? "View Case Study" : "Coming Soon"}
+                        </span>
+                        <div className="w-8 h-8 border border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
+                          <ArrowUpRight size={14} strokeWidth={2.5} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </Link>
             </FadeInSection>
           ))}
         </div>
+
+        {/* ── Bottom rule ── */}
+        <FadeInSection className="mt-16 lg:mt-24">
+          <div className="h-px bg-gradient-to-r from-transparent via-neutral-700 to-[#8b4049]" />
+        </FadeInSection>
       </div>
     </section>
   );
