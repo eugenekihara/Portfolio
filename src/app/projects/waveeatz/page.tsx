@@ -26,70 +26,116 @@ function FadeIn({
   );
 }
 
+/* ─── Footer Marquee ─── */
+function FooterMarquee() {
+  const items = [
+    "WEB DESIGN",
+    "BRAND IDENTITY",
+    "UI / UX DESIGN",
+    "UX RESEARCH",
+    "ART DIRECTION",
+    "PRODUCT DESIGN",
+    "MOTION DESIGN",
+  ];
+  const doubled = [...items, ...items];
+
+  return (
+    <div className="bg-foreground text-background py-4 overflow-hidden">
+      <div className="flex animate-marquee whitespace-nowrap">
+        {doubled.map((item, i) => (
+          <span
+            key={i}
+            className="mx-8 text-lg font-bold tracking-[0.3em] flex items-center gap-8"
+          >
+            {item}
+            <span className="text-accent text-sm">◆</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── WAVEEATZ Project Page ─── */
 export default function WaveeatzPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Navigation ── */}
+      {/* Navigation */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
+        className="sticky top-0 z-50 bg-background border-b-2 border-foreground"
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
             <Link
               href="/#projects"
-              className="text-lg font-bold tracking-tight font-[family-name:var(--font-poppins)]"
+              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
             >
               Eugene<span className="text-accent">.</span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Home
+              <Link
+                href="/"
+                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                HOME
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
-              <Link href="/#projects" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Projects
+              <Link
+                href="/#projects"
+                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                PROJECTS
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
-              <Link href="/#about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                About
+              <Link
+                href="/#about"
+                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                ABOUT
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
-              <Link href="/#skills" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Skills
-              </Link>
-              <Link href="/#contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Contact
+              <Link
+                href="/#contact"
+                className="text-xs tracking-[0.2em] font-bold text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                CONTACT
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
             </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* ── Back Arrow ── */}
+      {/* Back Link */}
       <FadeIn delay={0.1}>
-        <Link
-          href="/#projects"
-          className="fixed top-24 left-6 z-40 w-12 h-12 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors group"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground/70 group-hover:text-foreground transition-colors" />
-        </Link>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8">
+          <Link
+            href="/#projects"
+            className="inline-flex items-center gap-2 font-bold tracking-[0.15em] uppercase text-xs text-muted-foreground hover:text-accent transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            BACK TO PROJECTS
+          </Link>
+        </div>
       </FadeIn>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-12 pb-24">
-        {/* ── Hero Title ── */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 pb-24">
+        {/* Hero Title */}
         <FadeIn delay={0.2}>
-          <div className="pt-8 pb-8">
-            <h1 className="text-7xl sm:text-8xl lg:text-[128px] font-bold leading-[0.9] tracking-tight font-[family-name:var(--font-poppins)]">
+          <div className="pt-4 pb-8">
+            <h1 className="text-7xl sm:text-8xl lg:text-[128px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
               <span className="text-foreground">WAVE</span>
               <span className="text-accent">EATZ</span>
             </h1>
           </div>
         </FadeIn>
 
-        {/* ── Project Metadata Bar ── */}
+        {/* Project Metadata Bar */}
         <FadeIn delay={0.3}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 border border-foreground/10 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4 border-2 border-foreground overflow-hidden">
             {[
               { label: "Client", value: "School Project", dark: false },
               { label: "Role", value: "App Design", dark: false },
@@ -102,10 +148,10 @@ export default function WaveeatzPage() {
                   item.dark
                     ? "bg-foreground text-background"
                     : "bg-background text-foreground"
-                } ${i < 3 ? "border-r border-foreground/10" : ""}`}
+                } ${i < 3 ? "border-r-2 border-foreground" : ""}`}
               >
                 <p
-                  className={`text-xs tracking-widest uppercase mb-1 ${
+                  className={`text-xs tracking-[0.2em] uppercase mb-1 font-bold ${
                     item.dark
                       ? "text-background/60"
                       : "text-muted-foreground"
@@ -125,11 +171,11 @@ export default function WaveeatzPage() {
           </div>
         </FadeIn>
 
-        {/* ── Two-Column Layout: Mockup + Description ── */}
+        {/* Two-Column Layout: Mockup + Description */}
         <div className="mt-10 grid lg:grid-cols-2 gap-8 items-start">
           {/* Left: Phone Mockup */}
           <FadeIn delay={0.4}>
-            <div className="rounded-3xl overflow-hidden shadow-2xl bg-[#36170E]">
+            <div className="border-2 border-foreground overflow-hidden bg-[#36170E]">
               <img
                 src="/waveeatz.png"
                 alt="WAVEEATZ App Design"
@@ -142,11 +188,11 @@ export default function WaveeatzPage() {
           <FadeIn delay={0.5}>
             <div className="space-y-8">
               {/* Problem */}
-              <div className="bg-secondary/50 rounded-2xl p-8">
-                <h3 className="text-sm font-medium tracking-widest uppercase text-accent mb-4">
+              <div className="border-2 border-foreground p-8">
+                <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-accent mb-4">
                   The Problem
                 </h3>
-                <p className="text-foreground/80 leading-relaxed text-base lg:text-lg">
+                <p className="text-foreground/80 leading-[1.7] text-base">
                   High delivery fees often create a financial barrier for
                   individual users, particularly in high-density residential
                   environments. Despite the proximity of neighbors with similar
@@ -156,11 +202,11 @@ export default function WaveeatzPage() {
               </div>
 
               {/* Solution */}
-              <div className="bg-secondary/50 rounded-2xl p-8">
-                <h3 className="text-sm font-medium tracking-widest uppercase text-accent mb-4">
+              <div className="border-2 border-foreground p-8">
+                <h3 className="text-xs font-bold tracking-[0.3em] uppercase text-accent mb-4">
                   The Solution
                 </h3>
-                <p className="text-foreground/80 leading-relaxed text-base lg:text-lg">
+                <p className="text-foreground/80 leading-[1.7] text-base">
                   <span className="font-bold font-[family-name:var(--font-poppins)]">
                     Wave Eatz
                   </span>{" "}
@@ -172,34 +218,25 @@ export default function WaveeatzPage() {
                   logistics.
                 </p>
               </div>
-
-              {/* CTA Link */}
-              <div className="flex items-center justify-end">
-                <Link
-                  href="#"
-                  className="group inline-flex items-center gap-3 text-foreground/70 hover:text-foreground transition-colors border-b border-foreground/30 hover:border-foreground pb-1"
-                >
-                  <span className="text-base font-medium">
-                    Dive Into the Design Journey
-                  </span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
             </div>
           </FadeIn>
         </div>
 
-        {/* ── Color Palette Section ── */}
+        {/* Color Palette Section */}
         <FadeIn delay={0.6}>
           <div className="mt-16 flex flex-col lg:flex-row gap-8 items-start">
             {/* Color Palette Card */}
-            <div className="lg:ml-auto bg-foreground rounded-2xl p-8 w-full lg:w-[480px]">
+            <div className="lg:ml-auto bg-foreground p-8 border-2 border-foreground w-full lg:w-[480px]">
               <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-background mb-6">
                 Color Palette
               </h3>
               <div className="space-y-0">
                 {[
-                  { name: "DEEP COFFEE BROWN", hex: "#36170E", color: "#36170E" },
+                  {
+                    name: "DEEP COFFEE BROWN",
+                    hex: "#36170E",
+                    color: "#36170E",
+                  },
                   { name: "ARROWWOOD", hex: "#642714", color: "#642714" },
                   { name: "SILVER PINK", hex: "#C1A9A1", color: "#C1A9A1" },
                 ].map((item, i) => (
@@ -207,7 +244,7 @@ export default function WaveeatzPage() {
                     <div className="flex items-center justify-between py-4">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 rounded-xl border-2 border-white/20"
+                          className="w-10 h-10 border-2 border-white/20"
                           style={{ backgroundColor: item.color }}
                         />
                         <span className="text-background font-bold text-base">
@@ -218,9 +255,7 @@ export default function WaveeatzPage() {
                         {item.hex}
                       </span>
                     </div>
-                    {i < 2 && (
-                      <div className="h-px bg-white/20" />
-                    )}
+                    {i < 2 && <div className="h-px bg-white/20" />}
                   </div>
                 ))}
               </div>
@@ -228,51 +263,24 @@ export default function WaveeatzPage() {
           </div>
         </FadeIn>
 
-        {/* ── Next Project ── */}
+        {/* Next Project */}
         <FadeIn delay={0.7}>
           <div className="mt-20 flex justify-start">
             <Link
-              href="/#projects"
-              className="group inline-flex items-center gap-4 px-8 py-5 bg-[#696969] hover:bg-[#696969]/80 rounded-2xl border border-foreground/10 transition-all duration-300"
+              href="/projects/schoolpata"
+              className="group inline-flex items-center gap-4 px-8 py-5 border-2 border-foreground hover:bg-foreground hover:text-background transition-all duration-300"
             >
-              <span className="text-foreground font-medium text-lg">
+              <span className="font-bold tracking-[0.2em] uppercase text-sm">
                 Next Project
               </span>
-              <ArrowRight className="w-6 h-6 text-foreground transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </FadeIn>
       </div>
 
-      {/* ── Footer Marquee ── */}
-      <div className="bg-foreground text-background py-3 overflow-hidden">
-        <div className="flex animate-marquee whitespace-nowrap">
-          {[
-            "WEB DESIGN",
-            "BRAND IDENTITY",
-            "UI / UX DESIGN",
-            "UX RESEARCH",
-            "ART DIRECTION",
-            "PRODUCT DESIGN",
-            "MOTION DESIGN",
-            "WEB DESIGN",
-            "BRAND IDENTITY",
-            "UI / UX DESIGN",
-            "UX RESEARCH",
-            "ART DIRECTION",
-            "PRODUCT DESIGN",
-            "MOTION DESIGN",
-          ].map((item, i) => (
-            <span
-              key={i}
-              className="mx-6 text-sm font-medium tracking-wider flex items-center gap-6"
-            >
-              {item}
-              <span className="text-accent">&#10022;</span>
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Footer Marquee */}
+      <FooterMarquee />
     </div>
   );
 }
