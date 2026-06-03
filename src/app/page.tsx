@@ -438,14 +438,14 @@ function ProjectsSection() {
     },
     {
       name: "SchooPata",
-      category: "Web Development",
-      categoryTag: "Full Stack",
+      category: "Product Design",
+      categoryTag: "App Design",
       description:
-        "An educational platform connecting students with learning resources and mentors across Kenya. Built to democratize access to quality education through a clean, accessible interface.",
-      impact: "2,000+ students reached",
-      techStack: ["React", "Node.js", "MySQL", "REST API"],
+        "A mobile platform helping parents find the perfect school for their child. Centralizes school information, ratings, and comparison tools to simplify a complex decision-making process.",
+      impact: "Streamlined school search",
+      techStack: ["Figma", "Prototyping", "UX Research", "UI Design"],
       image: "/schoolpata.png",
-      href: null,
+      href: "/projects/schoolpata",
       featured: false,
     },
     {
