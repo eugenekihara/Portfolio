@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { NextAuthProvider } from "@/components/providers/next-auth-provider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -55,7 +56,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
+        <NextAuthProvider>
+          {children}
+        </NextAuthProvider>
         <Toaster />
       </body>
     </html>
