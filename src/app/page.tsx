@@ -666,48 +666,51 @@ function MarqueeBanner() {
 }
 
 /* ─── Projects Section (Dark bg, Editorial) ─── */
+interface ProjectData {
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  category: string;
+  categoryTag: string | null;
+  technologies: string;
+  thumbnail: string;
+  impact: string | null;
+  caseStudyHref: string | null;
+  featured: boolean;
+  order: number;
+}
+
 function ProjectsSection() {
-  const projects = [
-    {
-      name: "WAVEEATZ",
-      category: "UI/UX Design",
-      categoryTag: "Product Design",
-      description:
-        "A food delivery mobile app reimagining the ordering experience with bold visuals and frictionless flows. Designed to increase user retention by 40% through intuitive navigation and reduced checkout steps.",
-      impact: "40% retention increase",
-      techStack: ["Figma", "Prototyping", "UX Research", "UI Design"],
-      image: "/waveeatz.png",
-      href: "/projects/waveeatz",
-      featured: true,
-    },
-    {
-      name: "SchooPata",
-      category: "Product Design",
-      categoryTag: "App Design",
-      description:
-        "A mobile platform helping parents find the perfect school for their child. Centralizes school information, ratings, and comparison tools to simplify a complex decision-making process.",
-      impact: "Streamlined school search",
-      techStack: ["Figma", "Prototyping", "UX Research", "UI Design"],
-      image: "/schoolpata.png",
-      href: "/projects/schoolpata",
-      featured: false,
-    },
-    {
-      name: "Shamba Rahisi",
-      category: "Product Design",
-      categoryTag: "AgriTech",
-      description:
-        "A digital ecosystem bridging high-tech soil data and farm execution for African cooperatives. Translates IoT sensor data into localized voice-based tasks and cost blueprints.",
-      impact: "IoT-to-action for farmers",
-      techStack: ["Figma", "Adobe XD", "Wireframing", "UX Audit"],
-      image: "/shamba-rahisi.png",
-      href: "/projects/shamba-rahisi",
-      featured: false,
-    },
-  ];
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((data) => {
+        setProjects(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   const featuredProject = projects.find((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
+          <p className="text-neutral-500">Loading projects...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (projects.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -742,8 +745,7 @@ function ProjectsSection() {
         {featuredProject && (
           <FadeInSection>
             <Link
-              href={featuredProject.href || "#"}
-              className={featuredProject.href ? "" : "pointer-events-none"}
+              href={`/projects/${featuredProject.slug}`}
             >
               <div className="group relative cursor-pointer">
                 {/* Outer border frame */}
@@ -753,8 +755,8 @@ function ProjectsSection() {
                     {/* Left — Image */}
                     <div className="relative overflow-hidden bg-neutral-900 aspect-[4/3] lg:aspect-auto">
                       <img
-                        src={featuredProject.image}
-                        alt={featuredProject.name}
+                        src={featuredProject.thumbnail}
+                        alt={featuredProject.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       />
                       {/* Category overlay chip */}
@@ -780,33 +782,35 @@ function ProjectsSection() {
 
                         {/* Project name */}
                         <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                          {featuredProject.name}
+                          {featuredProject.title}
                         </h3>
 
                         {/* Description */}
                         <p className="mt-6 text-neutral-400 leading-relaxed text-sm max-w-lg">
-                          {featuredProject.description}
+                          {featuredProject.shortDescription}
                         </p>
 
                         {/* Impact badge */}
-                        <div className="mt-6 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-4 py-2">
-                          <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                          <span className="text-[#8b4049] text-xs font-bold tracking-wider uppercase">
-                            {featuredProject.impact}
-                          </span>
-                        </div>
+                        {featuredProject.impact && (
+                          <div className="mt-6 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-4 py-2">
+                            <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                            <span className="text-[#8b4049] text-xs font-bold tracking-wider uppercase">
+                              {featuredProject.impact}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Bottom — Tech stack + CTA */}
                       <div className="mt-10">
                         {/* Tech tags */}
                         <div className="flex flex-wrap gap-2 mb-8">
-                          {featuredProject.techStack.map((tech) => (
+                          {featuredProject.technologies.split(",").map((tech) => (
                             <span
                               key={tech}
                               className="text-[11px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-3 py-1.5 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
                             >
-                              {tech}
+                              {tech.trim()}
                             </span>
                           ))}
                         </div>
@@ -832,10 +836,9 @@ function ProjectsSection() {
         {/* Other Projects — Grid */}
         <div className="mt-16 lg:mt-24 grid md:grid-cols-2 gap-6 lg:gap-8">
           {otherProjects.map((project, i) => (
-            <FadeInSection key={project.name} delay={i * 0.15}>
+            <FadeInSection key={project.id} delay={i * 0.15}>
               <Link
-                href={project.href || "#"}
-                className={project.href ? "" : "pointer-events-none"}
+                href={`/projects/${project.slug}`}
               >
                 <div className="group cursor-pointer h-full">
                   {/* Card outer border */}
@@ -843,8 +846,8 @@ function ProjectsSection() {
                     {/* Image area */}
                     <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
                       <img
-                        src={project.image}
-                        alt={project.name}
+                        src={project.thumbnail}
+                        alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                       />
                       {/* Category chip */}
@@ -864,34 +867,38 @@ function ProjectsSection() {
                       {/* Name + tag */}
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <h3 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                          {project.name}
+                          {project.title}
                         </h3>
-                        <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
-                          {project.categoryTag}
-                        </span>
+                        {project.categoryTag && (
+                          <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
+                            {project.categoryTag}
+                          </span>
+                        )}
                       </div>
 
                       {/* Description */}
                       <p className="text-neutral-400 text-sm leading-relaxed flex-1">
-                        {project.description}
+                        {project.shortDescription}
                       </p>
 
                       {/* Impact */}
-                      <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
-                        <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                        <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
-                          {project.impact}
-                        </span>
-                      </div>
+                      {project.impact && (
+                        <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
+                          <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                          <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
+                            {project.impact}
+                          </span>
+                        </div>
+                      )}
 
                       {/* Tech stack */}
                       <div className="flex flex-wrap gap-2 mt-5">
-                        {project.techStack.map((tech) => (
+                        {project.technologies.split(",").map((tech) => (
                           <span
                             key={tech}
                             className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
                           >
-                            {tech}
+                            {tech.trim()}
                           </span>
                         ))}
                       </div>
@@ -899,7 +906,7 @@ function ProjectsSection() {
                       {/* CTA row */}
                       <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
                         <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
-                          {project.href ? "View Case Study" : "Coming Soon"}
+                          View Case Study
                         </span>
                         <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
                           <ArrowUpRight size={14} strokeWidth={2.5} />

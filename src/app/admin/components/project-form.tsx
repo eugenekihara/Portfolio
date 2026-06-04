@@ -451,7 +451,7 @@ export function ProjectForm({ projectId }: ProjectFormProps) {
               id="caseStudyHref"
               value={formData.caseStudyHref}
               onChange={(e) => handleChange("caseStudyHref", e.target.value)}
-              placeholder="e.g. /projects/waveeatz"
+              placeholder="e.g. https://www.figma.com/design/... or /projects/my-project"
             />
           </div>
         </CardContent>
