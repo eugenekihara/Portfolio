@@ -387,8 +387,8 @@ function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
     >
       {/* Decorative blur blobs */}
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />
+      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-16 w-full">
         <div className="grid lg:grid-cols-3 gap-12 items-center">
@@ -426,32 +426,31 @@ function HeroSection() {
             </motion.p>
 
             {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.55 }}
-              className="mt-10 flex flex-wrap gap-4"
-            >
+            <div className="mt-10 flex flex-wrap gap-4 relative z-10">
               <button
                 onClick={() => {
                   const el = document.getElementById("projects");
                   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
-                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                aria-label="View my projects"
+                type="button"
               >
                 View Work
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 pointer-events-none" />
               </button>
               <button
                 onClick={() => {
                   const el = document.getElementById("contact");
                   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
-                className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer"
+                className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                aria-label="Get in touch with me"
+                type="button"
               >
                 Get in Touch
               </button>
-            </motion.div>
+            </div>
           </div>
 
           {/* Interests card (right side) */}
@@ -487,20 +486,22 @@ function HeroSection() {
         </div>
 
         {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-muted-foreground">Scroll</span>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none">
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="flex flex-col items-center gap-2"
           >
-            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Scroll</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
