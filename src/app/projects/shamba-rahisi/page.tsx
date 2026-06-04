@@ -223,7 +223,9 @@ export default function ShambaRahisiPage() {
                 {/* CTA link */}
                 <div className="mt-6">
                   <a
-                    href="/projects/shamba-rahisi"
+                    href="https://www.figma.com/deck/lZy1RpGIHIaL2WsBdfbuDT"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-[#ED6C02] text-sm font-medium hover:gap-3 transition-all duration-300"
                   >
                     Read full case study
