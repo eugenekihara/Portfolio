@@ -107,6 +107,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Offset for fixed navbar when scrolling to anchor links */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
 /* Marquee animation */
 @keyframes marquee {
   0% { transform: translateX(0); }

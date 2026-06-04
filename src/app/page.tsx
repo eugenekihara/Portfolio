@@ -432,19 +432,25 @@ function HeroSection() {
               transition={{ duration: 0.6, delay: 0.55 }}
               className="mt-10 flex flex-wrap gap-4"
             >
-              <a
-                href="#projects"
-                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300"
+              <button
+                onClick={() => {
+                  const el = document.getElementById("projects");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer"
               >
                 View Work
                 <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+              </button>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("contact");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer"
               >
                 Get in Touch
-              </a>
+              </button>
             </motion.div>
           </div>
 
