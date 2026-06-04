@@ -221,7 +221,9 @@ export default function WaveeatzPage() {
                 {/* CTA link */}
                 <div className="mt-6">
                   <a
-                    href="/projects/waveeatz"
+                    href="https://www.figma.com/design/5duOZT25VFKNPc55oOt7Gf/Wave-Eats-App-Group-7--Copy-?node-id=25-6&t=5gIRe96krBqAaNAt-1"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-accent text-sm font-medium hover:gap-3 transition-all duration-300"
                   >
                     Read full case study
