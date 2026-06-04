@@ -65,6 +65,7 @@ server.log
 
 # Database
 /db/
+/prisma/db/
 
 # Screenshots & temp files
 *.png.bak
