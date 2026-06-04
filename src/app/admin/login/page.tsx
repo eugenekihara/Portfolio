@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,14 @@ import {
 import { Loader2, Lock, Mail } from "lucide-react";
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<LoginShell />}>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
@@ -144,6 +152,14 @@ export default function AdminLoginPage() {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+}
+
+function LoginShell() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#f5f0eb] px-4">
+      <Loader2 className="h-8 w-8 animate-spin text-[#8b4049]" />
     </div>
   );
 }

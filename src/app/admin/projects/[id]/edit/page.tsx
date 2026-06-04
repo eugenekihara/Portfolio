@@ -1,8 +1,8 @@
 "use client";
 
 import { use } from "react";
-import { AdminNav } from "../../components/admin-nav";
-import { ProjectForm } from "../../components/project-form";
+import { AdminNav } from "../../../components/admin-nav";
+import { ProjectForm } from "../../../components/project-form";
 
 export default function EditProjectPage({
   params,

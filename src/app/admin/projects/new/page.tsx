@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminNav } from "../../components/admin-nav";
-import { ProjectForm } from "../components/project-form";
+import { ProjectForm } from "../../components/project-form";
 
 export default function NewProjectPage() {
   return (
