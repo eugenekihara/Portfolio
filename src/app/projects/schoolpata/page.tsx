@@ -227,6 +227,10 @@ export default function SchoolpataPage() {
                     href="https://www.figma.com/design/SZE5vqXtIOX3bYFNrARVW7/Eugene%7C-SchoolPata-%7C-FINAL--Copy-?node-id=1506-226&t=V4tfu9CevRCsSz4N-1"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open("https://www.figma.com/design/SZE5vqXtIOX3bYFNrARVW7/Eugene%7C-SchoolPata-%7C-FINAL--Copy-?node-id=1506-226&t=V4tfu9CevRCsSz4N-1", "_blank");
+                    }}
                     className="inline-flex items-center gap-2 text-[#0B3A66] text-sm font-medium hover:gap-3 transition-all duration-300"
                   >
                     Read full case study
