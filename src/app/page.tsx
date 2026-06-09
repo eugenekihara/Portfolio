@@ -1236,22 +1236,32 @@ function ContactSection() {
 
     setSending(true);
 
+    const payload = {
+      fullName: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    };
+
+    console.log("[Contact Form] Submitting:", payload);
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: formData.name.trim(),
-          email: formData.email.trim(),
-          message: formData.message.trim(),
-        }),
+        body: JSON.stringify(payload),
       });
 
+      console.log("[Contact Form] Response status:", res.status, res.statusText);
+      console.log("[Contact Form] Response headers content-type:", res.headers.get("content-type"));
+
       // Safely parse the response - handle non-JSON responses
-      let data: { success?: boolean; error?: string; message?: string };
+      let data: { success?: boolean; error?: string; message?: string; id?: string };
       try {
-        data = await res.json();
-      } catch {
+        const responseText = await res.text();
+        console.log("[Contact Form] Raw response:", responseText);
+        data = JSON.parse(responseText);
+      } catch (parseErr) {
+        console.error("[Contact Form] Failed to parse response as JSON:", parseErr);
         toast({
           title: "Error",
           description: "Server returned an invalid response. Please refresh the page and try again.",
@@ -1259,6 +1269,8 @@ function ContactSection() {
         });
         return;
       }
+
+      console.log("[Contact Form] Parsed response data:", data);
 
       if (res.ok && data.success) {
         toast({
@@ -1280,21 +1292,21 @@ function ContactSection() {
           variant: "destructive",
         });
       } else if (res.status === 400) {
-        // Validation error - show the specific message from the server
         toast({
           title: "Validation error",
           description: data.error || "Please check your input and try again.",
           variant: "destructive",
         });
       } else {
+        console.error("[Contact Form] Unexpected response:", res.status, data);
         toast({
           title: "Failed to send",
-          description: data.error || "Something went wrong. Please try again later.",
+          description: data.error || `Server error (${res.status}). Please try again later.`,
           variant: "destructive",
         });
       }
     } catch (networkError) {
-      console.error("Contact form network error:", networkError);
+      console.error("[Contact Form] Network/fetch error:", networkError);
       toast({
         title: "Connection error",
         description: "Could not reach the server. Please check your internet connection and try again.",
