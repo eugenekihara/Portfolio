@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: Record<string, unknown> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: Record<string, any> = {};
 
     switch (filter) {
       case "unread":
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
         break;
       case "all":
       default:
-        where.isArchived = false; // By default, exclude archived
+        where.isArchived = false;
         break;
     }
 
@@ -77,9 +78,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching messages:", error);
+    console.error("[Messages API] Error fetching messages:", error);
     return NextResponse.json(
-      { error: "Failed to fetch messages" },
+      { error: "Failed to fetch messages. Please try again." },
       { status: 500 }
     );
   }

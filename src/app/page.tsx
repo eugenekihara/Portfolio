@@ -1247,26 +1247,57 @@ function ContactSection() {
         }),
       });
 
-      const data = await res.json();
+      // Safely parse the response - handle non-JSON responses
+      let data: { success?: boolean; error?: string; message?: string };
+      try {
+        data = await res.json();
+      } catch {
+        toast({
+          title: "Error",
+          description: "Server returned an invalid response. Please refresh the page and try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      if (res.ok) {
+      if (res.ok && data.success) {
         toast({
           title: "Message sent!",
           description: "Thanks for reaching out. I'll get back to you within 24h.",
         });
         setFormData({ name: "", email: "", message: "" });
         setFormErrors({});
+      } else if (res.status === 429) {
+        toast({
+          title: "Slow down",
+          description: data.error || "Too many submissions. Please wait a minute and try again.",
+          variant: "destructive",
+        });
+      } else if (res.status === 409) {
+        toast({
+          title: "Duplicate message",
+          description: data.error || "You've already sent this message recently.",
+          variant: "destructive",
+        });
+      } else if (res.status === 400) {
+        // Validation error - show the specific message from the server
+        toast({
+          title: "Validation error",
+          description: data.error || "Please check your input and try again.",
+          variant: "destructive",
+        });
       } else {
         toast({
-          title: "Error",
-          description: data.error || "Failed to send message. Please try again.",
+          title: "Failed to send",
+          description: data.error || "Something went wrong. Please try again later.",
           variant: "destructive",
         });
       }
-    } catch {
+    } catch (networkError) {
+      console.error("Contact form network error:", networkError);
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again later.",
+        title: "Connection error",
+        description: "Could not reach the server. Please check your internet connection and try again.",
         variant: "destructive",
       });
     } finally {

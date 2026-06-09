@@ -27,9 +27,9 @@ export async function GET() {
       archived,
     });
   } catch (error) {
-    console.error("Error fetching message stats:", error);
+    console.error("[Messages Stats API] Error fetching stats:", error);
     return NextResponse.json(
-      { error: "Failed to fetch message stats" },
+      { error: "Failed to fetch message stats." },
       { status: 500 }
     );
   }

@@ -27,9 +27,9 @@ export async function GET(
 
     return NextResponse.json(message);
   } catch (error) {
-    console.error("Error fetching message:", error);
+    console.error("[Messages API] Error fetching message:", error);
     return NextResponse.json(
-      { error: "Failed to fetch message" },
+      { error: "Failed to fetch message." },
       { status: 500 }
     );
   }
@@ -47,7 +47,17 @@ export async function PATCH(
     }
 
     const { id } = await params;
-    const body = await request.json();
+
+    // Parse body safely
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body." },
+        { status: 400 }
+      );
+    }
 
     // Verify message exists
     const existing = await db.contactMessage.findUnique({ where: { id } });
@@ -61,14 +71,14 @@ export async function PATCH(
     // Build update data based on provided fields
     const updateData: Record<string, unknown> = {};
 
-    if (typeof body.isRead === "boolean") {
-      updateData.isRead = body.isRead;
+    if (typeof (body as Record<string, unknown>)?.isRead === "boolean") {
+      updateData.isRead = (body as Record<string, unknown>).isRead;
     }
-    if (typeof body.isArchived === "boolean") {
-      updateData.isArchived = body.isArchived;
+    if (typeof (body as Record<string, unknown>)?.isArchived === "boolean") {
+      updateData.isArchived = (body as Record<string, unknown>).isArchived;
     }
-    if (typeof body.isReplied === "boolean") {
-      updateData.isReplied = body.isReplied;
+    if (typeof (body as Record<string, unknown>)?.isReplied === "boolean") {
+      updateData.isReplied = (body as Record<string, unknown>).isReplied;
     }
 
     if (Object.keys(updateData).length === 0) {
@@ -85,9 +95,9 @@ export async function PATCH(
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Error updating message:", error);
+    console.error("[Messages API] Error updating message:", error);
     return NextResponse.json(
-      { error: "Failed to update message" },
+      { error: "Failed to update message." },
       { status: 500 }
     );
   }
@@ -119,9 +129,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: "Message deleted" });
   } catch (error) {
-    console.error("Error deleting message:", error);
+    console.error("[Messages API] Error deleting message:", error);
     return NextResponse.json(
-      { error: "Failed to delete message" },
+      { error: "Failed to delete message." },
       { status: 500 }
     );
   }
