@@ -26,36 +26,6 @@ function FadeIn({
   );
 }
 
-/* ─── Footer Marquee ─── */
-function FooterMarquee() {
-  const items = [
-    "WEB DESIGN",
-    "BRAND IDENTITY",
-    "UI / UX DESIGN",
-    "UX RESEARCH",
-    "ART DIRECTION",
-    "PRODUCT DESIGN",
-    "MOTION DESIGN",
-  ];
-  const doubled = [...items, ...items];
-
-  return (
-    <div className="bg-foreground text-background py-3 overflow-hidden">
-      <div className="flex animate-marquee whitespace-nowrap">
-        {doubled.map((item, i) => (
-          <span
-            key={i}
-            className="mx-8 text-sm font-medium tracking-wider flex items-center gap-8"
-          >
-            {item}
-            <span className="text-accent">✦</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ─── SchooPata Project Page ─── */
 export default function SchoolpataPage() {
   return (
@@ -298,9 +268,6 @@ export default function SchoolpataPage() {
           </div>
         </FadeIn>
       </div>
-
-      {/* Footer Marquee */}
-      <FooterMarquee />
     </div>
   );
 }

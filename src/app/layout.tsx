@@ -3,6 +3,8 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { NextAuthProvider } from "@/components/providers/next-auth-provider";
+import { MarqueeBanner } from "@/components/marquee-banner";
+import { SiteFooter } from "@/components/site-footer";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -57,7 +59,11 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-background text-foreground`}
       >
         <NextAuthProvider>
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-1">{children}</div>
+            <MarqueeBanner />
+            <SiteFooter />
+          </div>
         </NextAuthProvider>
         <Toaster />
       </body>

@@ -635,36 +635,6 @@ function ProcessSection() {
   );
 }
 
-/* ─── Marquee Banner ─── */
-function MarqueeBanner() {
-  const items = [
-    "WEB DESIGN",
-    "BRAND IDENTITY",
-    "UI / UX DESIGN",
-    "UX RESEARCH",
-    "ART DIRECTION",
-    "PRODUCT DESIGN",
-    "MOTION DESIGN",
-  ];
-  const doubled = [...items, ...items];
-
-  return (
-    <div className="bg-foreground text-background py-3 overflow-hidden">
-      <div className="flex animate-marquee whitespace-nowrap">
-        {doubled.map((item, i) => (
-          <span
-            key={i}
-            className="mx-8 text-sm font-medium tracking-wider flex items-center gap-8"
-          >
-            {item}
-            <span className="text-accent">✦</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ─── Projects Section (Dark bg, Editorial) ─── */
 interface ProjectData {
   id: string;
@@ -1378,53 +1348,6 @@ function ContactSection() {
   );
 }
 
-/* ─── Footer ─── */
-function Footer() {
-  return (
-    <footer className="bg-card border-t border-border">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Logo */}
-          <a
-            href="#hero"
-            className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-          >
-            Eugene<span className="text-accent">.</span>
-          </a>
-
-          {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Eugene Kihara. All rights
-            reserved.
-          </p>
-
-          {/* Social links */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com/eugenekihara"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-accent transition-colors"
-              aria-label="GitHub"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/eugenekihara"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-accent transition-colors"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 /* ─── Main Page ─── */
 export default function Home() {
   return (
@@ -1433,12 +1356,10 @@ export default function Home() {
       <HeroSection />
       <ServicesSection />
       <ProcessSection />
-      <MarqueeBanner />
       <ProjectsSection />
       <AboutSection />
       <SkillsSection />
       <ContactSection />
-      <Footer />
     </main>
   );
 }
