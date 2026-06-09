@@ -43,6 +43,9 @@ import {
   ChevronUp,
   ChevronDown,
   Loader2,
+  Mail,
+  MailOpen,
+  Calendar,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -67,6 +70,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [messageStats, setMessageStats] = useState<{ total: number; unread: number; thisMonth: number } | null>(null);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -87,6 +91,13 @@ export default function AdminDashboard() {
       router.push("/admin/login");
     } else if (status === "authenticated") {
       fetchProjects();
+      // Fetch message stats
+      fetch("/api/messages/stats")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setMessageStats({ total: data.total, unread: data.unread, thisMonth: data.thisMonth });
+        })
+        .catch(() => {});
     }
   }, [status, router, fetchProjects]);
 
@@ -221,6 +232,48 @@ export default function AdminDashboard() {
             Add New Project
           </Button>
         </div>
+
+        {/* Message Stats Widget */}
+        {messageStats && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <button
+              onClick={() => router.push("/admin/messages")}
+              className="bg-white rounded-xl border border-border p-5 flex items-center gap-4 hover:shadow-md transition-shadow text-left"
+            >
+              <div className="h-10 w-10 rounded-lg bg-[#8b4049]/10 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-[#8b4049]" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{messageStats.total}</p>
+                <p className="text-xs text-muted-foreground">Total Messages</p>
+              </div>
+            </button>
+            <button
+              onClick={() => router.push("/admin/messages?filter=unread")}
+              className="bg-white rounded-xl border border-border p-5 flex items-center gap-4 hover:shadow-md transition-shadow text-left"
+            >
+              <div className="h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                <MailOpen className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{messageStats.unread}</p>
+                <p className="text-xs text-muted-foreground">Unread Messages</p>
+              </div>
+            </button>
+            <button
+              onClick={() => router.push("/admin/messages")}
+              className="bg-white rounded-xl border border-border p-5 flex items-center gap-4 hover:shadow-md transition-shadow text-left"
+            >
+              <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{messageStats.thisMonth}</p>
+                <p className="text-xs text-muted-foreground">This Month</p>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Projects Table */}
         {projects.length === 0 ? (

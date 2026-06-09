@@ -1205,21 +1205,73 @@ function ContactSection() {
     message: "",
   });
   const [sending, setSending] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+
+  const validateForm = (): boolean => {
+    const errors: { name?: string; email?: string; message?: string } = {};
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      errors.name = "Please enter your full name (at least 2 characters).";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      errors.email = "Please enter your email address.";
+    } else if (!emailRegex.test(formData.email.trim())) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.message.trim() || formData.message.trim().length < 5) {
+      errors.message = "Please enter a message (at least 5 characters).";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     setSending(true);
 
-    // Simulate sending
-    await new Promise((r) => setTimeout(r, 1500));
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+        }),
+      });
 
-    toast({
-      title: "Message sent!",
-      description: "Thanks for reaching out. I'll get back to you within 24h.",
-    });
+      const data = await res.json();
 
-    setFormData({ name: "", email: "", message: "" });
-    setSending(false);
+      if (res.ok) {
+        toast({
+          title: "Message sent!",
+          description: "Thanks for reaching out. I'll get back to you within 24h.",
+        });
+        setFormData({ name: "", email: "", message: "" });
+        setFormErrors({});
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to send message. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -1243,41 +1295,53 @@ function ContactSection() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Form */}
           <FadeInSection delay={0.1}>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <Input
                   placeholder="Your Name"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (formErrors.name) setFormErrors((prev) => ({ ...prev, name: undefined }));
+                  }}
                   required
-                  className="border-border rounded-lg px-4 py-3 text-sm focus:border-accent"
+                  className={`border-border rounded-lg px-4 py-3 text-sm focus:border-accent ${formErrors.name ? "border-red-500 focus:border-red-500" : ""}`}
                 />
+                {formErrors.name && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
+                )}
               </div>
               <div>
                 <Input
                   type="email"
                   placeholder="Your Email"
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (formErrors.email) setFormErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
                   required
-                  className="border-border rounded-lg px-4 py-3 text-sm focus:border-accent"
+                  className={`border-border rounded-lg px-4 py-3 text-sm focus:border-accent ${formErrors.email ? "border-red-500 focus:border-red-500" : ""}`}
                 />
+                {formErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                )}
               </div>
               <div>
                 <Textarea
                   placeholder="Your Message"
                   value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value });
+                    if (formErrors.message) setFormErrors((prev) => ({ ...prev, message: undefined }));
+                  }}
                   required
                   rows={6}
-                  className="border-border rounded-lg px-4 py-3 text-sm focus:border-accent resize-none"
+                  className={`border-border rounded-lg px-4 py-3 text-sm focus:border-accent resize-none ${formErrors.message ? "border-red-500 focus:border-red-500" : ""}`}
                 />
+                {formErrors.message && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.message}</p>
+                )}
               </div>
               <Button
                 type="submit"
