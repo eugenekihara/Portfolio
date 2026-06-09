@@ -1242,23 +1242,42 @@ function ContactSection() {
       message: formData.message.trim(),
     };
 
-    console.log("[Contact Form] Submitting:", payload);
+    console.log("[Contact Form] ====== Starting Submission ======");
+    console.log("[Contact Form] Payload:", payload);
+    console.log("[Contact Form] Current URL:", window.location.href);
+    console.log("[Contact Form] API endpoint will be:", new URL("/api/contact", window.location.origin).href);
 
     try {
+      // First, do a quick health check to see if the API is reachable
+      try {
+        const healthCheck = await fetch("/api/contact", { method: "GET" });
+        console.log("[Contact Form] Health check status:", healthCheck.status);
+      } catch (healthErr) {
+        console.error("[Contact Form] API health check FAILED - server unreachable:", healthErr);
+        toast({
+          title: "Server unreachable",
+          description: "The contact service is not responding. Please try again in a few minutes.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log("[Contact Form] API is reachable, submitting form...");
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      console.log("[Contact Form] Response status:", res.status, res.statusText);
+      console.log("[Contact Form] POST response status:", res.status, res.statusText);
       console.log("[Contact Form] Response headers content-type:", res.headers.get("content-type"));
 
       // Safely parse the response - handle non-JSON responses
       let data: { success?: boolean; error?: string; message?: string; id?: string };
       try {
         const responseText = await res.text();
-        console.log("[Contact Form] Raw response:", responseText);
+        console.log("[Contact Form] Raw response body:", responseText.substring(0, 500));
         data = JSON.parse(responseText);
       } catch (parseErr) {
         console.error("[Contact Form] Failed to parse response as JSON:", parseErr);
@@ -1273,6 +1292,7 @@ function ContactSection() {
       console.log("[Contact Form] Parsed response data:", data);
 
       if (res.ok && data.success) {
+        console.log("[Contact Form] ✅ Message sent successfully!");
         toast({
           title: "Message sent!",
           description: "Thanks for reaching out. I'll get back to you within 24h.",
@@ -1298,7 +1318,7 @@ function ContactSection() {
           variant: "destructive",
         });
       } else {
-        console.error("[Contact Form] Unexpected response:", res.status, data);
+        console.error("[Contact Form] ❌ Unexpected response:", res.status, data);
         toast({
           title: "Failed to send",
           description: data.error || `Server error (${res.status}). Please try again later.`,
@@ -1306,7 +1326,7 @@ function ContactSection() {
         });
       }
     } catch (networkError) {
-      console.error("[Contact Form] Network/fetch error:", networkError);
+      console.error("[Contact Form] ❌ Network/fetch error:", networkError);
       toast({
         title: "Connection error",
         description: "Could not reach the server. Please check your internet connection and try again.",

@@ -24,7 +24,7 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-// Basic email format validation (no HTML sanitization for email - preserve @ and .)
+// Basic email format validation
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -37,10 +37,23 @@ function sanitizeText(input: string): string {
     .trim();
 }
 
+// GET /api/contact - Health check endpoint to verify API is alive
+export async function GET() {
+  return NextResponse.json({
+    status: "ok",
+    message: "Contact API is running",
+    timestamp: new Date().toISOString(),
+  });
+}
+
 // POST /api/contact - Public endpoint for contact form submissions
 export async function POST(request: NextRequest) {
-  console.log("[Contact API] Received POST request");
+  console.log("[Contact API] ====== New POST Request ======");
+  console.log("[Contact API] URL:", request.url);
+  console.log("[Contact API] Method:", request.method);
   console.log("[Contact API] Content-Type:", request.headers.get("content-type"));
+  console.log("[Contact API] Origin:", request.headers.get("origin"));
+  console.log("[Contact API] Referer:", request.headers.get("referer"));
 
   try {
     // Rate limiting by IP
@@ -62,11 +75,12 @@ export async function POST(request: NextRequest) {
     let body: unknown;
     try {
       body = await request.json();
-      console.log("[Contact API] Parsed body keys:", Object.keys(body as Record<string, unknown>));
+      const bodyKeys = typeof body === 'object' && body !== null ? Object.keys(body as Record<string, unknown>) : [];
+      console.log("[Contact API] Parsed body keys:", bodyKeys);
     } catch (parseErr) {
       console.error("[Contact API] Failed to parse request body:", parseErr);
       return NextResponse.json(
-        { error: "Invalid request. Please try again." },
+        { error: "Invalid request body. Please try again." },
         { status: 400 }
       );
     }
@@ -178,7 +192,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      console.log(`[Contact API] Message saved successfully: ${contactMessage.id} from ${email}`);
+      console.log(`[Contact API] ✅ Message saved successfully: ${contactMessage.id} from ${email}`);
 
       return NextResponse.json(
         {
@@ -189,14 +203,14 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       );
     } catch (dbWriteError) {
-      console.error("[Contact API] Database write error:", dbWriteError);
+      console.error("[Contact API] ❌ Database write error:", dbWriteError);
       return NextResponse.json(
         { error: "Unable to save your message right now. Please try again later." },
         { status: 500 }
       );
     }
   } catch (error) {
-    console.error("[Contact API] Unexpected error processing contact form:", error);
+    console.error("[Contact API] ❌ Unexpected error:", error);
     return NextResponse.json(
       { error: "Something went wrong on our end. Please try again later." },
       { status: 500 }
