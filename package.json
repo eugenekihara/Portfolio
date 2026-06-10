@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "node scripts/setup-db.mjs && next dev -p 3000",
     "build": "prisma generate && node scripts/setup-db.mjs && next build && bun scripts/copy-standalone-assets.mjs",
     "postinstall": "prisma generate",
     "start": "set NODE_ENV=production && bun .next/standalone/server.js",

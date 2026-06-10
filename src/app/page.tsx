@@ -654,16 +654,27 @@ interface ProjectData {
 function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/projects")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         // API returns an array on success, or { error: string } on failure
-        setProjects(Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) {
+          setProjects(data);
+        } else if (data && typeof data.error === "string") {
+          setError(data.error);
+        } else {
+          setError("Unexpected response format");
+        }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        setError(err.message || "Failed to load projects");
         setProjects([]);
         setLoading(false);
       });
@@ -676,14 +687,45 @@ function ProjectsSection() {
     return (
       <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-          <p className="text-neutral-500">Loading projects...</p>
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-neutral-400">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
+          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
+            Selected Work
+          </span>
+          <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
+            Projects
+          </h2>
+          <p className="mt-6 text-neutral-400 text-sm">Unable to load projects. Please try again later.</p>
         </div>
       </section>
     );
   }
 
   if (projects.length === 0) {
-    return null;
+    return (
+      <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
+          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
+            Selected Work
+          </span>
+          <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
+            Projects
+          </h2>
+          <p className="mt-6 text-neutral-400 text-sm">No projects yet. Check back soon!</p>
+        </div>
+      </section>
+    );
   }
 
   return (

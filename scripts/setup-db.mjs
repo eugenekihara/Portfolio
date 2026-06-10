@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync } from "node:fs";
+import { mkdirSync, existsSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { execSync } from "node:child_process";
 
@@ -16,6 +16,15 @@ const dbUrl = `file:${dbFile}`;
 console.log(`[Setup DB] Project root: ${projectRoot}`);
 console.log(`[Setup DB] Database path: ${dbFile}`);
 console.log(`[Setup DB] DATABASE_URL: ${dbUrl}`);
+
+// Ensure .env file exists with DATABASE_URL and NEXTAUTH_SECRET
+const envFile = join(projectRoot, ".env");
+if (!existsSync(envFile)) {
+  writeFileSync(envFile, "DATABASE_URL=file:./db/custom.db\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n");
+  console.log(`[Setup DB] Created .env file with default configuration`);
+} else {
+  console.log(`[Setup DB] .env file already exists`);
+}
 
 // Ensure db/ directory exists
 if (!existsSync(dbDir)) {
@@ -35,7 +44,7 @@ try {
     },
     cwd: projectRoot,
   });
-  console.log(`[Setup DB] ✅ Database synced successfully`);
+  console.log(`[Setup DB] ✅ Database schema synced successfully`);
 } catch (err) {
   console.error(`[Setup DB] ❌ prisma db push failed`);
   process.exit(1);
@@ -47,4 +56,21 @@ if (existsSync(dbFile)) {
 } else {
   console.warn(`[Setup DB] ⚠️ Database file not found at expected path: ${dbFile}`);
   console.warn(`[Setup DB] It may have been created elsewhere. Check prisma/ directory.`);
+}
+
+// Run seed to populate initial data (projects + admin user)
+console.log(`[Setup DB] Running database seed...`);
+try {
+  execSync("bunx tsx prisma/seed.ts", {
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      DATABASE_URL: dbUrl,
+    },
+    cwd: projectRoot,
+  });
+  console.log(`[Setup DB] ✅ Database seeded successfully`);
+} catch (err) {
+  console.warn(`[Setup DB] ⚠️ Seed failed (data may already exist). Continuing...`);
+  // Don't exit — seed failure is non-fatal (data may already be there)
 }
