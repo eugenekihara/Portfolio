@@ -659,10 +659,14 @@ function ProjectsSection() {
     fetch("/api/projects")
       .then((res) => res.json())
       .then((data) => {
-        setProjects(data);
+        // API returns an array on success, or { error: string } on failure
+        setProjects(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setProjects([]);
+        setLoading(false);
+      });
   }, []);
 
   const featuredProject = projects.find((p) => p.featured);
