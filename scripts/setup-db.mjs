@@ -4,8 +4,12 @@ import { execSync } from "node:child_process";
 
 // Compute the absolute path to the database file
 // This ensures prisma CLI and Prisma Client use the SAME file
+// IMPORTANT: The database must be at prisma/db/custom.db because:
+//   - Prisma CLI resolves "file:./db/custom.db" relative to prisma/schema.prisma → prisma/db/custom.db
+//   - db.ts also resolves relative to the prisma/ directory → prisma/db/custom.db
+// Both must agree on the same location!
 const projectRoot = resolve(import.meta.dirname, "..");
-const dbDir = join(projectRoot, "db");
+const dbDir = join(projectRoot, "prisma", "db");
 const dbFile = join(dbDir, "custom.db");
 const dbUrl = `file:${dbFile}`;
 
