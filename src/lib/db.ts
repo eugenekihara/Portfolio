@@ -10,13 +10,17 @@ function resolveDatabaseUrl(): string {
   let dbUrl = process.env.DATABASE_URL
 
   if (!dbUrl) {
-    // Fallback: use db/custom.db relative to current working directory
-    const dbPath = path.join(process.cwd(), 'db', 'custom.db')
+    // Fallback: use prisma/db/custom.db relative to current working directory
+    const dbPath = path.join(process.cwd(), 'prisma', 'db', 'custom.db')
     dbUrl = `file:${dbPath}`
   } else if (dbUrl.startsWith('file:./')) {
-    // Resolve relative paths relative to cwd (same as Prisma Client behavior)
+    // Resolve relative paths the same way Prisma CLI does:
+    // Prisma CLI resolves "file:./db/custom.db" relative to the prisma/ directory,
+    // not relative to cwd. We must match that behavior so the runtime
+    // connects to the same database file that prisma db push created.
     const relativePath = dbUrl.replace('file:', '')
-    const absolutePath = path.resolve(process.cwd(), relativePath)
+    const prismaDir = path.join(process.cwd(), 'prisma')
+    const absolutePath = path.resolve(prismaDir, relativePath)
     dbUrl = `file:${absolutePath}`
   }
 

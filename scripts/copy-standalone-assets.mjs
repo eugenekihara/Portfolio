@@ -23,16 +23,17 @@ for (const [source, destination] of copies) {
 }
 
 // Copy the database file to standalone build
-const standaloneDbDir = join(projectRoot, ".next/standalone/db");
+// Prisma CLI creates the DB at prisma/db/custom.db (relative to schema directory)
+const standaloneDbDir = join(projectRoot, ".next/standalone/prisma/db");
 mkdirSync(standaloneDbDir, { recursive: true });
 
-const dbSource = join(projectRoot, "db/custom.db");
+const dbSource = join(projectRoot, "prisma/db/custom.db");
 if (existsSync(dbSource)) {
   cpSync(dbSource, join(standaloneDbDir, "custom.db"), { force: true });
-  console.log("Copied db/custom.db -> .next/standalone/db/custom.db");
+  console.log("Copied prisma/db/custom.db -> .next/standalone/prisma/db/custom.db");
 } else {
-  console.warn("WARNING: db/custom.db not found");
-  console.warn("Run 'npm run build' again to create it.");
+  console.warn("WARNING: prisma/db/custom.db not found - database will be created on first run");
+  console.warn("Run 'npx prisma db push' to create the database before starting the server.");
 }
 
 // Create/update .env in standalone build with relative path
