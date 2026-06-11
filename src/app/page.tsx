@@ -745,10 +745,7 @@ function ProjectsSection() {
                 Projects
               </h2>
             </div>
-            <p className="text-neutral-400 max-w-sm text-sm leading-relaxed sm:text-right sm:pb-2">
-              Each project is a case study — not just a screenshot. Strategy,
-              design, and outcome fused into one narrative.
-            </p>
+
           </div>
         </FadeInSection>
 
