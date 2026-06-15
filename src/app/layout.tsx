@@ -35,6 +35,13 @@ export const metadata: Metadata = {
     "Branding",
   ],
   authors: [{ name: "Eugene Kihara" }],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Eugene Portfolio | UI/UX Designer & Developer",
     description:
