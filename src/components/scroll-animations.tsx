@@ -316,16 +316,21 @@ export function StaggerReveal({
     const el = ref.current;
     if (!el) return;
 
-    const children = el.querySelectorAll(childSelector);
-    if (!children.length) return;
+    // "> *" is not a valid querySelectorAll selector — use el.children instead
+    const childElements =
+      childSelector === "> *"
+        ? el.children
+        : el.querySelectorAll(childSelector);
+    if (!childElements.length) return;
 
-    gsap.set(children, { opacity: 0, y });
+    const targets = Array.from(childElements);
+    gsap.set(targets, { opacity: 0, y });
 
     const trigger = ScrollTrigger.create({
       trigger: el,
       start: "top 80%",
       onEnter: () => {
-        gsap.to(children, {
+        gsap.to(targets, {
           opacity: 1,
           y: 0,
           duration: 0.8,
