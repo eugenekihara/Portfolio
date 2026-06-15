@@ -1,0 +1,1226 @@
+     1→"use client";
+     2→
+     3→import { motion } from "framer-motion";
+     4→import {
+     5→  ArrowLeft,
+     6→  ArrowRight,
+     7→  ArrowUpRight,
+     8→  Search,
+     9→  Users,
+    10→  Mic,
+    11→  Globe,
+    12→  Bell,
+    13→  Sprout,
+    14→  BarChart3,
+    15→  MapPin,
+    16→  CheckCircle2,
+    17→  ChevronRight,
+    18→  Clock,
+    19→  BookOpen,
+    20→  Target,
+    21→  Lightbulb,
+    22→  Leaf,
+    23→  Languages,
+    24→} from "lucide-react";
+    25→import Link from "next/link";
+    26→import {
+    27→  ScrollReveal,
+    28→  ScrollRevealLeft,
+    29→  ScrollRevealRight,
+    30→  Parallax,
+    31→  SplitTextReveal,
+    32→  StaggerReveal,
+    33→  DrawLine,
+    34→  ClipReveal,
+    35→  MagneticHover,
+    36→  ScaleIn,
+    37→} from "@/components/scroll-animations";
+    38→
+    39→/* ─── Theme Constants ─── */
+    40→const GREEN = "#2E5C3E";
+    41→const GREEN_DARK = "#1A3A26";
+    42→const ORANGE = "#ED6C02";
+    43→const ORANGE_LIGHT = "#F5923A";
+    44→const ACCENT_GREEN = "#4A8B5E";
+    45→
+    46→/* ─── Phone Frame Wrapper ─── */
+    47→function PhoneFrame({
+    48→  src,
+    49→  alt,
+    50→  className = "",
+    51→}: {
+    52→  src: string;
+    53→  alt: string;
+    54→  className?: string;
+    55→}) {
+    56→  return (
+    57→    <div
+    58→      className={`relative mx-auto ${className}`}
+    59→      style={{ maxWidth: "320px" }}
+    60→    >
+    61→      <div className="relative rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-gray-800 shadow-2xl">
+    62→        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-gray-800 rounded-b-2xl z-10" />
+    63→        <img
+    64→          src={src}
+    65→          alt={alt}
+    66→          className="w-full h-auto object-cover rounded-[2rem]"
+    67→        />
+    68→      </div>
+    69→    </div>
+    70→  );
+    71→}
+    72→
+    73→/* ─── Section Heading ─── */
+    74→function SectionHeading({
+    75→  label,
+    76→  title,
+    77→  light = false,
+    78→  accentColor,
+    79→}: {
+    80→  label: string;
+    81→  title: string;
+    82→  light?: boolean;
+    83→  accentColor?: string;
+    84→}) {
+    85→  return (
+    86→    <div className="mb-12 lg:mb-16">
+    87→      <ScrollReveal>
+    88→        <p
+    89→          className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
+    90→          style={{ color: accentColor || ORANGE }}
+    91→        >
+    92→          {label}
+    93→        </p>
+    94→      </ScrollReveal>
+    95→      <SplitTextReveal
+    96→        text={title}
+    97→        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
+    98→          light ? "text-white" : "text-foreground"
+    99→        }`}
+   100→      />
+   101→    </div>
+   102→  );
+   103→}
+   104→
+   105→/* ─── Stat Card ─── */
+   106→function StatCard({
+   107→  icon: Icon,
+   108→  value,
+   109→  label,
+   110→  light = false,
+   111→}: {
+   112→  icon: React.ElementType;
+   113→  value: string;
+   114→  label: string;
+   115→  light?: boolean;
+   116→}) {
+   117→  return (
+   118→    <div
+   119→      className={`p-6 lg:p-8 rounded-2xl ${
+   120→        light
+   121→          ? "bg-white/10 border border-white/10"
+   122→          : "bg-secondary/50 border border-foreground/5"
+   123→      }`}
+   124→    >
+   125→      <Icon className="w-6 h-6 mb-4" style={{ color: light ? ORANGE_LIGHT : ORANGE }} />
+   126→      <p
+   127→        className={`text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 ${
+   128→          light ? "text-white" : "text-foreground"
+   129→        }`}
+   130→      >
+   131→        {value}
+   132→      </p>
+   133→      <p
+   134→        className={`text-sm leading-relaxed ${
+   135→          light ? "text-white/60" : "text-muted-foreground"
+   136→        }`}
+   137→      >
+   138→        {label}
+   139→      </p>
+   140→    </div>
+   141→  );
+   142→}
+   143→
+   144→/* ─── User Flow Step ─── */
+   145→function FlowStep({
+   146→  number,
+   147→  icon: Icon,
+   148→  title,
+   149→  description,
+   150→}: {
+   151→  number: number;
+   152→  icon: React.ElementType;
+   153→  title: string;
+   154→  description: string;
+   155→}) {
+   156→  return (
+   157→    <div className="flex flex-col items-center text-center relative">
+   158→      <div className="relative z-10">
+   159→        <div
+   160→          className="w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center border-2 shadow-lg"
+   161→          style={{ backgroundColor: GREEN, borderColor: `${ACCENT_GREEN}50` }}
+   162→        >
+   163→          <Icon className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: ACCENT_GREEN }} />
+   164→        </div>
+   165→        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ backgroundColor: ORANGE }}>
+   166→          {number}
+   167→        </span>
+   168→      </div>
+   169→      <h4 className="mt-5 text-sm lg:text-base font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   170→        {title}
+   171→      </h4>
+   172→      <p className="mt-2 text-xs lg:text-sm text-muted-foreground leading-relaxed max-w-[180px]">
+   173→        {description}
+   174→      </p>
+   175→    </div>
+   176→  );
+   177→}
+   178→
+   179→/* ─── Screen Text Content ─── */
+   180→function ScreenTextContent({
+   181→  title,
+   182→  purpose,
+   183→  rationale,
+   184→}: {
+   185→  title: string;
+   186→  purpose: string;
+   187→  rationale: string;
+   188→}) {
+   189→  return (
+   190→    <div className="flex flex-col justify-center space-y-4">
+   191→      <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   192→        {title}
+   193→      </h4>
+   194→      <div>
+   195→        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: GREEN }}>
+   196→          Purpose
+   197→        </p>
+   198→        <p className="text-sm text-muted-foreground leading-relaxed">
+   199→          {purpose}
+   200→        </p>
+   201→      </div>
+   202→      <div>
+   203→        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: GREEN }}>
+   204→          UX Rationale
+   205→        </p>
+   206→        <p className="text-sm text-muted-foreground leading-relaxed">
+   207→          {rationale}
+   208→        </p>
+   209→      </div>
+   210→    </div>
+   211→  );
+   212→}
+   213→
+   214→/* ─── Screen Showcase Item ─── */
+   215→function ScreenShowcase({
+   216→  src,
+   217→  alt,
+   218→  title,
+   219→  purpose,
+   220→  rationale,
+   221→  reversed = false,
+   222→}: {
+   223→  src: string;
+   224→  alt: string;
+   225→  title: string;
+   226→  purpose: string;
+   227→  rationale: string;
+   228→  reversed?: boolean;
+   229→}) {
+   230→  if (reversed) {
+   231→    return (
+   232→      <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+   233→        <ScrollRevealRight>
+   234→          <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
+   235→        </ScrollRevealRight>
+   236→        <ScrollRevealLeft>
+   237→          <PhoneFrame src={src} alt={alt} />
+   238→        </ScrollRevealLeft>
+   239→      </div>
+   240→    );
+   241→  }
+   242→
+   243→  return (
+   244→    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+   245→      <ScrollRevealLeft>
+   246→        <PhoneFrame src={src} alt={alt} />
+   247→      </ScrollRevealLeft>
+   248→      <ScrollRevealRight>
+   249→        <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
+   250→      </ScrollRevealRight>
+   251→    </div>
+   252→  );
+   253→}
+   254→
+   255→/* ─── Color Swatch ─── */
+   256→function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: string }) {
+   257→  return (
+   258→    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
+   259→      <div
+   260→        className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0"
+   261→        style={{ backgroundColor: color }}
+   262→      />
+   263→      <div>
+   264→        <p className="text-white font-medium text-sm">{name}</p>
+   265→        <p className="text-white/50 text-xs font-mono">{hex}</p>
+   266→      </div>
+   267→    </div>
+   268→  );
+   269→}
+   270→
+   271→/* ────────────────────────────────────────────
+   272→   SHAMBA RAHISI Case Study Page
+   273→   ──────────────────────────────────────────── */
+   274→export default function ShambaRahisiPage() {
+   275→  return (
+   276→    <div className="min-h-screen bg-background">
+   277→      {/* ── 1. Sticky Navigation ── */}
+   278→      <motion.nav
+   279→        initial={{ y: -100 }}
+   280→        animate={{ y: 0 }}
+   281→        transition={{ duration: 0.6, ease: "easeOut" }}
+   282→        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
+   283→      >
+   284→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   285→          <div className="flex items-center justify-between h-16 lg:h-20">
+   286→            <Link
+   287→              href="/"
+   288→              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
+   289→            >
+   290→              Eugene<span className="text-accent">.</span>
+   291→            </Link>
+   292→            <div className="hidden md:flex items-center gap-8">
+   293→              {["Home", "Projects", "About", "Contact"].map((item) => (
+   294→                <Link
+   295→                  key={item}
+   296→                  href={`/#${item.toLowerCase()}`}
+   297→                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
+   298→                >
+   299→                  {item}
+   300→                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
+   301→                </Link>
+   302→              ))}
+   303→            </div>
+   304→            <Link
+   305→              href="/#projects"
+   306→              className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
+   307→            >
+   308→              <ArrowLeft className="w-4 h-4" />
+   309→              <span className="hidden sm:inline">Back</span>
+   310→            </Link>
+   311→          </div>
+   312→        </div>
+   313→      </motion.nav>
+   314→
+   315→      {/* ── 2. Hero Section ── */}
+   316→      <section className="relative overflow-hidden" style={{ backgroundColor: GREEN }}>
+   317→        {/* Decorative blobs */}
+   318→        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+   319→          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: `${GREEN_DARK}` }} />
+   320→          <div className="absolute -bottom-60 -left-40 w-[500px] h-[500px] rounded-full blur-3xl" style={{ backgroundColor: `${GREEN_DARK}50` }} />
+   321→          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl" style={{ backgroundColor: `${ORANGE}08` }} />
+   322→        </div>
+   323→
+   324→        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 pt-16 pb-20 lg:pt-24 lg:pb-32">
+   325→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+   326→            {/* Left: Title + Metadata */}
+   327→            <div>
+   328→              <motion.div
+   329→                initial={{ opacity: 0, y: 40 }}
+   330→                animate={{ opacity: 1, y: 0 }}
+   331→                transition={{ duration: 0.7, delay: 0.2 }}
+   332→              >
+   333→                <h1 className="text-6xl sm:text-7xl lg:text-[100px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
+   334→                  <span className="text-white">SHAMBA</span>
+   335→                  <br />
+   336→                  <span style={{ color: ORANGE }}>RAHISI</span>
+   337→                </h1>
+   338→              </motion.div>
+   339→
+   340→              <motion.div
+   341→                initial={{ opacity: 0, y: 20 }}
+   342→                animate={{ opacity: 1, y: 0 }}
+   343→                transition={{ duration: 0.7, delay: 0.4 }}
+   344→                className="mt-8 flex flex-wrap gap-3"
+   345→              >
+   346→                {[
+   347→                  { label: "Category", value: "AgriTech UX" },
+   348→                  { label: "Role", value: "UX Research Lead" },
+   349→                  { label: "Timeline", value: "2025" },
+   350→                  { label: "Platform", value: "Mobile App" },
+   351→                ].map((item) => (
+   352→                  <div
+   353→                    key={item.label}
+   354→                    className="px-4 py-2 rounded-full border border-white/15 bg-white/5"
+   355→                  >
+   356→                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: ORANGE }}>
+   357→                      {item.label}:{" "}
+   358→                    </span>
+   359→                    <span className="text-sm font-medium text-white/90">
+   360→                      {item.value}
+   361→                    </span>
+   362→                  </div>
+   363→                ))}
+   364→              </motion.div>
+   365→
+   366→              <motion.p
+   367→                initial={{ opacity: 0, y: 20 }}
+   368→                animate={{ opacity: 1, y: 0 }}
+   369→                transition={{ duration: 0.7, delay: 0.5 }}
+   370→                className="mt-8 text-white/60 text-base lg:text-lg leading-relaxed max-w-lg"
+   371→              >
+   372→                An agricultural technology solution that transforms complex farm
+   373→                data into simple, actionable insights&mdash;delivered in
+   374→                farmers&apos; own languages through voice and smart reminders.
+   375→              </motion.p>
+   376→
+   377→              <motion.div
+   378→                initial={{ opacity: 0, y: 20 }}
+   379→                animate={{ opacity: 1, y: 0 }}
+   380→                transition={{ duration: 0.7, delay: 0.6 }}
+   381→                className="mt-8"
+   382→              >
+   383→                <MagneticHover>
+   384→                  <a
+   385→                    href="#overview"
+   386→                    className="inline-flex items-center gap-3 px-8 py-4 bg-white rounded-full font-semibold text-sm hover:bg-white/90 transition-colors duration-300"
+   387→                    style={{ color: GREEN }}
+   388→                  >
+   389→                    Read Full Case Study
+   390→                    <ChevronRight className="w-4 h-4" />
+   391→                  </a>
+   392→                </MagneticHover>
+   393→              </motion.div>
+   394→
+   395→              {/* Scroll indicator */}
+   396→              <motion.div
+   397→                initial={{ opacity: 0 }}
+   398→                animate={{ opacity: 1 }}
+   399→                transition={{ duration: 1, delay: 1.2 }}
+   400→                className="mt-16 hidden lg:flex items-center gap-3 text-white/30"
+   401→              >
+   402→                <div className="w-px h-12 bg-white/20" />
+   403→                <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
+   404→                <motion.div
+   405→                  animate={{ y: [0, 8, 0] }}
+   406→                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+   407→                >
+   408→                  <ArrowRight className="w-4 h-4 rotate-90" />
+   409→                </motion.div>
+   410→              </motion.div>
+   411→            </div>
+   412→
+   413→            {/* Right: Phone Mockup */}
+   414→            <motion.div
+   415→              initial={{ opacity: 0, x: 60, scale: 0.9 }}
+   416→              animate={{ opacity: 1, x: 0, scale: 1 }}
+   417→              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
+   418→              className="flex justify-center lg:justify-end"
+   419→            >
+   420→              <Parallax speed={-0.08}>
+   421→                <PhoneFrame
+   422→                  src="/shamba-rahisi/screen-splash.png"
+   423→                  alt="Shamba Rahisi splash screen with farmer"
+   424→                  className="w-[260px] lg:w-[300px]"
+   425→                />
+   426→              </Parallax>
+   427→            </motion.div>
+   428→          </div>
+   429→        </div>
+   430→      </section>
+   431→
+   432→      {/* ── 3. Project Overview ── */}
+   433→      <section id="overview" className="py-20 lg:py-32 bg-background">
+   434→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   435→          <SectionHeading label="Overview" title="The voice of your soil" accentColor={ORANGE} />
+   436→
+   437→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+   438→            <ScrollReveal>
+   439→              <div className="space-y-6">
+   440→                <p className="text-foreground/80 text-base lg:text-lg leading-[1.8]">
+   441→                  <span className="font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   442→                    Shamba Rahisi
+   443→                  </span>{" "}
+   444→                  is an agricultural technology solution designed to help
+   445→                  farmers better understand and utilize farm data. The platform
+   446→                  transforms complex agricultural and environmental data into
+   447→                  simple, actionable insights presented in language that farmers
+   448→                  can easily understand.
+   449→                </p>
+   450→                <p className="text-foreground/70 text-base leading-[1.8]">
+   451→                  Recognizing the diversity of farmers across Kenya, the
+   452→                  solution supports multiple languages including local and native
+   453→                  languages such as Kiswahili, Kalenjin, and Kikuyu. This makes
+   454→                  critical farming information more accessible regardless of
+   455→                  literacy level or language preference. The platform also
+   456→                  provides timely reminders for important farming activities and
+   457→                  environmental conditions, helping farmers make informed
+   458→                  decisions and improve productivity.
+   459→                </p>
+   460→                <p className="text-foreground/70 text-base leading-[1.8]">
+   461→                  Developed through primary research with AgTech leaders like
+   462→                  Synnefa, the platform integrates real-time IoT sensor data
+   463→                  from FarmShield devices, translating raw soil readings into
+   464→                  localized, voice-based task recommendations and pre-season
+   465→                  cost blueprints that ensure technical recommendations become
+   466→                  affordable, reliable action at the farm level.
+   467→                </p>
+   468→              </div>
+   469→            </ScrollReveal>
+   470→
+   471→            <ScrollRevealRight>
+   472→              <div className="rounded-3xl overflow-hidden shadow-xl border border-foreground/5">
+   473→                <img
+   474→                  src="/shamba-rahisi/screen-home.png"
+   475→                  alt="Shamba Rahisi home dashboard with farm overview"
+   476→                  className="w-full h-auto object-cover"
+   477→                />
+   478→              </div>
+   479→            </ScrollRevealRight>
+   480→          </div>
+   481→        </div>
+   482→      </section>
+   483→
+   484→      {/* ── 4. Problem Statement ── */}
+   485→      <section className="py-20 lg:py-32 bg-secondary/30">
+   486→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   487→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+   488→            <div>
+   489→              <SectionHeading
+   490→                label="The Problem"
+   491→                title="Data-rich, insight-poor"
+   492→                accentColor={ORANGE}
+   493→              />
+   494→              <ScrollReveal delay={0.2}>
+   495→                <div className="space-y-5">
+   496→                  <p className="text-foreground/80 text-base leading-[1.8]">
+   497→                    Many farmers in Kenya now have access to agricultural
+   498→                    data&mdash;from soil sensors, weather stations, and extension
+   499→                    services&mdash;but they struggle to interpret the technical
+   500→                    information and complex reports this data generates. Critical
+   501→                    insights about soil health, nutrient deficiencies, and
+   502→                    planting conditions are presented using scientific terminology
+   503→                    that creates barriers rather than enabling informed
+   504→                    decision-making.
+   505→                  </p>
+   506→                  <p className="text-foreground/70 text-base leading-[1.8]">
+   507→                    Language barriers compound the problem. Most agricultural
+   508→                    data platforms present information exclusively in English,
+   509→                    yet many farmers are more comfortable in Kiswahili or their
+   510→                    local native languages. This linguistic gap effectively
+   511→                    locks out the very people who need the information most,
+   512→                    turning potentially transformative data into inaccessible
+   513→                    noise.
+   514→                  </p>
+   515→                  <p className="text-foreground/70 text-base leading-[1.8]">
+   516→                    Additionally, farmers struggle to track important farming
+   517→                    activities and deadlines. Without timely reminders for
+   518→                    crucial actions like fertilizer application or planting
+   519→                    windows, even the best data-driven recommendations fail to
+   520→                    translate into on-the-ground action.
+   521→                  </p>
+   522→                </div>
+   523→              </ScrollReveal>
+   524→            </div>
+   525→
+   526→            <div>
+   527→              <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
+   528→                <StatCard
+   529→                  icon={BarChart3}
+   530→                  value="Raw Data"
+   531→                  label="Complex sensor data that farmers cannot interpret without technical knowledge"
+   532→                />
+   533→                <StatCard
+   534→                  icon={Languages}
+   535→                  value="English Only"
+   536→                  label="Most AgTech platforms ignore local and native languages"
+   537→                />
+   538→                <StatCard
+   539→                  icon={Clock}
+   540→                  value="Missed Deadlines"
+   541→                  label="No timely reminders for critical farming activities like planting windows"
+   542→                />
+   543→                <StatCard
+   544→                  icon={Sprout}
+   545→                  value="Yield Gap"
+   546→                  label="The disconnect between available data and farmer action reduces productivity"
+   547→                />
+   548→              </StaggerReveal>
+   549→            </div>
+   550→          </div>
+   551→        </div>
+   552→      </section>
+   553→
+   554→      {/* ── 5. My Role / Contributions ── */}
+   555→      <section className="py-20 lg:py-32 bg-background">
+   556→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   557→          <div className="text-center mb-16">
+   558→            <ScrollReveal>
+   559→              <p className="text-xs font-bold tracking-[0.3em] uppercase mb-3" style={{ color: ORANGE }}>
+   560→                My Role
+   561→              </p>
+   562→            </ScrollReveal>
+   563→            <SplitTextReveal
+   564→              text="UX Research Lead — from stakeholder interviews to product strategy"
+   565→              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-foreground max-w-4xl mx-auto"
+   566→            />
+   567→          </div>
+   568→
+   569→          <StaggerReveal className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" stagger={0.12}>
+   570→            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
+   571→              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+   572→                <Users className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
+   573→              </div>
+   574→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
+   575→                Stakeholder Interviews
+   576→              </h4>
+   577→              <p className="text-white/60 text-sm leading-relaxed">
+   578→                Organized and coordinated interviews with representatives from
+   579→                Synnefa. Facilitated discussions to understand industry
+   580→                challenges, user needs, and business objectives. Documented
+   581→                meeting outcomes and maintained detailed research notes.
+   582→              </p>
+   583→            </div>
+   584→
+   585→            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
+   586→              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+   587→                <Search className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
+   588→              </div>
+   589→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
+   590→                User & Market Research
+   591→              </h4>
+   592→              <p className="text-white/60 text-sm leading-relaxed">
+   593→                Conducted extensive online research to understand agricultural
+   594→                technology trends and farmer challenges. Analyzed existing
+   595→                solutions within the market to identify gaps and opportunities.
+   596→                Gathered insights on how farmers interact with information.
+   597→              </p>
+   598→            </div>
+   599→
+   600→            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
+   601→              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+   602→                <Target className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
+   603→              </div>
+   604→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
+   605→                Problem Identification
+   606→              </h4>
+   607→              <p className="text-white/60 text-sm leading-relaxed">
+   608→                Identified key pain points affecting farmers when interpreting
+   609→                agricultural data. Mapped challenges related to accessibility,
+   610→                language barriers, and information comprehension. Defined core
+   611→                problem areas that shaped the product direction.
+   612→              </p>
+   613→            </div>
+   614→
+   615→            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
+   616→              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+   617→                <Lightbulb className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
+   618→              </div>
+   619→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
+   620→                Opportunity Discovery
+   621→              </h4>
+   622→              <p className="text-white/60 text-sm leading-relaxed">
+   623→                Investigated potential market opportunities where technology
+   624→                could simplify data interpretation for farmers. Contributed
+   625→                research findings that informed feature prioritization and
+   626→                product strategy, ensuring the solution addressed real needs.
+   627→              </p>
+   628→            </div>
+   629→          </StaggerReveal>
+   630→        </div>
+   631→      </section>
+   632→
+   633→      {/* ── 6. Research Insights ── */}
+   634→      <section className="py-20 lg:py-32 bg-secondary/30">
+   635→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   636→          <SectionHeading
+   637→            label="Research Insights"
+   638→            title="What farmers told us"
+   639→            accentColor={ORANGE}
+   640→          />
+   641→
+   642→          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.1}>
+   643→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   644→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   645→                01
+   646→              </div>
+   647→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   648→                Technical Data is Inaccessible
+   649→              </h4>
+   650→              <p className="text-sm text-muted-foreground leading-relaxed">
+   651→                Farmers found technical agricultural data extremely difficult to
+   652→                understand. Soil pH readings, nitrogen levels, and sensor
+   653→                metrics meant nothing without translation into practical
+   654→                language. The gap between raw data and actionable knowledge was
+   655→                the single biggest barrier to adoption.
+   656→              </p>
+   657→            </div>
+   658→
+   659→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   660→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   661→                02
+   662→              </div>
+   663→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   664→                Conversational Language Preferred
+   665→              </h4>
+   666→              <p className="text-sm text-muted-foreground leading-relaxed">
+   667→                Farmers overwhelmingly preferred information presented in
+   668→                simple, conversational language rather than scientific reports.
+   669→                Metaphors and analogies (e.g., &ldquo;Your soil is hungry for
+   670→                nitrogen&rdquo;) resonated far more than charts and graphs.
+   671→                This insight directly shaped the recommendation engine&apos;s
+   672→                communication style.
+   673→              </p>
+   674→            </div>
+   675→
+   676→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   677→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   678→                03
+   679→              </div>
+   680→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   681→                Reminders Drive Action
+   682→              </h4>
+   683→              <p className="text-sm text-muted-foreground leading-relaxed">
+   684→                Farmers benefited significantly from receiving reminders for
+   685→                critical farming activities. Without nudges, important tasks
+   686→                like fertilizer application were often delayed past optimal
+   687→                windows, reducing their effectiveness. Timely notifications
+   688→                emerged as a key feature request across all user segments.
+   689→              </p>
+   690→            </div>
+   691→
+   692→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   693→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   694→                04
+   695→              </div>
+   696→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   697→                Local Language is Non-Negotiable
+   698→              </h4>
+   699→              <p className="text-sm text-muted-foreground leading-relaxed">
+   700→                Solutions that only supported English effectively excluded a
+   701→                large portion of the target user base. Farmers required
+   702→                interfaces and audio in their native languages&mdash;including
+   703→                Kiswahili, Kalenjin, and Kikuyu. Voice-based delivery in local
+   704→                dialects was identified as essential for low-literacy contexts.
+   705→              </p>
+   706→            </div>
+   707→
+   708→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   709→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   710→                05
+   711→              </div>
+   712→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   713→                Recommendations, Not Raw Data
+   714→              </h4>
+   715→              <p className="text-sm text-muted-foreground leading-relaxed">
+   716→                Farmers didn&apos;t want to see raw sensor readings&mdash;they
+   717→                wanted to know what to do. Actionable recommendations (e.g.,
+   718→                &ldquo;Apply 50kg of DAP fertilizer within 7 days&rdquo;) were
+   719→                far more valuable than being told &ldquo;Nitrogen level: Low.&rdquo;
+   720→                The platform needed to move from data display to decision
+   721→                support.
+   722→              </p>
+   723→            </div>
+   724→
+   725→            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
+   726→              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
+   727→                06
+   728→              </div>
+   729→              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   730→                Cost Awareness Matters
+   731→              </h4>
+   732→              <p className="text-sm text-muted-foreground leading-relaxed">
+   733→                Farmers needed to understand the financial implications of
+   734→                recommendations before acting. Including estimated costs (e.g.,
+   735→                &ldquo;2,800 KES for DAP&rdquo;) and potential savings (e.g.,
+   736→                &ldquo;Potential savings: Ksh 15,000&rdquo;) alongside
+   737→                agricultural advice built trust and enabled financial planning
+   738→                around farming activities.
+   739→              </p>
+   740→            </div>
+   741→          </StaggerReveal>
+   742→        </div>
+   743→      </section>
+   744→
+   745→      {/* ── 7. The Solution ── */}
+   746→      <section className="py-20 lg:py-32 relative overflow-hidden" style={{ backgroundColor: GREEN }}>
+   747→        <div className="absolute inset-0 pointer-events-none">
+   748→          <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: GREEN_DARK }} />
+   749→          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-3xl" style={{ backgroundColor: `${ORANGE}08` }} />
+   750→        </div>
+   751→
+   752→        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+   753→          <div className="text-center mb-16">
+   754→            <ScrollReveal>
+   755→              <p className="text-xs font-bold tracking-[0.3em] uppercase mb-3" style={{ color: ORANGE }}>
+   756→                The Solution
+   757→              </p>
+   758→            </ScrollReveal>
+   759→            <SplitTextReveal
+   760→              text="Complex data, simple voice — your farm speaks your language"
+   761→              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white max-w-4xl mx-auto"
+   762→            />
+   763→          </div>
+   764→
+   765→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+   766→            <ScrollRevealLeft>
+   767→              <div className="space-y-6">
+   768→                <p className="text-white/80 text-base lg:text-lg leading-[1.8]">
+   769→                  Shamba Rahisi converts complex farm and environmental data
+   770→                  into simplified, easy-to-understand insights that support
+   771→                  better decision-making. By connecting to Synnefa&apos;s
+   772→                  FarmShield IoT sensors, the app pulls real-time soil data and
+   773→                  transforms it into practical recommendations delivered in the
+   774→                  farmer&apos;s preferred language.
+   775→                </p>
+   776→                <p className="text-white/60 text-base leading-[1.8]">
+   777→                  The platform&apos;s standout innovation is its multi-language
+   778→                  voice system. Farmers can receive audio recommendations in
+   779→                  Kiswahili, Kalenjin, Kikuyu, or English&mdash;choosing both
+   780→                  their preferred language and voice gender. This ensures that
+   781→                  even farmers with limited literacy can benefit from
+   782→                  data-driven insights through accessible audio delivery.
+   783→                </p>
+   784→                <p className="text-white/60 text-base leading-[1.8]">
+   785→                  Smart reminders ensure that critical farming activities are
+   786→                  never missed. The app sends timely notifications tied to
+   787→                  real-time environmental conditions&mdash;alerting farmers
+   788→                  when to apply fertilizer before rain, or when soil moisture
+   789→                  levels indicate optimal planting conditions.
+   790→                </p>
+   791→
+   792→                <div className="grid grid-cols-3 gap-4 mt-8">
+   793→                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+   794→                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">4+</p>
+   795→                    <p className="text-xs text-white/50 mt-1">Languages supported</p>
+   796→                  </div>
+   797→                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+   798→                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)]" style={{ color: ORANGE }}>IoT</p>
+   799→                    <p className="text-xs text-white/50 mt-1">Real-time sensor data</p>
+   800→                  </div>
+   801→                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+   802→                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">Voice</p>
+   803→                    <p className="text-xs text-white/50 mt-1">Audio recommendations</p>
+   804→                  </div>
+   805→                </div>
+   806→              </div>
+   807→            </ScrollRevealLeft>
+   808→
+   809→            <ScrollRevealRight>
+   810→              <ClipReveal>
+   811→                <PhoneFrame
+   812→                  src="/shamba-rahisi/screen-recommendation.png"
+   813→                  alt="Shamba Rahisi recommendation screen with actionable insights"
+   814→                  className="w-[280px] lg:w-[320px]"
+   815→                />
+   816→              </ClipReveal>
+   817→            </ScrollRevealRight>
+   818→          </div>
+   819→        </div>
+   820→      </section>
+   821→
+   822→      {/* ── 8. User Flow ── */}
+   823→      <section className="py-20 lg:py-32 bg-background">
+   824→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   825→          <div className="text-center mb-16 lg:mb-20">
+   826→            <SectionHeading label="User Flow" title="From data to action" accentColor={ORANGE} />
+   827→          </div>
+   828→
+   829→          {/* Desktop: Horizontal Timeline */}
+   830→          <div className="hidden lg:block">
+   831→            <ScrollReveal>
+   832→              <div className="relative">
+   833→                <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
+   834→                <div className="grid grid-cols-5 gap-4 relative">
+   835→                  <FlowStep number={1} icon={Sprout} title="Welcome" description="Splash screen introduces the brand and gets farmers started with the app" />
+   836→                  <FlowStep number={2} icon={BarChart3} title="Provide Data" description="Choose how to share soil data — soil test results, extension officer, or manual entry" />
+   837→                  <FlowStep number={3} icon={MapPin} title="Map Farm" description="Trace field boundaries on satellite maps and connect Synnefa sensor accounts" />
+   838→                  <FlowStep number={4} icon={Lightbulb} title="Get Insights" description="Receive personalized recommendations in your language with cost estimates and deadlines" />
+   839→                  <FlowStep number={5} icon={CheckCircle2} title="Take Action" description="Follow step-by-step task instructions with location verification and smart reminders" />
+   840→                </div>
+   841→              </div>
+   842→            </ScrollReveal>
+   843→          </div>
+   844→
+   845→          {/* Mobile: Vertical Timeline */}
+   846→          <div className="lg:hidden">
+   847→            <StaggerReveal className="space-y-6" stagger={0.1}>
+   848→              {[
+   849→                { number: 1, icon: Sprout, title: "Welcome", description: "Splash screen introduces the brand and gets farmers started with the app" },
+   850→                { number: 2, icon: BarChart3, title: "Provide Data", description: "Choose how to share soil data — soil test results, extension officer, or manual entry" },
+   851→                { number: 3, icon: MapPin, title: "Map Farm", description: "Trace field boundaries on satellite maps and connect Synnefa sensor accounts" },
+   852→                { number: 4, icon: Lightbulb, title: "Get Insights", description: "Receive personalized recommendations in your language with cost estimates and deadlines" },
+   853→                { number: 5, icon: CheckCircle2, title: "Take Action", description: "Follow step-by-step task instructions with location verification and smart reminders" },
+   854→              ].map((step) => (
+   855→                <div key={step.number} className="flex gap-4">
+   856→                  <div className="flex flex-col items-center">
+   857→                    <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 flex-shrink-0" style={{ backgroundColor: GREEN, borderColor: `${ACCENT_GREEN}50` }}>
+   858→                      <step.icon className="w-5 h-5" style={{ color: ACCENT_GREEN }} />
+   859→                    </div>
+   860→                    {step.number < 5 && <div className="w-0.5 flex-1 bg-foreground/10 mt-2" />}
+   861→                  </div>
+   862→                  <div className="pb-6">
+   863→                    <h4 className="font-bold font-[family-name:var(--font-poppins)] text-foreground text-sm">{step.title}</h4>
+   864→                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{step.description}</p>
+   865→                  </div>
+   866→                </div>
+   867→              ))}
+   868→            </StaggerReveal>
+   869→          </div>
+   870→        </div>
+   871→      </section>
+   872→
+   873→      {/* ── 9. Screens Showcase ── */}
+   874→      <section className="py-20 lg:py-32 bg-secondary/30">
+   875→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   876→          <div className="text-center mb-16 lg:mb-24">
+   877→            <SectionHeading label="App Screens" title="From soil data to farmer action" accentColor={ORANGE} />
+   878→          </div>
+   879→
+   880→          <div className="space-y-20 lg:space-y-32">
+   881→            {/* Screen 1: Splash */}
+   882→            <ScreenShowcase
+   883→              src="/shamba-rahisi/screen-splash.png"
+   884→              alt="Shamba Rahisi splash welcome screen"
+   885→              title="Welcome Screen"
+   886→              purpose="The splash screen establishes the brand identity with authentic agricultural imagery — a real farmer working in a field. The bold 'Shamba Rahisi' branding in orange alongside the tagline 'The Voice of Your Soil' immediately communicates the app's mission to give farmers a voice through their soil data."
+   887→              rationale="Research showed that farmers respond to authentic, relatable imagery rather than abstract tech visuals. The dual-path entry (Get Started for new users, Log In for returning) reduces friction. The orange brand text against the natural photography creates visual warmth that resonates with the agricultural community."
+   888→            />
+   889→
+   890→            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+   891→
+   892→            {/* Screen 2: Onboarding Data Source */}
+   893→            <ScreenShowcase
+   894→              src="/shamba-rahisi/screen-onboarding-data.png"
+   895→              alt="Shamba Rahisi onboarding data source selection"
+   896→              title="Data Source Selection"
+   897→              purpose="The first onboarding step asks farmers how they'd like to provide soil and farm information. Three clear options — Soil Test Results, Extension Officer, or Manual Entry — accommodate different farmer profiles and data access levels."
+   898→              rationale="Bilingual presentation (English + Swahili) from the very first interaction reinforces the app's commitment to accessibility. The three-card layout was designed to be scannable without reading long paragraphs. Offering multiple data input methods ensures the app is useful even for farmers without recent lab results or sensor access."
+   899→              reversed
+   900→            />
+   901→
+   902→            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+   903→
+   904→            {/* Screen 3: Home Dashboard */}
+   905→            <ScreenShowcase
+   906→              src="/shamba-rahisi/screen-home.png"
+   907→              alt="Shamba Rahisi home dashboard with farm overview and priority task"
+   908→              title="Home Dashboard"
+   909→              purpose="The home dashboard serves as the farmer's central hub, displaying a personalized greeting, real-time farm summary (Farm Size, Soil pH, Crop), weather conditions, priority tasks, quick actions, and recent activity — all above the fold."
+   910→              rationale="The priority task card uses Swahili for the recommendation title ('Tumia Mbolea yenye Naitrojeni Nyingi') to demonstrate the multilingual approach. Including potential savings (Ksh 15,000) alongside the task provides financial motivation. Weather integration helps farmers contextualize recommendations against current conditions."
+   911→            />
+   912→
+   913→            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+   914→
+   915→            {/* Screen 4: Recommendation */}
+   916→            <ScreenShowcase
+   917→              src="/shamba-rahisi/screen-recommendation.png"
+   918→              alt="Shamba Rahisi recommendation with actionable insights"
+   919→              title="Smart Recommendations"
+   920→              purpose="The recommendation screen is where complex data becomes simple action. It shows the sensor source, soil status cards (Nitrogen, pH, Moisture), a conversational explanation using metaphors, recommended action with cost estimates, step-by-step instructions, and CTAs to add to tasks or set savings goals."
+   921→              rationale="The metaphor-based explanation ('Your soil is hungry for nitrogen') was a direct result of research finding that farmers prefer conversational language over scientific terminology. Including estimated cost (2,800 KES) and deadline context ('before rain') transforms an abstract recommendation into a concrete, plannable action. The 'Watch Demo Video' option caters to visual learners."
+   922→              reversed
+   923→            />
+   924→
+   925→            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+   926→
+   927→            {/* Screen 5: Voice Settings */}
+   928→            <ScreenShowcase
+   929→              src="/shamba-rahisi/screen-voice-settings.png"
+   930→              alt="Shamba Rahisi voice settings with language selection"
+   931→              title="Voice & Language Settings"
+   932→              purpose="The voice settings screen allows farmers to choose their preferred language (Kiswahili, English, Kalenjin, or Kikuyu) and voice gender for audio recommendations. A preview feature lets users sample the voice before committing."
+   933→              rationale="This screen directly addresses the research insight that local language is non-negotiable. Including native languages like Kalenjin and Kikuyu (with their native script: 'Gikuyu') demonstrates genuine localization rather than token translation. The voice gender option adds personalization, and the preview function builds confidence before committing to settings."
+   934→            />
+   935→          </div>
+   936→        </div>
+   937→      </section>
+   938→
+   939→      {/* ── 10. Features Section ── */}
+   940→      <section className="py-20 lg:py-32 bg-background">
+   941→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   942→          <div className="text-center mb-16">
+   943→            <SectionHeading label="Features" title="Built for the field, not the lab" accentColor={ORANGE} />
+   944→          </div>
+   945→
+   946→          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
+   947→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   948→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   949→                <BarChart3 className="w-5 h-5" style={{ color: GREEN }} />
+   950→              </div>
+   951→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Data Interpretation</h4>
+   952→              <p className="text-sm text-muted-foreground leading-relaxed">
+   953→                Transforms raw agricultural sensor data into clear, understandable recommendations using conversational language and relatable metaphors that farmers can immediately act on.
+   954→              </p>
+   955→            </div>
+   956→
+   957→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   958→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   959→                <Globe className="w-5 h-5" style={{ color: GREEN }} />
+   960→              </div>
+   961→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Multi-Language Support</h4>
+   962→              <p className="text-sm text-muted-foreground leading-relaxed">
+   963→                Supports Kiswahili, English, Kalenjin, and Kikuyu with native script display. Farmers select their preferred language and voice gender for audio recommendations delivered in their mother tongue.
+   964→              </p>
+   965→            </div>
+   966→
+   967→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   968→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   969→                <Bell className="w-5 h-5" style={{ color: GREEN }} />
+   970→              </div>
+   971→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Smart Reminders</h4>
+   972→              <p className="text-sm text-muted-foreground leading-relaxed">
+   973→                Provides timely notifications for important farming activities and environmental conditions, tied to real-time weather and sensor data so farmers never miss critical planting or fertilization windows.
+   974→              </p>
+   975→            </div>
+   976→
+   977→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   978→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   979→                <Mic className="w-5 h-5" style={{ color: GREEN }} />
+   980→              </div>
+   981→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Voice Delivery</h4>
+   982→              <p className="text-sm text-muted-foreground leading-relaxed">
+   983→                Audio recommendations in local dialects ensure accessibility for farmers with limited literacy. Voice gender selection and preview functionality allow farmers to choose a voice they trust.
+   984→              </p>
+   985→            </div>
+   986→
+   987→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   988→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   989→                <MapPin className="w-5 h-5" style={{ color: GREEN }} />
+   990→              </div>
+   991→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Farm Mapping</h4>
+   992→              <p className="text-sm text-muted-foreground leading-relaxed">
+   993→                Satellite-based field boundary mapping enables precise, location-specific recommendations. Farmers trace their plots on aerial imagery for accurate sensor data correlation and task location verification.
+   994→              </p>
+   995→            </div>
+   996→
+   997→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+   998→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+   999→                <CheckCircle2 className="w-5 h-5" style={{ color: GREEN }} />
+  1000→              </div>
+  1001→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Step-by-Step Tasks</h4>
+  1002→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1003→                Each recommendation converts into actionable tasks with numbered instructions, resource verification (e.g., confirming available fertilizer), and location check-in to ensure correct execution.
+  1004→              </p>
+  1005→            </div>
+  1006→
+  1007→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+  1008→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+  1009→                <Leaf className="w-5 h-5" style={{ color: GREEN }} />
+  1010→              </div>
+  1011→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Synnefa Integration</h4>
+  1012→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1013→                Direct connection to FarmShield IoT sensors via Synnefa accounts provides real-time soil data — pH, nitrogen, moisture — that powers personalized recommendations without manual data entry.
+  1014→              </p>
+  1015→            </div>
+  1016→
+  1017→            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
+  1018→              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
+  1019→                <BookOpen className="w-5 h-5" style={{ color: GREEN }} />
+  1020→              </div>
+  1021→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Cost Transparency</h4>
+  1022→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1023→                Every recommendation includes estimated costs, potential savings, and savings goal tracking. Farmers see the financial impact before committing, building trust and enabling budget-conscious farming decisions.
+  1024→              </p>
+  1025→            </div>
+  1026→          </StaggerReveal>
+  1027→        </div>
+  1028→      </section>
+  1029→
+  1030→      {/* ── 11. Design System ── */}
+  1031→      <section className="py-20 lg:py-32 relative overflow-hidden" style={{ backgroundColor: GREEN }}>
+  1032→        <div className="absolute inset-0 pointer-events-none">
+  1033→          <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: GREEN_DARK }} />
+  1034→          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-3xl" style={{ backgroundColor: `${ORANGE}08` }} />
+  1035→        </div>
+  1036→
+  1037→        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+  1038→          <div className="text-center mb-16">
+  1039→            <ScrollReveal>
+  1040→              <p className="text-xs font-bold tracking-[0.3em] uppercase mb-3" style={{ color: ORANGE }}>Design System</p>
+  1041→            </ScrollReveal>
+  1042→            <SplitTextReveal
+  1043→              text="Rooted in nature, built for accessibility"
+  1044→              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white max-w-4xl mx-auto"
+  1045→            />
+  1046→          </div>
+  1047→
+  1048→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+  1049→            {/* Color Palette */}
+  1050→            <ScrollRevealLeft>
+  1051→              <div className="space-y-6">
+  1052→                <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">Color Palette</h3>
+  1053→                <div className="space-y-3">
+  1054→                  <ColorSwatch color="#2E5C3E" name="Deep Forest Green" hex="#2E5C3E" />
+  1055→                  <ColorSwatch color="#4A8B5E" name="Leaf Green" hex="#4A8B5E" />
+  1056→                  <ColorSwatch color="#ED6C02" name="Burnt Orange" hex="#ED6C02" />
+  1057→                  <ColorSwatch color="#F5923A" name="Harvest Gold" hex="#F5923A" />
+  1058→                  <ColorSwatch color="#FFFFFF" name="White" hex="#FFFFFF" />
+  1059→                </div>
+  1060→              </div>
+  1061→            </ScrollRevealLeft>
+  1062→
+  1063→            {/* Typography & Principles */}
+  1064→            <ScrollRevealRight>
+  1065→              <div className="space-y-8">
+  1066→                <div>
+  1067→                  <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">Typography</h3>
+  1068→                  <div className="space-y-4">
+  1069→                    <div className="p-4 rounded-xl bg-white/5">
+  1070→                      <p className="text-white/50 text-xs tracking-[0.2em] uppercase mb-2">Headings</p>
+  1071→                      <p className="text-white text-2xl font-bold font-[family-name:var(--font-poppins)]">Poppins Bold</p>
+  1072→                    </div>
+  1073→                    <div className="p-4 rounded-xl bg-white/5">
+  1074→                      <p className="text-white/50 text-xs tracking-[0.2em] uppercase mb-2">Body</p>
+  1075→                      <p className="text-white text-base">Inter Regular — for readable body text in both English and Swahili</p>
+  1076→                    </div>
+  1077→                  </div>
+  1078→                </div>
+  1079→
+  1080→                <div>
+  1081→                  <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">Design Principles</h3>
+  1082→                  <div className="space-y-3">
+  1083→                    {[
+  1084→                      {
+  1085→                        title: "Accessibility First",
+  1086→                        desc: "Voice delivery and multi-language support ensure every farmer can use the platform regardless of literacy level",
+  1087→                      },
+  1088→                      {
+  1089→                        title: "Conversational Data",
+  1090→                        desc: "Complex sensor readings translated into metaphors and plain language that farmers relate to naturally",
+  1091→                      },
+  1092→                      {
+  1093→                        title: "Action-Oriented",
+  1094→                        desc: "Every data point leads to a clear recommendation with cost, deadline, and step-by-step instructions",
+  1095→                      },
+  1096→                    ].map((principle) => (
+  1097→                      <div key={principle.title} className="p-4 rounded-xl bg-white/5">
+  1098→                        <p className="text-white font-medium text-sm mb-1">{principle.title}</p>
+  1099→                        <p className="text-white/50 text-xs leading-relaxed">{principle.desc}</p>
+  1100→                      </div>
+  1101→                    ))}
+  1102→                  </div>
+  1103→                </div>
+  1104→              </div>
+  1105→            </ScrollRevealRight>
+  1106→          </div>
+  1107→        </div>
+  1108→      </section>
+  1109→
+  1110→      {/* ── 12. Outcomes ── */}
+  1111→      <section className="py-20 lg:py-32 bg-background">
+  1112→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+  1113→          <div className="text-center mb-16">
+  1114→            <SectionHeading label="Outcomes" title="Empowering farmers through understanding" accentColor={ORANGE} />
+  1115→          </div>
+  1116→
+  1117→          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" stagger={0.12}>
+  1118→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1119→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1120→                <Lightbulb className="w-7 h-7" style={{ color: GREEN }} />
+  1121→              </div>
+  1122→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Informed Decisions</h4>
+  1123→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1124→                Farmers can make better-informed decisions based on real-time sensor data translated into actionable recommendations. The gap between data availability and farmer understanding was eliminated through conversational design and voice delivery.
+  1125→              </p>
+  1126→            </div>
+  1127→
+  1128→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1129→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1130→                <Sprout className="w-7 h-7" style={{ color: GREEN }} />
+  1131→              </div>
+  1132→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Improved Farm Management</h4>
+  1133→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1134→                Smart reminders and step-by-step task instructions improved on-time execution of critical farming activities. Farmers no longer miss optimal planting windows or fertilizer application deadlines because of timely, contextual notifications.
+  1135→              </p>
+  1136→            </div>
+  1137→
+  1138→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1139→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1140→                <BarChart3 className="w-7 h-7" style={{ color: GREEN }} />
+  1141→              </div>
+  1142→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Reduced Data Complexity</h4>
+  1143→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1144→                Farmers reduced reliance on complex technical reports by receiving pre-interpreted insights. The platform eliminated the need for agricultural officers to manually translate soil data for each farmer, scaling knowledge delivery.
+  1145→              </p>
+  1146→            </div>
+  1147→
+  1148→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1149→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1150→                <Globe className="w-7 h-7" style={{ color: GREEN }} />
+  1151→              </div>
+  1152→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Language Accessibility</h4>
+  1153→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1154→                Multi-language support including Kiswahili, Kalenjin, and Kikuyu ensured that critical farming insights reached farmers in their mother tongue. Voice delivery made the platform accessible to users regardless of literacy level.
+  1155→              </p>
+  1156→            </div>
+  1157→
+  1158→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1159→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1160→                <Bell className="w-7 h-7" style={{ color: GREEN }} />
+  1161→              </div>
+  1162→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Timely Alerts</h4>
+  1163→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1164→                Weather-linked reminders and environmental alerts kept farmers informed through timely notifications. The system connected real-time conditions to actionable guidance, ensuring recommendations were relevant to current farm realities.
+  1165→              </p>
+  1166→            </div>
+  1167→
+  1168→            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
+  1169→              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
+  1170→                <Users className="w-7 h-7" style={{ color: GREEN }} />
+  1171→              </div>
+  1172→              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Research-Driven Design</h4>
+  1173→              <p className="text-sm text-muted-foreground leading-relaxed">
+  1174→                The project demonstrated the power of UX research in agricultural technology. Stakeholder interviews, market analysis, and user insights directly shaped feature prioritization, proving that user-centered design principles apply universally.
+  1175→              </p>
+  1176→            </div>
+  1177→          </StaggerReveal>
+  1178→
+  1179→          {/* Figma CTA */}
+  1180→          <ScrollReveal delay={0.3}>
+  1181→            <div className="mt-16 text-center">
+  1182→              <a
+  1183→                href="https://www.figma.com/deck/lZy1RpGIHIaL2WsBdfbuDT"
+  1184→                target="_blank"
+  1185→                rel="noopener noreferrer"
+  1186→                className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm transition-colors duration-300 text-white"
+  1187→                style={{ backgroundColor: GREEN }}
+  1188→              >
+  1189→                View Full Figma File
+  1190→                <ArrowUpRight className="w-4 h-4" />
+  1191→              </a>
+  1192→            </div>
+  1193→          </ScrollReveal>
+  1194→        </div>
+  1195→      </section>
+  1196→
+  1197→      {/* ── 13. Next Project ── */}
+  1198→      <section className="py-16 lg:py-24 bg-secondary/30 border-t border-foreground/5">
+  1199→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+  1200→          <ScrollReveal>
+  1201→            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+  1202→              <div>
+  1203→                <p className="text-xs font-bold tracking-[0.3em] uppercase text-muted-foreground mb-2">
+  1204→                  Next Project
+  1205→                </p>
+  1206→                <Link
+  1207→                  href="/projects/schoolpata"
+  1208→                  className="group inline-flex items-center gap-4"
+  1209→                >
+  1210→                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
+  1211→                    School Pata
+  1212→                  </h3>
+  1213→                  <ArrowRight className="w-6 h-6 text-foreground group-hover:text-accent transition-all duration-300 group-hover:translate-x-2" />
+  1214→                </Link>
+  1215→                <p className="mt-2 text-muted-foreground text-sm">
+  1216→                  School discovery and comparison platform for parents
+  1217→                </p>
+  1218→              </div>
+  1219→            </div>
+  1220→          </ScrollReveal>
+  1221→        </div>
+  1222→      </section>
+  1223→    </div>
+  1224→  );
+  1225→}
+  1226→
