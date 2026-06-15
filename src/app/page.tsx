@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -28,31 +30,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import {
+  ScrollReveal,
+  ScrollRevealLeft,
+  ScrollRevealRight,
+  Parallax,
+  SplitTextReveal,
+  StaggerReveal,
+  DrawLine,
+  ClipReveal,
+  MagneticHover,
+  ScrollProgress,
+  ScaleIn,
+} from "@/components/scroll-animations";
 
-/* ─── Animated Section Wrapper ─── */
-function FadeInSection({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.7, delay, ease: "easeOut" }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+// Register GSAP plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
 }
 
 /* ─── SVG Icon Components for Skills ─── */
@@ -282,7 +276,7 @@ function SEOIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-/* ─── Navigation (Warm Modern) ─── */
+/* ─── Navigation ─── */
 function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -314,24 +308,27 @@ function Navigation() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            <a
-              href="#hero"
-              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-            >
-              Eugene<span className="text-accent">.</span>
-            </a>
+            <MagneticHover strength={0.15}>
+              <a
+                href="#hero"
+                className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
+              >
+                Eugene<span className="text-accent">.</span>
+              </a>
+            </MagneticHover>
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
               {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
-                >
-                  {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </a>
+                <MagneticHover key={item.label} strength={0.2}>
+                  <a
+                    href={item.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
+                  >
+                    {item.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
+                  </a>
+                </MagneticHover>
               ))}
             </div>
 
@@ -379,18 +376,86 @@ function Navigation() {
   );
 }
 
-/* ─── Hero Section (Warm Modern) ─── */
+/* ─── Hero Section with Parallax ─── */
 function HeroSection() {
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const blobs = hero.querySelectorAll(".hero-blob");
+    const content = hero.querySelector(".hero-content");
+    const scrollIndicator = hero.querySelector(".scroll-indicator");
+
+    const tweens: gsap.core.Tween[] = [];
+    const triggers: ScrollTrigger[] = [];
+
+    if (blobs.length) {
+      blobs.forEach((blob, i) => {
+        const tw = gsap.to(blob, {
+          y: 120 * (i + 1) * 0.4,
+          ease: "none",
+          scrollTrigger: {
+            trigger: hero,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        tweens.push(tw);
+        if (tw.scrollTrigger) triggers.push(tw.scrollTrigger);
+      });
+    }
+
+    if (content) {
+      const tw = gsap.to(content, {
+        y: 150,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: hero,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+      tweens.push(tw);
+      if (tw.scrollTrigger) triggers.push(tw.scrollTrigger);
+    }
+
+    if (scrollIndicator) {
+      const tw = gsap.to(scrollIndicator, {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: hero,
+          start: "15% top",
+          end: "30% top",
+          scrub: true,
+        },
+      });
+      tweens.push(tw);
+      if (tw.scrollTrigger) triggers.push(tw.scrollTrigger);
+    }
+
+    return () => {
+      tweens.forEach((tw) => tw.kill());
+      triggers.forEach((t) => t.kill());
+    };
+  }, []);
+
   return (
     <section
       id="hero"
+      ref={heroRef}
       className="relative min-h-screen flex items-center overflow-hidden"
     >
-      {/* Decorative blur blobs */}
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl pointer-events-none" />
+      {/* Decorative blur blobs with parallax */}
+      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-3xl pointer-events-none hero-blob" />
+      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl pointer-events-none hero-blob" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-16 w-full">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-16 w-full hero-content">
         <div className="grid lg:grid-cols-3 gap-12 items-center">
           <div className="lg:col-span-2">
             {/* Label */}
@@ -404,7 +469,7 @@ function HeroSection() {
               </span>
             </motion.div>
 
-            {/* Name */}
+            {/* Name with split text reveal */}
             <motion.h1
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
@@ -425,35 +490,39 @@ function HeroSection() {
               where strategy meets aesthetics.
             </motion.p>
 
-            {/* CTAs */}
+            {/* CTAs with magnetic hover */}
             <div className="mt-10 flex flex-wrap gap-4 relative z-10">
-              <button
-                onClick={() => {
-                  const el = document.getElementById("projects");
-                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                aria-label="View my projects"
-                type="button"
-              >
-                View Work
-                <ArrowRight className="w-4 h-4 pointer-events-none" />
-              </button>
-              <button
-                onClick={() => {
-                  const el = document.getElementById("contact");
-                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                aria-label="Get in touch with me"
-                type="button"
-              >
-                Get in Touch
-              </button>
+              <MagneticHover strength={0.15}>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById("projects");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 rounded-full text-sm font-medium hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  aria-label="View my projects"
+                  type="button"
+                >
+                  View Work
+                  <ArrowRight className="w-4 h-4 pointer-events-none" />
+                </button>
+              </MagneticHover>
+              <MagneticHover strength={0.15}>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById("contact");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="inline-flex items-center gap-2 border border-border bg-transparent px-8 py-4 rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  aria-label="Get in touch with me"
+                  type="button"
+                >
+                  Get in Touch
+                </button>
+              </MagneticHover>
             </div>
           </div>
 
-          {/* Interests card (right side) */}
+          {/* Interests card */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -486,7 +555,7 @@ function HeroSection() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none scroll-indicator">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -539,39 +608,73 @@ function ServicesSection() {
   return (
     <section className="py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <FadeInSection>
+        <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               What I Offer
             </span>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-              Services
-            </h2>
+            <SplitTextReveal
+              text="Services"
+              className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
+            />
           </div>
-        </FadeInSection>
+        </ScrollReveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, i) => (
-            <FadeInSection key={service.title} delay={i * 0.1}>
-              <div className="bg-card border border-border rounded-2xl p-8 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <span className="text-3xl text-accent">{service.icon}</span>
-                <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
-                  {service.title}
-                </h3>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
-            </FadeInSection>
+        <StaggerReveal stagger={0.15} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service) => (
+            <div key={service.title} className="bg-card border border-border rounded-2xl p-8 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <span className="text-3xl text-accent">{service.icon}</span>
+              <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
+                {service.title}
+              </h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                {service.description}
+              </p>
+            </div>
           ))}
-        </div>
+        </StaggerReveal>
       </div>
     </section>
   );
 }
 
-/* ─── Process Section ─── */
+/* ─── Process Section with Scroll-Driven Number Animation ─── */
 function ProcessSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const cards = section.querySelectorAll(".process-card");
+
+    cards.forEach((card, i) => {
+      // Staggered reveal from left/right alternating
+      const direction = i % 2 === 0 ? -60 : 60;
+      gsap.set(card, { opacity: 0, x: direction });
+
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 85%",
+        onEnter: () => {
+          gsap.to(card, {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            delay: i * 0.05,
+            ease: "power3.out",
+          });
+        },
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => {
+        if (section.contains(t.trigger as Element)) t.kill();
+      });
+    };
+  }, []);
+
   const steps = [
     {
       number: "01",
@@ -600,34 +703,33 @@ function ProcessSection() {
   ];
 
   return (
-    <section className="py-24 lg:py-32 bg-card">
+    <section ref={sectionRef} className="py-24 lg:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <FadeInSection>
+        <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               How I Work
             </span>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-              Process
-            </h2>
+            <SplitTextReveal
+              text="Process"
+              className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
+            />
           </div>
-        </FadeInSection>
+        </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, i) => (
-            <FadeInSection key={step.title} delay={i * 0.1}>
-              <div className="p-8 border border-border rounded-2xl bg-background hover:border-accent/50 transition-all duration-300">
-                <span className="text-5xl font-bold text-accent/20 font-[family-name:var(--font-poppins)]">
-                  {step.number}
-                </span>
-                <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            </FadeInSection>
+          {steps.map((step) => (
+            <div key={step.title} className="process-card p-8 border border-border rounded-2xl bg-background hover:border-accent/50 transition-all duration-300">
+              <span className="text-5xl font-bold text-accent/20 font-[family-name:var(--font-poppins)]">
+                {step.number}
+              </span>
+              <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
+                {step.title}
+              </h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                {step.description}
+              </p>
+            </div>
           ))}
         </div>
       </div>
@@ -734,56 +836,55 @@ function ProjectsSection() {
       className="py-28 lg:py-40 bg-[#0a0a0a] text-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        {/* Section Header */}
-        <FadeInSection>
+        {/* Section Header with split text reveal */}
+        <ScrollReveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16 lg:mb-24">
             <div>
               <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
                 Selected Work
               </span>
-              <h2 className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter">
-                Projects
-              </h2>
+              <SplitTextReveal
+                text="Projects"
+                className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
+              />
             </div>
 
+            <ScrollRevealRight className="max-w-sm" delay={0.3}>
+              <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
+                Each project is a case study — not just a screenshot. Strategy,
+                design, and outcome fused into one narrative.
+              </p>
+            </ScrollRevealRight>
           </div>
-        </FadeInSection>
+        </ScrollReveal>
 
-        {/* Decorative rule */}
-        <FadeInSection>
-          <div className="h-px bg-gradient-to-r from-[#8b4049] via-neutral-700 to-transparent mb-16 lg:mb-24" />
-        </FadeInSection>
+        {/* Decorative rule with draw animation */}
+        <DrawLine className="mb-16 lg:mb-24" color="#8b4049" />
 
-        {/* Featured Project — Full-width Editorial Block */}
+        {/* Featured Project with clip reveal */}
         {featuredProject && (
-          <FadeInSection>
-            <Link
-              href={`/projects/${featuredProject.slug}`}
-            >
+          <ClipReveal>
+            <Link href={`/projects/${featuredProject.slug}`}>
               <div className="group relative cursor-pointer">
-                {/* Outer border frame */}
                 <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                  {/* Inner content */}
                   <div className="grid lg:grid-cols-2 gap-0">
-                    {/* Left — Image */}
-                    <div className="relative overflow-hidden bg-neutral-900 aspect-[4/3] lg:aspect-auto">
+                    {/* Image with parallax */}
+                    <Parallax speed={-0.15} className="relative overflow-hidden bg-neutral-900 aspect-[4/3] lg:aspect-auto">
                       <img
                         src={featuredProject.thumbnail}
                         alt={featuredProject.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       />
-                      {/* Category overlay chip */}
                       <div className="absolute top-6 left-6 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
                         <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
                           {featuredProject.category}
                         </span>
                       </div>
-                    </div>
+                    </Parallax>
 
-                    {/* Right — Content */}
+                    {/* Content */}
                     <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-between bg-[#0a0a0a] border-t-2 lg:border-t-0 lg:border-l-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
                       <div>
-                        {/* Project number + tag */}
                         <div className="flex items-center gap-4 mb-6">
                           <span className="text-7xl lg:text-8xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800 group-hover:text-neutral-700 transition-colors duration-500 leading-none">
                             01
@@ -793,17 +894,14 @@ function ProjectsSection() {
                           </span>
                         </div>
 
-                        {/* Project name */}
                         <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
                           {featuredProject.title}
                         </h3>
 
-                        {/* Description */}
                         <p className="mt-6 text-neutral-400 leading-relaxed text-sm max-w-lg">
                           {featuredProject.shortDescription}
                         </p>
 
-                        {/* Impact badge */}
                         {featuredProject.impact && (
                           <div className="mt-6 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-4 py-2">
                             <span className="w-1.5 h-1.5 bg-[#8b4049]" />
@@ -814,9 +912,7 @@ function ProjectsSection() {
                         )}
                       </div>
 
-                      {/* Bottom — Tech stack + CTA */}
                       <div className="mt-10">
-                        {/* Tech tags */}
                         <div className="flex flex-wrap gap-2 mb-8">
                           {featuredProject.technologies.split(",").map((tech) => (
                             <span
@@ -828,7 +924,6 @@ function ProjectsSection() {
                           ))}
                         </div>
 
-                        {/* CTA */}
                         <div className="flex items-center gap-3 text-[#8b4049] group-hover:gap-5 transition-all duration-300">
                           <span className="text-sm font-bold tracking-wider uppercase">
                             View Case Study
@@ -843,106 +938,90 @@ function ProjectsSection() {
                 </div>
               </div>
             </Link>
-          </FadeInSection>
+          </ClipReveal>
         )}
 
-        {/* Other Projects — Grid */}
-        <div className="mt-16 lg:mt-24 grid md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Other Projects with stagger reveal */}
+        <StaggerReveal stagger={0.2} className="mt-16 lg:mt-24 grid md:grid-cols-2 gap-6 lg:gap-8">
           {otherProjects.map((project, i) => (
-            <FadeInSection key={project.id} delay={i * 0.15}>
-              <Link
-                href={`/projects/${project.slug}`}
-              >
-                <div className="group cursor-pointer h-full">
-                  {/* Card outer border */}
-                  <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
-                    {/* Image area */}
-                    <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
-                      <img
-                        src={project.thumbnail}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                      />
-                      {/* Category chip */}
-                      <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                        <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
-                          {project.category}
-                        </span>
-                      </div>
-                      {/* Project number watermark */}
-                      <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
-                        0{i + 2}
+            <Link key={project.id} href={`/projects/${project.slug}`}>
+              <div className="group cursor-pointer h-full">
+                <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
+                  <Parallax speed={-0.1} className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                    />
+                    <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
+                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
+                        {project.category}
                       </span>
                     </div>
+                    <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
+                      0{i + 2}
+                    </span>
+                  </Parallax>
 
-                    {/* Content area */}
-                    <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                      {/* Name + tag */}
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <h3 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                          {project.title}
-                        </h3>
-                        {project.categoryTag && (
-                          <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
-                            {project.categoryTag}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-neutral-400 text-sm leading-relaxed flex-1">
-                        {project.shortDescription}
-                      </p>
-
-                      {/* Impact */}
-                      {project.impact && (
-                        <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
-                          <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                          <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
-                            {project.impact}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Tech stack */}
-                      <div className="flex flex-wrap gap-2 mt-5">
-                        {project.technologies.split(",").map((tech) => (
-                          <span
-                            key={tech}
-                            className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                          >
-                            {tech.trim()}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* CTA row */}
-                      <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
-                        <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
-                          View Case Study
+                  <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <h3 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
+                        {project.title}
+                      </h3>
+                      {project.categoryTag && (
+                        <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
+                          {project.categoryTag}
                         </span>
-                        <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                          <ArrowUpRight size={14} strokeWidth={2.5} />
-                        </div>
+                      )}
+                    </div>
+
+                    <p className="text-neutral-400 text-sm leading-relaxed flex-1">
+                      {project.shortDescription}
+                    </p>
+
+                    {project.impact && (
+                      <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
+                        <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                        <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
+                          {project.impact}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mt-5">
+                      {project.technologies.split(",").map((tech) => (
+                        <span
+                          key={tech}
+                          className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                        >
+                          {tech.trim()}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
+                      <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
+                        View Case Study
+                      </span>
+                      <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
+                        <ArrowUpRight size={14} strokeWidth={2.5} />
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            </FadeInSection>
+              </div>
+            </Link>
           ))}
-        </div>
+        </StaggerReveal>
 
         {/* Bottom rule */}
-        <FadeInSection className="mt-16 lg:mt-24">
-          <div className="h-px bg-gradient-to-r from-transparent via-neutral-700 to-[#8b4049]" />
-        </FadeInSection>
+        <DrawLine className="mt-16 lg:mt-24" color="#8b4049" />
       </div>
     </section>
   );
 }
 
-/* ─── About Section (Two-column with image) ─── */
+/* ─── About Section ─── */
 function AboutSection() {
   const whatIDo = [
     { icon: <Palette className="w-5 h-5" />, title: "UI Design", description: "Pixel-perfect interfaces that delight users" },
@@ -957,15 +1036,17 @@ function AboutSection() {
     <section id="about" className="py-24 lg:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          {/* Left: Text */}
-          <FadeInSection>
+          {/* Left: Text - reveals from left */}
+          <ScrollRevealLeft>
             <div>
               <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
                 About
               </span>
-              <h2 className="mt-4 text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)]">
-                Intentional design, meaningful experiences.
-              </h2>
+              <SplitTextReveal
+                text="Intentional design, meaningful experiences."
+                className="mt-4 text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)]"
+                staggerDelay={0.04}
+              />
               <div className="mt-6 space-y-4">
                 <p className="text-muted-foreground leading-relaxed">
                   I&apos;m Eugene, a UI/UX designer and front-end developer
@@ -998,11 +1079,11 @@ function AboutSection() {
                 </div>
               </div>
             </div>
-          </FadeInSection>
+          </ScrollRevealLeft>
 
-          {/* Right: Image */}
-          <FadeInSection delay={0.2}>
-            <div className="relative">
+          {/* Right: Image - reveals from right with parallax */}
+          <ScrollRevealRight>
+            <Parallax speed={-0.1} className="relative">
               <div className="rounded-2xl overflow-hidden shadow-2xl">
                 <img
                   src="/about-studio.png"
@@ -1010,43 +1091,40 @@ function AboutSection() {
                   className="w-full h-auto object-cover"
                 />
               </div>
-              {/* Decorative element */}
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-accent/20 rounded-2xl -z-10" />
-            </div>
-          </FadeInSection>
+            </Parallax>
+          </ScrollRevealRight>
         </div>
 
-        {/* What I Do grid */}
+        {/* What I Do grid with stagger reveal */}
         <div className="mt-20">
-          <FadeInSection>
+          <ScrollReveal>
             <h3 className="text-2xl font-bold font-[family-name:var(--font-poppins)] mb-8">
               What I Do
             </h3>
-          </FadeInSection>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whatIDo.map((item, i) => (
-              <FadeInSection key={item.title} delay={i * 0.05}>
-                <div className="border border-border rounded-2xl p-6 hover:bg-foreground hover:text-background transition-all duration-300 group cursor-default">
-                  <span className="text-accent group-hover:text-accent-foreground">
-                    {item.icon}
-                  </span>
-                  <h4 className="mt-3 font-bold font-[family-name:var(--font-poppins)]">
-                    {item.title}
-                  </h4>
-                  <p className="mt-1 text-sm text-muted-foreground group-hover:text-background/70">
-                    {item.description}
-                  </p>
-                </div>
-              </FadeInSection>
+          </ScrollReveal>
+          <StaggerReveal stagger={0.08} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {whatIDo.map((item) => (
+              <div key={item.title} className="border border-border rounded-2xl p-6 hover:bg-foreground hover:text-background transition-all duration-300 group cursor-default">
+                <span className="text-accent group-hover:text-accent-foreground">
+                  {item.icon}
+                </span>
+                <h4 className="mt-3 font-bold font-[family-name:var(--font-poppins)]">
+                  {item.title}
+                </h4>
+                <p className="mt-1 text-sm text-muted-foreground group-hover:text-background/70">
+                  {item.description}
+                </p>
+              </div>
             ))}
-          </div>
+          </StaggerReveal>
         </div>
       </div>
     </section>
   );
 }
 
-/* ─── Skills Section (Design first, no percentages) ─── */
+/* ─── Skills Section ─── */
 function SkillCategoryBlock({
   title,
   icon,
@@ -1081,11 +1159,11 @@ function SkillCategoryBlock({
           </span>
         )}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <StaggerReveal stagger={0.04} y={20} childSelector=".skill-tag" className="flex flex-wrap gap-2">
         {skills.map((skill) => (
           <div
             key={skill}
-            className={`flex items-center gap-2 border border-border rounded-lg px-3 py-2 text-sm hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 cursor-default ${
+            className={`skill-tag flex items-center gap-2 border border-border rounded-lg px-3 py-2 text-sm hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 cursor-default ${
               featured ? "px-4 py-2.5" : ""
             }`}
           >
@@ -1095,7 +1173,7 @@ function SkillCategoryBlock({
             <span className="font-medium">{skill}</span>
           </div>
         ))}
-      </div>
+      </StaggerReveal>
     </div>
   );
 }
@@ -1172,20 +1250,21 @@ function SkillsSection() {
   return (
     <section id="skills" className="py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <FadeInSection>
+        <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               Capabilities
             </span>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-              Skills
-            </h2>
+            <SplitTextReveal
+              text="Skills"
+              className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
+            />
           </div>
-        </FadeInSection>
+        </ScrollReveal>
 
         <div className="space-y-6">
           {/* Design — Featured Category */}
-          <FadeInSection>
+          <ScaleIn>
             <SkillCategoryBlock
               title="Design"
               icon={<Palette className="w-6 h-6" />}
@@ -1193,46 +1272,46 @@ function SkillsSection() {
               iconMap={designIconMap}
               featured
             />
-          </FadeInSection>
+          </ScaleIn>
 
           {/* Frontend + Backend row */}
           <div className="grid md:grid-cols-2 gap-6">
-            <FadeInSection delay={0.1}>
+            <ScrollRevealLeft delay={0.1}>
               <SkillCategoryBlock
                 title="Frontend"
                 icon={<Code2 className="w-5 h-5" />}
                 skills={frontendSkills}
                 iconMap={frontendIconMap}
               />
-            </FadeInSection>
-            <FadeInSection delay={0.15}>
+            </ScrollRevealLeft>
+            <ScrollRevealRight delay={0.15}>
               <SkillCategoryBlock
                 title="Backend"
                 icon={<Wrench className="w-5 h-5" />}
                 skills={backendSkills}
                 iconMap={backendIconMap}
               />
-            </FadeInSection>
+            </ScrollRevealRight>
           </div>
 
           {/* Database + Tools row */}
           <div className="grid md:grid-cols-2 gap-6">
-            <FadeInSection delay={0.2}>
+            <ScrollRevealLeft delay={0.2}>
               <SkillCategoryBlock
                 title="Database"
                 icon={<Database className="w-5 h-5" />}
                 skills={databaseSkills}
                 iconMap={databaseIconMap}
               />
-            </FadeInSection>
-            <FadeInSection delay={0.25}>
+            </ScrollRevealLeft>
+            <ScrollRevealRight delay={0.25}>
               <SkillCategoryBlock
                 title="Tools & Technologies"
                 icon={<Figma className="w-5 h-5" />}
                 skills={toolsSkills}
                 iconMap={toolsIconMap}
               />
-            </FadeInSection>
+            </ScrollRevealRight>
           </div>
         </div>
       </div>
@@ -1285,18 +1364,10 @@ function ContactSection() {
       message: formData.message.trim(),
     };
 
-    console.log("[Contact Form] ====== Starting Submission ======");
-    console.log("[Contact Form] Payload:", payload);
-    console.log("[Contact Form] Current URL:", window.location.href);
-    console.log("[Contact Form] API endpoint will be:", new URL("/api/contact", window.location.origin).href);
-
     try {
-      // First, do a quick health check to see if the API is reachable
       try {
-        const healthCheck = await fetch("/api/contact", { method: "GET" });
-        console.log("[Contact Form] Health check status:", healthCheck.status);
-      } catch (healthErr) {
-        console.error("[Contact Form] API health check FAILED - server unreachable:", healthErr);
+        await fetch("/api/contact", { method: "GET" });
+      } catch {
         toast({
           title: "Server unreachable",
           description: "The contact service is not responding. Please try again in a few minutes.",
@@ -1305,25 +1376,16 @@ function ContactSection() {
         return;
       }
 
-      console.log("[Contact Form] API is reachable, submitting form...");
-
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      console.log("[Contact Form] POST response status:", res.status, res.statusText);
-      console.log("[Contact Form] Response headers content-type:", res.headers.get("content-type"));
-
-      // Safely parse the response - handle non-JSON responses
-      let data: { success?: boolean; error?: string; message?: string; id?: string };
+      let data: { success?: boolean; error?: string };
       try {
-        const responseText = await res.text();
-        console.log("[Contact Form] Raw response body:", responseText.substring(0, 500));
-        data = JSON.parse(responseText);
-      } catch (parseErr) {
-        console.error("[Contact Form] Failed to parse response as JSON:", parseErr);
+        data = JSON.parse(await res.text());
+      } catch {
         toast({
           title: "Error",
           description: "Server returned an invalid response. Please refresh the page and try again.",
@@ -1332,10 +1394,7 @@ function ContactSection() {
         return;
       }
 
-      console.log("[Contact Form] Parsed response data:", data);
-
       if (res.ok && data.success) {
-        console.log("[Contact Form] ✅ Message sent successfully!");
         toast({
           title: "Message sent!",
           description: "Thanks for reaching out. I'll get back to you within 24h.",
@@ -1361,15 +1420,13 @@ function ContactSection() {
           variant: "destructive",
         });
       } else {
-        console.error("[Contact Form] ❌ Unexpected response:", res.status, data);
         toast({
           title: "Failed to send",
           description: data.error || `Server error (${res.status}). Please try again later.`,
           variant: "destructive",
         });
       }
-    } catch (networkError) {
-      console.error("[Contact Form] ❌ Network/fetch error:", networkError);
+    } catch {
       toast({
         title: "Connection error",
         description: "Could not reach the server. Please check your internet connection and try again.",
@@ -1383,24 +1440,28 @@ function ContactSection() {
   return (
     <section id="contact" className="py-24 lg:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <FadeInSection>
+        <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               Contact
             </span>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-              Let&apos;s Work Together
-            </h2>
-            <p className="mt-4 text-muted-foreground max-w-md mx-auto">
-              Have a project in mind? Let&apos;s create something meaningful
-              together.
-            </p>
+            <SplitTextReveal
+              text="Let's Work Together"
+              className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
+              staggerDelay={0.04}
+            />
+            <ScrollReveal delay={0.3}>
+              <p className="mt-4 text-muted-foreground max-w-md mx-auto">
+                Have a project in mind? Let&apos;s create something meaningful
+                together.
+              </p>
+            </ScrollReveal>
           </div>
-        </FadeInSection>
+        </ScrollReveal>
 
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Form */}
-          <FadeInSection delay={0.1}>
+          <ScrollRevealLeft delay={0.1}>
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <Input
@@ -1449,19 +1510,21 @@ function ContactSection() {
                   <p className="text-red-500 text-xs mt-1">{formErrors.message}</p>
                 )}
               </div>
-              <Button
-                type="submit"
-                disabled={sending}
-                className="bg-foreground text-background rounded-full px-8 py-3 hover:bg-accent hover:text-white transition-all duration-300 disabled:opacity-50"
-              >
-                {sending ? "Sending..." : "Send Message"}
-                <Send className="w-4 h-4 ml-2" />
-              </Button>
+              <MagneticHover strength={0.1}>
+                <Button
+                  type="submit"
+                  disabled={sending}
+                  className="bg-foreground text-background rounded-full px-8 py-3 hover:bg-accent hover:text-white transition-all duration-300 disabled:opacity-50"
+                >
+                  {sending ? "Sending..." : "Send Message"}
+                  <Send className="w-4 h-4 ml-2" />
+                </Button>
+              </MagneticHover>
             </form>
-          </FadeInSection>
+          </ScrollRevealLeft>
 
           {/* Contact info */}
-          <FadeInSection delay={0.2}>
+          <ScrollRevealRight delay={0.2}>
             <div className="space-y-8 lg:pt-2">
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-4">
@@ -1490,28 +1553,32 @@ function ContactSection() {
                   Follow Me
                 </h3>
                 <div className="flex items-center gap-4">
-                  <a
-                    href="https://github.com/eugenekihara"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-all duration-300"
-                    aria-label="GitHub"
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/eugenekihara"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-all duration-300"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                  </a>
+                  <MagneticHover strength={0.3}>
+                    <a
+                      href="https://github.com/eugenekihara"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-all duration-300"
+                      aria-label="GitHub"
+                    >
+                      <Github className="w-4 h-4" />
+                    </a>
+                  </MagneticHover>
+                  <MagneticHover strength={0.3}>
+                    <a
+                      href="https://www.linkedin.com/in/eugenekihara"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-all duration-300"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  </MagneticHover>
                 </div>
               </div>
             </div>
-          </FadeInSection>
+          </ScrollRevealRight>
         </div>
       </div>
     </section>
@@ -1522,6 +1589,7 @@ function ContactSection() {
 export default function Home() {
   return (
     <main>
+      <ScrollProgress />
       <Navigation />
       <HeroSection />
       <ServicesSection />

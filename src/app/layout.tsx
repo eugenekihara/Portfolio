@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { NextAuthProvider } from "@/components/providers/next-auth-provider";
 import { MarqueeBanner } from "@/components/marquee-banner";
 import { SiteFooter } from "@/components/site-footer";
+import { SmoothScrollProvider } from "@/components/smooth-scroll-provider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -54,18 +55,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-background text-foreground`}
       >
-        <NextAuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <div className="flex-1">{children}</div>
-            <MarqueeBanner />
-            <SiteFooter />
-          </div>
-        </NextAuthProvider>
-        <Toaster />
+        <SmoothScrollProvider>
+          <NextAuthProvider>
+            <div className="flex flex-col min-h-screen">
+              <div className="flex-1">{children}</div>
+              <MarqueeBanner />
+              <SiteFooter />
+            </div>
+          </NextAuthProvider>
+          <Toaster />
+        </SmoothScrollProvider>
       </body>
     </html>
   );
