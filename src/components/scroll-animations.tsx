@@ -368,6 +368,10 @@ export function HorizontalScroll({
     const track = trackRef.current;
     if (!section || !track) return;
 
+    // Account for the px-6 / lg:px-12 padding inside the track
+    const style = getComputedStyle(track);
+    const paddingLeft = parseFloat(style.paddingLeft) || 0;
+    const paddingRight = parseFloat(style.paddingRight) || 0;
     const totalScroll = track.scrollWidth - window.innerWidth;
 
     const tween = gsap.to(track, {
@@ -380,6 +384,7 @@ export function HorizontalScroll({
         pin: true,
         scrub: 1,
         anticipatePin: 1,
+        invalidateOnRefresh: true,
       },
     });
 
@@ -391,7 +396,7 @@ export function HorizontalScroll({
 
   return (
     <div ref={sectionRef} className={`overflow-hidden ${className}`}>
-      <div ref={trackRef} className="flex gap-6 will-change-transform">
+      <div ref={trackRef} className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-[25vw] will-change-transform items-stretch">
         {children}
       </div>
     </div>

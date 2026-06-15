@@ -42,6 +42,7 @@ import {
   MagneticHover,
   ScrollProgress,
   ScaleIn,
+  HorizontalScroll,
 } from "@/components/scroll-animations";
 
 // Register GSAP plugin
@@ -737,7 +738,7 @@ function ProcessSection() {
   );
 }
 
-/* ─── Projects Section (Dark bg, Editorial) ─── */
+/* ─── Projects Section — Horizontal Scroll ─── */
 interface ProjectData {
   id: string;
   title: string;
@@ -765,7 +766,6 @@ function ProjectsSection() {
         return res.json();
       })
       .then((data) => {
-        // API returns an array on success, or { error: string } on failure
         if (Array.isArray(data)) {
           setProjects(data);
         } else if (data && typeof data.error === "string") {
@@ -782,9 +782,6 @@ function ProjectsSection() {
       });
   }, []);
 
-  const featuredProject = projects.find((p) => p.featured);
-  const otherProjects = projects.filter((p) => !p.featured);
-
   if (loading) {
     return (
       <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
@@ -798,7 +795,7 @@ function ProjectsSection() {
     );
   }
 
-  if (error) {
+  if (error || projects.length === 0) {
     return (
       <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
@@ -808,23 +805,9 @@ function ProjectsSection() {
           <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
             Projects
           </h2>
-          <p className="mt-6 text-neutral-400 text-sm">Unable to load projects. Please try again later.</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (projects.length === 0) {
-    return (
-      <section id="projects" className="py-28 lg:py-40 bg-[#0a0a0a] text-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
-            Selected Work
-          </span>
-          <h2 className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]">
-            Projects
-          </h2>
-          <p className="mt-6 text-neutral-400 text-sm">No projects yet. Check back soon!</p>
+          <p className="mt-6 text-neutral-400 text-sm">
+            {error ? "Unable to load projects. Please try again later." : "No projects yet. Check back soon!"}
+          </p>
         </div>
       </section>
     );
@@ -833,190 +816,110 @@ function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="py-28 lg:py-40 bg-[#0a0a0a] text-white overflow-hidden"
+      className="bg-[#0a0a0a] text-white overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        {/* Section Header with split text reveal */}
-        <ScrollReveal>
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16 lg:mb-24">
-            <div>
-              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
-                Selected Work
-              </span>
-              <SplitTextReveal
-                text="Projects"
-                className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
-              />
+      {/* Section Header — above the pinned area */}
+      <div className="pt-28 lg:pt-40 pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <ScrollReveal>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+              <div>
+                <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
+                  Selected Work
+                </span>
+                <SplitTextReveal
+                  text="Projects"
+                  className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
+                />
+              </div>
+
+              <ScrollRevealRight className="max-w-sm" delay={0.3}>
+                <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
+                  Each project is a case study — not just a screenshot. Strategy,
+                  design, and outcome fused into one narrative.
+                </p>
+              </ScrollRevealRight>
             </div>
+          </ScrollReveal>
 
-            <ScrollRevealRight className="max-w-sm" delay={0.3}>
-              <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
-                Each project is a case study — not just a screenshot. Strategy,
-                design, and outcome fused into one narrative.
-              </p>
-            </ScrollRevealRight>
-          </div>
-        </ScrollReveal>
-
-        {/* Decorative rule with draw animation */}
-        <DrawLine className="mb-16 lg:mb-24" color="#8b4049" />
-
-        {/* Featured Project with clip reveal */}
-        {featuredProject && (
-          <ClipReveal>
-            <Link href={`/projects/${featuredProject.slug}`}>
-              <div className="group relative cursor-pointer">
-                <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                  <div className="grid lg:grid-cols-2 gap-0">
-                    {/* Image with parallax */}
-                    <Parallax speed={-0.15} className="relative overflow-hidden bg-neutral-900 aspect-[4/3] lg:aspect-auto">
-                      <img
-                        src={featuredProject.thumbnail}
-                        alt={featuredProject.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                      />
-                      <div className="absolute top-6 left-6 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                        <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
-                          {featuredProject.category}
-                        </span>
-                      </div>
-                    </Parallax>
-
-                    {/* Content */}
-                    <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-between bg-[#0a0a0a] border-t-2 lg:border-t-0 lg:border-l-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                      <div>
-                        <div className="flex items-center gap-4 mb-6">
-                          <span className="text-7xl lg:text-8xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800 group-hover:text-neutral-700 transition-colors duration-500 leading-none">
-                            01
-                          </span>
-                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-3 py-1.5">
-                            {featuredProject.categoryTag}
-                          </span>
-                        </div>
-
-                        <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                          {featuredProject.title}
-                        </h3>
-
-                        <p className="mt-6 text-neutral-400 leading-relaxed text-sm max-w-lg">
-                          {featuredProject.shortDescription}
-                        </p>
-
-                        {featuredProject.impact && (
-                          <div className="mt-6 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-4 py-2">
-                            <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                            <span className="text-[#8b4049] text-xs font-bold tracking-wider uppercase">
-                              {featuredProject.impact}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mt-10">
-                        <div className="flex flex-wrap gap-2 mb-8">
-                          {featuredProject.technologies.split(",").map((tech) => (
-                            <span
-                              key={tech}
-                              className="text-[11px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-3 py-1.5 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                            >
-                              {tech.trim()}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="flex items-center gap-3 text-[#8b4049] group-hover:gap-5 transition-all duration-300">
-                          <span className="text-sm font-bold tracking-wider uppercase">
-                            View Case Study
-                          </span>
-                          <div className="w-10 h-10 border-2 border-[#8b4049] flex items-center justify-center group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                            <ArrowUpRight size={18} strokeWidth={2.5} />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </ClipReveal>
-        )}
-
-        {/* Other Projects with stagger reveal */}
-        <StaggerReveal stagger={0.2} className="mt-16 lg:mt-24 grid md:grid-cols-2 gap-6 lg:gap-8">
-          {otherProjects.map((project, i) => (
-            <Link key={project.id} href={`/projects/${project.slug}`}>
-              <div className="group cursor-pointer h-full">
-                <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
-                  <Parallax speed={-0.1} className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
-                    <img
-                      src={project.thumbnail}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-                    />
-                    <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
-                        {project.category}
-                      </span>
-                    </div>
-                    <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
-                      0{i + 2}
-                    </span>
-                  </Parallax>
-
-                  <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <h3 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                        {project.title}
-                      </h3>
-                      {project.categoryTag && (
-                        <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
-                          {project.categoryTag}
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-neutral-400 text-sm leading-relaxed flex-1">
-                      {project.shortDescription}
-                    </p>
-
-                    {project.impact && (
-                      <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
-                        <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                        <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
-                          {project.impact}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex flex-wrap gap-2 mt-5">
-                      {project.technologies.split(",").map((tech) => (
-                        <span
-                          key={tech}
-                          className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                        >
-                          {tech.trim()}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
-                      <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
-                        View Case Study
-                      </span>
-                      <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                        <ArrowUpRight size={14} strokeWidth={2.5} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </StaggerReveal>
-
-        {/* Bottom rule */}
-        <DrawLine className="mt-16 lg:mt-24" color="#8b4049" />
+          <DrawLine className="mt-8 lg:mt-12" color="#8b4049" />
+        </div>
       </div>
+
+      {/* Horizontal scrolling project cards */}
+      <HorizontalScroll className="pb-28 lg:pb-40">
+        {projects.map((project, i) => (
+          <Link key={project.id} href={`/projects/${project.slug}`}>
+            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full">
+              <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
+                {/* Image */}
+                <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
+                  <img
+                    src={project.thumbnail}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                  />
+                  <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
+                    <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
+                      {project.category}
+                    </span>
+                  </div>
+                  <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
+                    0{i + 1}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
+                      {project.title}
+                    </h3>
+                    {project.categoryTag && (
+                      <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
+                        {project.categoryTag}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-neutral-400 text-sm leading-relaxed flex-1">
+                    {project.shortDescription}
+                  </p>
+
+                  {project.impact && (
+                    <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
+                      <span className="w-1.5 h-1.5 bg-[#8b4049]" />
+                      <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
+                        {project.impact}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2 mt-5">
+                    {project.technologies.split(",").map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                      >
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
+                      View Case Study
+                    </span>
+                    <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
+                      <ArrowUpRight size={14} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </HorizontalScroll>
     </section>
   );
 }
