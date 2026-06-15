@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 
 /* ─── Fade-in Wrapper ─── */
 function FadeIn({
@@ -261,9 +262,9 @@ export default function DynamicProjectPage({
                     The Solution
                   </h3>
                   {project.detailedDescription && (
-                    <p className="text-foreground/80 leading-[1.7] text-base">
-                      {project.detailedDescription}
-                    </p>
+                    <div className="text-foreground/80 leading-[1.7] text-base prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground/80 prose-a:text-accent prose-strong:text-foreground prose-ul:text-foreground/80 prose-ol:text-foreground/80 prose-li:text-foreground/80">
+                      <ReactMarkdown>{project.detailedDescription}</ReactMarkdown>
+                    </div>
                   )}
 
                   {/* Impact */}

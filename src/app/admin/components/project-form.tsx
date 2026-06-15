@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Upload, X, ImagePlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 interface ProjectFormData {
   title: string;
@@ -379,14 +380,13 @@ export function ProjectForm({ projectId }: ProjectFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="detailedDescription">Detailed Description</Label>
-            <Textarea
-              id="detailedDescription"
-              value={formData.detailedDescription}
-              onChange={(e) =>
-                handleChange("detailedDescription", e.target.value)
-              }
-              placeholder="Full project description for case study page"
-              rows={5}
+            <p className="text-xs text-muted-foreground">
+              Supports Markdown formatting. Use headings, lists, bold, and links for rich content.
+            </p>
+            <RichTextEditor
+              value={formData.detailedDescription || ""}
+              onChange={(value) => handleChange("detailedDescription", value)}
+              placeholder="Full project description for case study page. Use Markdown for formatting."
             />
           </div>
 

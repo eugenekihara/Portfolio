@@ -67,6 +67,9 @@ server.log
 /db/
 /prisma/db/
 
+# Uploaded files
+/public/uploads/
+
 # Screenshots & temp files
 *.png.bak
 waveeatz-page.json
