@@ -471,7 +471,7 @@ export default function ShambaRahisiPage() {
             <ScrollRevealRight>
               <div className="rounded-3xl overflow-hidden shadow-xl border border-foreground/5">
                 <img
-                  src="/shamba-rahisi/screen-home.png"
+                  src="/shamba-rahisi/screen-home-dashboard.png"
                   alt="Shamba Rahisi home dashboard with farm overview"
                   className="w-full h-auto object-cover"
                 />
@@ -891,7 +891,7 @@ export default function ShambaRahisiPage() {
 
             {/* Screen 2: Onboarding Data Source */}
             <ScreenShowcase
-              src="/shamba-rahisi/screen-onboarding-data.png"
+              src="/shamba-rahisi/screen-onboarding-data-source.png"
               alt="Shamba Rahisi onboarding data source selection"
               title="Data Source Selection"
               purpose="The first onboarding step asks farmers how they'd like to provide soil and farm information. Three clear options — Soil Test Results, Extension Officer, or Manual Entry — accommodate different farmer profiles and data access levels."
@@ -903,7 +903,7 @@ export default function ShambaRahisiPage() {
 
             {/* Screen 3: Home Dashboard */}
             <ScreenShowcase
-              src="/shamba-rahisi/screen-home.png"
+              src="/shamba-rahisi/screen-home-dashboard.png"
               alt="Shamba Rahisi home dashboard with farm overview and priority task"
               title="Home Dashboard"
               purpose="The home dashboard serves as the farmer's central hub, displaying a personalized greeting, real-time farm summary (Farm Size, Soil pH, Crop), weather conditions, priority tasks, quick actions, and recent activity — all above the fold."
@@ -931,6 +931,52 @@ export default function ShambaRahisiPage() {
               title="Voice & Language Settings"
               purpose="The voice settings screen allows farmers to choose their preferred language (Kiswahili, English, Kalenjin, or Kikuyu) and voice gender for audio recommendations. A preview feature lets users sample the voice before committing."
               rationale="This screen directly addresses the research insight that local language is non-negotiable. Including native languages like Kalenjin and Kikuyu (with their native script: 'Gikuyu') demonstrates genuine localization rather than token translation. The voice gender option adds personalization, and the preview function builds confidence before committing to settings."
+            />
+
+            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+
+            {/* Screen 6: Connect Synnefa */}
+            <ScreenShowcase
+              src="/shamba-rahisi/screen-onboarding-connect-synnefa.png"
+              alt="Shamba Rahisi Synnefa FarmShield sensor connection screen"
+              title="Connect Synnefa Sensors"
+              purpose="Step 2 of onboarding integrates the farmer's Synnefa FarmShield account to sync real-time IoT sensor data. A simple login form with phone number and password fields bridges the gap between sensor hardware and the recommendation engine."
+              rationale="Placing sensor integration early in onboarding ensures the app can deliver data-driven recommendations from the very first session. The phone number field with Kenyan format hint (+254) reduces input errors. By separating this step from data source selection, farmers who choose manual entry aren't forced through a sensor login they don't need — the flow adapts to their earlier choice."
+              reversed
+            />
+
+            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+
+            {/* Screen 7: Map Farm */}
+            <ScreenShowcase
+              src="/shamba-rahisi/screen-onboarding-map-farm.png"
+              alt="Shamba Rahisi farm mapping with satellite view"
+              title="Farm Mapping"
+              purpose="The final onboarding step enables farmers to trace their field boundaries on a satellite map. The satellite imagery provides a realistic aerial view, while simple drawing tools let users outline their plots with precision. Undo and Save Field controls ensure confidence before committing."
+              rationale="Satellite imagery was chosen over map views because farmers can visually identify their own land — landmarks, buildings, and field shapes act as natural verification. The three-action button system (Undo, Save Field, Finish Setup) breaks the complex task of boundary tracing into manageable steps. Completing this step enables location-specific sensor data correlation."
+            />
+
+            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+
+            {/* Screen 8: Tasks */}
+            <ScreenShowcase
+              src="/shamba-rahisi/screen-tasks.png"
+              alt="Shamba Rahisi task management with priority levels"
+              title="Task Management"
+              purpose="The tasks screen organizes all farming activities by urgency. Today's high-priority task sits at the top with a bold orange border and immediate 'Start Task' CTA, while this week's medium-priority items appear below. Completed tasks are accessible via a separate link."
+              rationale="Priority-based visual hierarchy (orange border for HIGH, lighter for MEDIUM) ensures farmers see the most urgent action first. The 'Start Task' button on high-priority items reduces the friction between seeing a task and beginning it. Separating completed tasks prevents clutter while maintaining a sense of progress and accomplishment."
+              reversed
+            />
+
+            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
+
+            {/* Screen 9: Task Details */}
+            <ScreenShowcase
+              src="/shamba-rahisi/screen-task-details.png"
+              alt="Shamba Rahisi task detail with step-by-step instructions and location check"
+              title="Task Execution"
+              purpose="The task detail screen guides farmers through execution with numbered step-by-step instructions, resource verification (confirming available fertilizer in storage), and GPS-based location confirmation. An aerial map view confirms the farmer is at the correct field before starting."
+              rationale="Location verification addresses a real-world problem — farmers with multiple fields applying the wrong treatment to the wrong plot. The resource check ('You have 50kg DAP in storage') removes the guesswork around material availability. Numbered instructions with precise measurements (e.g., '10g per planting hole') translate recommendations into unambiguous actions that leave no room for misinterpretation."
             />
           </div>
         </div>
