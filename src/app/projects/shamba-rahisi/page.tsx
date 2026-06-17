@@ -1153,7 +1153,90 @@ export default function ShambaRahisiPage() {
         </div>
       </section>
 
-      {/* ── 12. Outcomes ── */}
+      {/* ── 12. Tools & Technology ── */}
+      <section className="py-20 lg:py-32 bg-secondary/30">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <SectionHeading label="Tools & Technology" title="The stack behind the solution" accentColor={ORANGE} />
+          </div>
+
+          <StaggerReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" stagger={0.08}>
+            {/* GitHub */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">GitHub</h4>
+              <p className="text-xs text-muted-foreground mt-1">Version Control</p>
+            </div>
+
+            {/* Claude AI */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M17.2 24c-.32 0-.64-.12-.88-.36L12 19.32l-4.32 4.32a1.24 1.24 0 01-1.76 0 1.24 1.24 0 010-1.76L10.24 17l-4.32-4.88a1.24 1.24 0 011.76-1.76L12 15.68l4.32-5.32a1.24 1.24 0 011.76 1.76L13.76 17l4.32 4.88c.48.48.48 1.28 0 1.76-.24.24-.56.36-.88.36z"/><circle cx="12" cy="8" r="5"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Claude AI</h4>
+              <p className="text-xs text-muted-foreground mt-1">AI Assistant</p>
+            </div>
+
+            {/* Z.AI */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Z.AI</h4>
+              <p className="text-xs text-muted-foreground mt-1">AI Platform</p>
+            </div>
+
+            {/* Visual Studio */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M17.583 2.322l-5.106 4.86L6.5 3.5 2.5 6.5v11l4 3 5.977-3.682 5.106 4.86L21.5 19V5l-3.917-2.678zM6.5 16V8l4 3v2l-4 3zm11 1l-4-3v-4l4-3v10z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Visual Studio</h4>
+              <p className="text-xs text-muted-foreground mt-1">Code Editor</p>
+            </div>
+
+            {/* Nano Banana Banani AI */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Nano Banana Banani AI</h4>
+              <p className="text-xs text-muted-foreground mt-1">AI Tool</p>
+            </div>
+
+            {/* FlowStep */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">FlowStep</h4>
+              <p className="text-xs text-muted-foreground mt-1">UX Workflow</p>
+            </div>
+
+            {/* Figma */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M8 24c2.208 0 4-1.792 4-4v-4H8c-2.208 0-4 1.792-4 4s1.792 4 4 4zM4 12c0-2.208 1.792-4 4-4h4v8H8c-2.208 0-4-1.792-4-4zM4 4c0-2.208 1.792-4 4-4h4v8H8C5.792 8 4 6.208 4 4zM12 0h4c2.208 0 4 1.792 4 4s-1.792 4-4 4h-4V0zM20 12c0 2.208-1.792 4-4 4s-4-1.792-4-4 1.792-4 4-4 4 1.792 4 4z"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Figma</h4>
+              <p className="text-xs text-muted-foreground mt-1">Design Tool</p>
+            </div>
+
+            {/* Figma Make */}
+            <div className="group p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60 text-center">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${GREEN}15` }}>
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill={GREEN}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <h4 className="text-sm font-bold font-[family-name:var(--font-poppins)] text-foreground">Figma Make</h4>
+              <p className="text-xs text-muted-foreground mt-1">AI Prototyping</p>
+            </div>
+          </StaggerReveal>
+        </div>
+      </section>
+
+      {/* ── 13. Outcomes ── */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
