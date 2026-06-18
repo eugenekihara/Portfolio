@@ -277,6 +277,65 @@ function SEOIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
+function ClaudeAIIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2L4 6v12l8 4 8-4V6l-8-4z" />
+      <path d="M12 8v4" />
+      <path d="M12 16v2" />
+      <circle cx="12" cy="6" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ZAIIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  );
+}
+
+function NanoBananaIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 20c0-4 2-8 6-10 4-2 6-6 6-10" />
+      <path d="M6 20c2-2 5-2 8-1s5 0 6-2" />
+      <circle cx="9" cy="12" r="1.5" fill="currentColor" />
+      <circle cx="15" cy="8" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function FlowStepIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="8" y="14" width="7" height="7" rx="1.5" />
+      <path d="M6.5 10v2.5a2 2 0 002 2H8" />
+      <path d="M17.5 10v2.5a2 2 0 01-2 2H15" />
+    </svg>
+  );
+}
+
+function FigmaMakeIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="6" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="12" r="3" />
+      <circle cx="12" cy="18" r="3" />
+      <line x1="12" y1="9" x2="12" y2="15" />
+      <line x1="9" y1="12" x2="6" y2="12" />
+      <line x1="15" y1="12" x2="18" y2="12" />
+      <path d="M21 3l-3 3" />
+      <path d="M21 3l-3 0" />
+      <path d="M21 3l0 3" />
+    </svg>
+  );
+}
+
 /* ─── Navigation ─── */
 function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -1135,19 +1194,25 @@ function SkillsSection() {
   };
 
   const toolsSkills = [
-    "Git",
     "GitHub",
-    "VS Code",
-    "Responsive Design",
-    "SEO",
+    "Claude AI",
+    "Z.AI",
+    "Visual Studio",
+    "Nano Banana Banani AI",
+    "FlowStep",
+    "Figma",
+    "Figma Make",
   ];
 
   const toolsIconMap: Record<string, React.ReactNode> = {
-    Git: <GitIcon className="w-4 h-4" />,
     GitHub: <GitHubIcon className="w-4 h-4" />,
-    "VS Code": <VSCodeIcon className="w-4 h-4" />,
-    "Responsive Design": <ResponsiveIcon className="w-4 h-4" />,
-    SEO: <SEOIcon className="w-4 h-4" />,
+    "Claude AI": <ClaudeAIIcon className="w-4 h-4" />,
+    "Z.AI": <ZAIIcon className="w-4 h-4" />,
+    "Visual Studio": <VSCodeIcon className="w-4 h-4" />,
+    "Nano Banana Banani AI": <NanoBananaIcon className="w-4 h-4" />,
+    FlowStep: <FlowStepIcon className="w-4 h-4" />,
+    Figma: <FigmaIcon className="w-4 h-4" />,
+    "Figma Make": <FigmaMakeIcon className="w-4 h-4" />,
   };
 
   return (
