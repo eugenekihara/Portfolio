@@ -36,9 +36,11 @@ if (existsSync(dbSource)) {
   console.warn("Run 'npx prisma db push' to create the database before starting the server.");
 }
 
-// Create/update .env in standalone build with relative path
+// Create/update .env in standalone build with absolute path
+// Using absolute path ensures the runtime always finds the database at the correct location
+const standaloneDbPath = join(projectRoot, ".next/standalone/prisma/db/custom.db");
 const standaloneEnv = join(projectRoot, ".next/standalone/.env");
-writeFileSync(standaloneEnv, "DATABASE_URL=file:./db/custom.db\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n");
-console.log("Created .next/standalone/.env");
+writeFileSync(standaloneEnv, `DATABASE_URL=file:${standaloneDbPath}\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n`);
+console.log("Created .next/standalone/.env with absolute DATABASE_URL");
 
 console.log("Standalone assets copied.");

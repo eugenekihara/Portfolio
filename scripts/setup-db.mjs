@@ -17,14 +17,12 @@ console.log(`[Setup DB] Project root: ${projectRoot}`);
 console.log(`[Setup DB] Database path: ${dbFile}`);
 console.log(`[Setup DB] DATABASE_URL: ${dbUrl}`);
 
-// Ensure .env file exists with DATABASE_URL and NEXTAUTH_SECRET
+// Ensure .env file has the correct absolute DATABASE_URL
+// Always write/update the .env to ensure DATABASE_URL points to the canonical location.
+// Using absolute path prevents resolution discrepancies between Prisma CLI, db.ts, and Next.js.
 const envFile = join(projectRoot, ".env");
-if (!existsSync(envFile)) {
-  writeFileSync(envFile, "DATABASE_URL=file:./db/custom.db\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n");
-  console.log(`[Setup DB] Created .env file with default configuration`);
-} else {
-  console.log(`[Setup DB] .env file already exists`);
-}
+writeFileSync(envFile, `DATABASE_URL=${dbUrl}\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n`);
+console.log(`[Setup DB] Updated .env with DATABASE_URL=${dbUrl}`);
 
 // Ensure db/ directory exists
 if (!existsSync(dbDir)) {
