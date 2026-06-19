@@ -7,24 +7,13 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function resolveDatabaseUrl(): string {
-  let dbUrl = process.env.DATABASE_URL
-
-  if (!dbUrl) {
-    // Fallback: use prisma/db/custom.db relative to current working directory
-    const dbPath = path.join(process.cwd(), 'prisma', 'db', 'custom.db')
-    dbUrl = `file:${dbPath}`
-  } else if (dbUrl.startsWith('file:./')) {
-    // Resolve relative paths the same way Prisma CLI does:
-    // Prisma CLI resolves "file:./db/custom.db" relative to the prisma/ directory,
-    // not relative to cwd. We must match that behavior so the runtime
-    // connects to the same database file that prisma db push created.
-    const relativePath = dbUrl.replace('file:', '')
-    const prismaDir = path.join(process.cwd(), 'prisma')
-    const absolutePath = path.resolve(prismaDir, relativePath)
-    dbUrl = `file:${absolutePath}`
-  }
-
-  return dbUrl
+  // Always resolve to the canonical database path at prisma/db/custom.db.
+  // This is the ONLY location the database should exist — the same path used
+  // by prisma CLI, setup-db.mjs, and the seed script.
+  // System env vars or stale .env files may point to wrong locations,
+  // so we compute the absolute path from the project root.
+  const dbPath = path.join(process.cwd(), 'prisma', 'db', 'custom.db')
+  return `file:${dbPath}`
 }
 
 function ensureDbDirectory(dbUrl: string): void {

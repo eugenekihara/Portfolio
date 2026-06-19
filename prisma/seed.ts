@@ -71,6 +71,25 @@ async function main() {
       published: true,
       order: 2,
     },
+    {
+      title: "Portfolio Website",
+      slug: "portfolio",
+      shortDescription:
+        "My personal portfolio — a case study in itself. Designed and developed from scratch with Next.js, GSAP animations, and a dark editorial aesthetic.",
+      detailedDescription:
+        "A self-designed, self-developed portfolio website built with Next.js 16, TypeScript, Tailwind CSS, GSAP scroll animations, and Prisma. Features horizontal-scroll project showcases, a dark editorial design language, and a custom CMS admin panel for managing projects and contact messages.",
+      category: "Web Development",
+      categoryTag: "Fullstack",
+      technologies: "Next.js,TypeScript,Tailwind CSS,GSAP,Prisma",
+      thumbnail: "/portfolio/screen-home-hero.png",
+      impact: "Live & Shipped",
+      caseStudyHref: "/projects/portfolio",
+      githubUrl: "https://github.com/eugenekihara/Portfolio",
+      liveDemoUrl: "https://eugenekihara.dev",
+      featured: true,
+      published: true,
+      order: 3,
+    },
   ];
 
   for (const project of projects) {
