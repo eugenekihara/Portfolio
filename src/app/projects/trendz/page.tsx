@@ -225,8 +225,8 @@ export default function TrendzPage() {
                 <div className="absolute -inset-4 rounded-3xl opacity-20 blur-2xl" style={{ backgroundColor: ACCENT }} />
                 <div className="relative rounded-2xl overflow-hidden border-2 border-foreground/10 shadow-2xl">
                   <img
-                    src="/trendz/trendz-logo.png"
-                    alt="Trendz Logo"
+                    src="/trendz/screen-dashboard.png"
+                    alt="Trendz Dashboard"
                     className="w-full h-auto object-cover"
                   />
                 </div>
@@ -299,6 +299,142 @@ export default function TrendzPage() {
                 </div>
               </ScrollReveal>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <DrawLine color={ACCENT} />
+
+      {/* ── 4b. App Screenshots ── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <SectionHeading label="Screens" title="Trendz in action" />
+          <ScrollReveal>
+            <p className="text-muted-foreground leading-relaxed mb-12 max-w-2xl">
+              From login to sale completion — every screen is designed for speed and clarity.
+              The interface prioritizes data density without sacrificing readability, so business
+              owners can find what they need at a glance.
+            </p>
+          </ScrollReveal>
+
+          {/* Screenshot grid: Login + Dashboard side by side */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <ScrollRevealLeft>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-login.png"
+                  alt="Trendz Login Screen"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Secure Login</p>
+                  <p className="text-white/60 text-sm">Email & password authentication with JWT session tokens</p>
+                </div>
+              </div>
+            </ScrollRevealLeft>
+            <ScrollRevealRight>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-dashboard.png"
+                  alt="Trendz Dashboard"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Dashboard Overview</p>
+                  <p className="text-white/60 text-sm">Revenue, sales, products & category metrics at a glance</p>
+                </div>
+              </div>
+            </ScrollRevealRight>
+          </div>
+
+          {/* Screenshot grid: Dashboard Detail + Analytics */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <ScrollRevealLeft>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-dashboard-detail.png"
+                  alt="Trendz Dashboard Detail"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Sales Analytics</p>
+                  <p className="text-white/60 text-sm">Daily sales charts, top products & recent transactions</p>
+                </div>
+              </div>
+            </ScrollRevealLeft>
+            <ScrollRevealRight>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-dashboard-analytics.png"
+                  alt="Trendz Analytics"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Revenue Breakdown</p>
+                  <p className="text-white/60 text-sm">Outstanding credit, paid collections & overdue tracking</p>
+                </div>
+              </div>
+            </ScrollRevealRight>
+          </div>
+
+          {/* Screenshot grid: Inventory + POS */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <ScrollRevealLeft>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-inventory.png"
+                  alt="Trendz Inventory Management"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Inventory Management</p>
+                  <p className="text-white/60 text-sm">Products, SKUs, pricing, stock levels & category filters</p>
+                </div>
+              </div>
+            </ScrollRevealLeft>
+            <ScrollRevealRight>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-pos.png"
+                  alt="Trendz POS"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Point of Sale</p>
+                  <p className="text-white/60 text-sm">Product selection, cart, discounts & customer details</p>
+                </div>
+              </div>
+            </ScrollRevealRight>
+          </div>
+
+          {/* Screenshot grid: POS Sale + Sales Tracking */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <ScrollRevealLeft>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-pos-sale.png"
+                  alt="Trendz POS Sale in Progress"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Sale Completion</p>
+                  <p className="text-white/60 text-sm">Cart review, quantity adjustment & payment processing</p>
+                </div>
+              </div>
+            </ScrollRevealLeft>
+            <ScrollRevealRight>
+              <div className="group relative rounded-2xl overflow-hidden border border-foreground/10 hover:border-[var(--accent-color)] transition-all duration-500">
+                <img
+                  src="/trendz/screen-sales-tracking.png"
+                  alt="Trendz Sales Tracking"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold font-[family-name:var(--font-poppins)]">Sales Tracking</p>
+                  <p className="text-white/60 text-sm">POS sales, credit sales, manual entries & date filtering</p>
+                </div>
+              </div>
+            </ScrollRevealRight>
           </div>
         </div>
       </section>
