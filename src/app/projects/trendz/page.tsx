@@ -33,10 +33,11 @@ import {
 } from "@/components/scroll-animations";
 
 /* ─── Theme Constants ─── */
-const DARK = "#0a0a0a";
-const ACCENT = "#6C3FE0"; // Trendz purple accent
-const ACCENT_LIGHT = "#8B6AE8";
-const ACCENT_DARK = "#5230B0";
+const DARK = "#1d140d"; // Rich espresso — dark backgrounds
+const ACCENT = "#966543"; // Warm amber brown — primary accent
+const ACCENT_LIGHT = "#faf8f5"; // Cream — light backgrounds & highlights
+const ACCENT_MID = "#6c6158"; // Warm stone — muted text & borders
+const ACCENT_DARK = "#774826"; // Deep saddle brown — secondary accent
 
 /* ─── Section Heading ─── */
 function SectionHeading({
@@ -563,18 +564,19 @@ export default function TrendzPage() {
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
               <p className="text-white/70 leading-relaxed mb-8">
-                Trendz uses shadcn/ui&apos;s New York style variant with a custom purple
-                accent palette. The design prioritizes clarity and density — business
-                users need to see numbers and actions quickly, not admire whitespace.
-                Dark and light themes are both supported with next-themes, and the
-                color system adapts automatically.
+                Trendz uses a warm, earthy palette inspired by the textures of fashion
+                and beauty — rich browns, natural cream, and muted stone tones. The design
+                prioritizes clarity and density — business users need to see numbers and
+                actions quickly, not admire whitespace. Dark and light themes are both
+                supported with next-themes, and the color system adapts automatically.
               </p>
               <div className="space-y-3">
-                <ColorSwatch color={ACCENT} name="Primary Purple" hex={ACCENT} />
-                <ColorSwatch color={ACCENT_LIGHT} name="Accent Light" hex={ACCENT_LIGHT} />
-                <ColorSwatch color={ACCENT_DARK} name="Accent Dark" hex={ACCENT_DARK} />
+                <ColorSwatch color={ACCENT} name="Warm Amber" hex={ACCENT} />
+                <ColorSwatch color={ACCENT_DARK} name="Saddle Brown" hex={ACCENT_DARK} />
+                <ColorSwatch color={ACCENT_LIGHT} name="Cream" hex={ACCENT_LIGHT} />
+                <ColorSwatch color={ACCENT_MID} name="Warm Stone" hex={ACCENT_MID} />
+                <ColorSwatch color={DARK} name="Espresso" hex={DARK} />
                 <ColorSwatch color="#10B981" name="Success Green" hex="#10B981" />
-                <ColorSwatch color="#F59E0B" name="Warning Amber" hex="#F59E0B" />
                 <ColorSwatch color="#EF4444" name="Error Red" hex="#EF4444" />
               </div>
             </div>
