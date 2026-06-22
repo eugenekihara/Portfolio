@@ -263,7 +263,7 @@ export function SplitTextReveal({
     container.innerHTML = words
       .map(
         (word) =>
-          `<span style="display:inline-block;overflow:hidden;vertical-align:bottom"><span style="display:inline-block;transform:translateY(100%)">${word}</span></span>`
+          `<span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.15em"><span style="display:inline-block;transform:translateY(100%)">${word}</span></span>`
       )
       .join(" ");
 
