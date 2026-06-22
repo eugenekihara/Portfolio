@@ -637,11 +637,11 @@ export default function PortfolioPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div>
                 <p className="text-xs font-bold tracking-[0.3em] uppercase text-muted-foreground mb-2">Next Project</p>
-                <Link href="/projects/waveeatz" className="group inline-flex items-center gap-4">
-                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">Wave Eatz</h3>
+                <Link href="/projects/trendz" className="group inline-flex items-center gap-4">
+                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">Trendz</h3>
                   <ArrowRight className="w-6 h-6 text-foreground group-hover:text-accent transition-all duration-300 group-hover:translate-x-2" />
                 </Link>
-                <p className="mt-2 text-muted-foreground text-sm">Food savings and tracking mobile app</p>
+                <p className="mt-2 text-muted-foreground text-sm">Business management & POS system</p>
               </div>
             </div>
           </ScrollReveal>
