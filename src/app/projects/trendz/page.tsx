@@ -134,7 +134,7 @@ function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: s
 /* ─── Tech Tag ─── */
 function TechTag({ name }: { name: string }) {
   return (
-    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/80 text-sm">
+    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#966543]/10 border border-[#966543]/25 text-[#1d140d] text-sm font-medium">
       <Code2 size={14} style={{ color: ACCENT }} />
       {name}
     </span>
