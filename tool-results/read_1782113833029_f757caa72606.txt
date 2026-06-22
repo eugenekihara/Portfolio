@@ -1,0 +1,596 @@
+     1→"use client";
+     2→
+     3→import { motion } from "framer-motion";
+     4→import {
+     5→  ArrowLeft,
+     6→  ArrowUpRight,
+     7→  Code2,
+     8→  Monitor,
+     9→  Layers,
+    10→  Zap,
+    11→  Github,
+    12→  CheckCircle2,
+    13→  BarChart3,
+    14→  Database,
+    15→  ShoppingCart,
+    16→  Package,
+    17→  Users,
+    18→  CreditCard,
+    19→  FileText,
+    20→  Shield,
+    21→  Settings,
+    22→  Bell,
+    23→} from "lucide-react";
+    24→import Link from "next/link";
+    25→import {
+    26→  ScrollReveal,
+    27→  ScrollRevealLeft,
+    28→  ScrollRevealRight,
+    29→  SplitTextReveal,
+    30→  StaggerReveal,
+    31→  DrawLine,
+    32→  ClipReveal,
+    33→} from "@/components/scroll-animations";
+    34→
+    35→/* ─── Theme Constants ─── */
+    36→const DARK = "#0a0a0a";
+    37→const ACCENT = "#6C3FE0"; // Trendz purple accent
+    38→const ACCENT_LIGHT = "#8B6AE8";
+    39→const ACCENT_DARK = "#5230B0";
+    40→
+    41→/* ─── Section Heading ─── */
+    42→function SectionHeading({
+    43→  label,
+    44→  title,
+    45→  light = false,
+    46→}: {
+    47→  label: string;
+    48→  title: string;
+    49→  light?: boolean;
+    50→}) {
+    51→  return (
+    52→    <div className="mb-12 lg:mb-16">
+    53→      <ScrollReveal>
+    54→        <p
+    55→          className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
+    56→          style={{ color: ACCENT }}
+    57→        >
+    58→          {label}
+    59→        </p>
+    60→      </ScrollReveal>
+    61→      <SplitTextReveal
+    62→        text={title}
+    63→        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
+    64→          light ? "text-white" : "text-foreground"
+    65→        }`}
+    66→      />
+    67→    </div>
+    68→  );
+    69→}
+    70→
+    71→/* ─── Stat Card ─── */
+    72→function StatCard({
+    73→  icon: Icon,
+    74→  value,
+    75→  label,
+    76→}: {
+    77→  icon: React.ElementType;
+    78→  value: string;
+    79→  label: string;
+    80→}) {
+    81→  return (
+    82→    <div className="p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-foreground/5">
+    83→      <Icon className="w-6 h-6 mb-4" style={{ color: ACCENT }} />
+    84→      <p className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 text-foreground">
+    85→        {value}
+    86→      </p>
+    87→      <p className="text-sm leading-relaxed text-muted-foreground">{label}</p>
+    88→    </div>
+    89→  );
+    90→}
+    91→
+    92→/* ─── Feature Card ─── */
+    93→function FeatureCard({
+    94→  icon: Icon,
+    95→  title,
+    96→  description,
+    97→}: {
+    98→  icon: React.ElementType;
+    99→  title: string;
+   100→  description: string;
+   101→}) {
+   102→  return (
+   103→    <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-foreground/5 hover:border-[var(--accent-color)] transition-all duration-500">
+   104→      <div
+   105→        className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110"
+   106→        style={{ backgroundColor: `${ACCENT}15` }}
+   107→      >
+   108→        <Icon className="w-6 h-6" style={{ color: ACCENT }} />
+   109→      </div>
+   110→      <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   111→        {title}
+   112→      </h4>
+   113→      <p className="text-sm text-muted-foreground leading-relaxed">
+   114→        {description}
+   115→      </p>
+   116→    </div>
+   117→  );
+   118→}
+   119→
+   120→/* ─── Color Swatch ─── */
+   121→function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: string }) {
+   122→  return (
+   123→    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
+   124→      <div className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0" style={{ backgroundColor: color }} />
+   125→      <div>
+   126→        <p className="text-white font-medium text-sm">{name}</p>
+   127→        <p className="text-white/50 text-xs font-mono">{hex}</p>
+   128→      </div>
+   129→    </div>
+   130→  );
+   131→}
+   132→
+   133→/* ─── Tech Tag ─── */
+   134→function TechTag({ name }: { name: string }) {
+   135→  return (
+   136→    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/80 text-sm">
+   137→      <Code2 size={14} style={{ color: ACCENT }} />
+   138→      {name}
+   139→    </span>
+   140→  );
+   141→}
+   142→
+   143→/* ────────────────────────────────────────────
+   144→   TRENDZ Case Study Page
+   145→   ──────────────────────────────────────────── */
+   146→export default function TrendzPage() {
+   147→  return (
+   148→    <div className="min-h-screen bg-background">
+   149→      {/* ── 1. Navigation ── */}
+   150→      <motion.nav
+   151→        initial={{ y: -100 }}
+   152→        animate={{ y: 0 }}
+   153→        transition={{ duration: 0.6, ease: "easeOut" }}
+   154→        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
+   155→      >
+   156→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   157→          <div className="flex items-center justify-between h-16 lg:h-20">
+   158→            <Link href="/" className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]">
+   159→              Eugene<span className="text-accent">.</span>
+   160→            </Link>
+   161→            <div className="hidden md:flex items-center gap-8">
+   162→              {["Home", "Projects", "About", "Contact"].map((item) => (
+   163→                <Link key={item} href={`/#${item.toLowerCase()}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
+   164→                  {item}
+   165→                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
+   166→                </Link>
+   167→              ))}
+   168→            </div>
+   169→            <Link href="/#projects" className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300">
+   170→              <ArrowLeft size={16} />
+   171→              All Projects
+   172→            </Link>
+   173→          </div>
+   174→        </div>
+   175→      </motion.nav>
+   176→
+   177→      {/* ── 2. Hero Section ── */}
+   178→      <section className="relative py-20 lg:py-32 overflow-hidden">
+   179→        <div className="absolute inset-0 opacity-[0.03]" style={{ background: `radial-gradient(ellipse at 30% 50%, ${ACCENT}, transparent 70%)` }} />
+   180→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   181→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+   182→            <div>
+   183→              <ClipReveal>
+   184→                <p
+   185→                  className="text-xs font-bold tracking-[0.3em] uppercase mb-6"
+   186→                  style={{ color: ACCENT }}
+   187→                >
+   188→                  Full Stack Application
+   189→                </p>
+   190→              </ClipReveal>
+   191→              <SplitTextReveal
+   192→                text="Trendz"
+   193→                className="text-6xl sm:text-7xl lg:text-8xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter text-foreground"
+   194→              />
+   195→              <ScrollReveal>
+   196→                <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-lg">
+   197→                  A full-featured business management system — POS, inventory tracking,
+   198→                  credit management, sales analytics, and reporting. Designed and built
+   199→                  end-to-end for small businesses that need enterprise-grade tools
+   200→                  without the enterprise price tag.
+   201→                </p>
+   202→              </ScrollReveal>
+   203→              <ScrollReveal>
+   204→                <div className="flex flex-wrap gap-4 mt-8">
+   205→                  <Link
+   206→                    href="https://github.com/eugenekihara/trendz"
+   207→                    target="_blank"
+   208→                    className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold tracking-wider uppercase transition-all duration-300"
+   209→                    style={{ backgroundColor: ACCENT, color: "#fff" }}
+   210→                  >
+   211→                    <Github size={16} />
+   212→                    View Source
+   213→                  </Link>
+   214→                  <Link
+   215→                    href="/#projects"
+   216→                    className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold tracking-wider uppercase border-2 border-foreground/20 text-foreground hover:border-foreground/40 transition-all duration-300"
+   217→                  >
+   218→                    Back to Projects
+   219→                  </Link>
+   220→                </div>
+   221→              </ScrollReveal>
+   222→            </div>
+   223→            <ScrollRevealRight>
+   224→              <div className="relative">
+   225→                <div className="absolute -inset-4 rounded-3xl opacity-20 blur-2xl" style={{ backgroundColor: ACCENT }} />
+   226→                <div className="relative rounded-2xl overflow-hidden border-2 border-foreground/10 shadow-2xl">
+   227→                  <img
+   228→                    src="/trendz/trendz-logo.png"
+   229→                    alt="Trendz Logo"
+   230→                    className="w-full h-auto object-cover"
+   231→                  />
+   232→                </div>
+   233→              </div>
+   234→            </ScrollRevealRight>
+   235→          </div>
+   236→        </div>
+   237→      </section>
+   238→
+   239→      <DrawLine color={ACCENT} />
+   240→
+   241→      {/* ── 3. Overview Stats ── */}
+   242→      <section className="py-20 lg:py-28">
+   243→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   244→          <SectionHeading label="Overview" title="By the Numbers" />
+   245→          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+   246→            <StatCard icon={Layers} value="10+" label="Core modules from POS to reporting" />
+   247→            <StatCard icon={Code2} value="35+" label="API endpoints handling all business logic" />
+   248→            <StatCard icon={Database} value="14" label="Prisma models with full relational integrity" />
+   249→            <StatCard icon={Shield} value="JWT" label="Secure cookie-based authentication" />
+   250→          </div>
+   251→        </div>
+   252→      </section>
+   253→
+   254→      <DrawLine color={ACCENT} />
+   255→
+   256→      {/* ── 4. Problem & Design Challenge ── */}
+   257→      <section className="py-20 lg:py-28">
+   258→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   259→          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+   260→            <div>
+   261→              <SectionHeading label="The Problem" title="Small businesses, big operational gaps" />
+   262→              <ScrollReveal>
+   263→                <div className="space-y-4 text-muted-foreground leading-relaxed">
+   264→                  <p>
+   265→                    Small retail businesses in Africa and emerging markets often rely on
+   266→                    pen-and-paper systems or fragmented spreadsheets to manage sales,
+   267→                    inventory, and customer credit. These manual processes lead to
+   268→                    stock discrepancies, lost revenue from untracked credit sales, and
+   269→                    no visibility into business performance.
+   270→                  </p>
+   271→                  <p>
+   272→                    Existing solutions are either too expensive, too complex, or require
+   273→                    internet connectivity that isn&apos;t always available. Business owners need
+   274→                    a tool that works locally, handles the full transaction lifecycle, and
+   275→                    provides actionable insights without requiring a finance degree to
+   276→                    interpret.
+   277→                  </p>
+   278→                </div>
+   279→              </ScrollReveal>
+   280→            </div>
+   281→            <div>
+   282→              <SectionHeading label="Design Challenge" title="Enterprise power, small-business simplicity" />
+   283→              <ScrollReveal>
+   284→                <div className="space-y-4 text-muted-foreground leading-relaxed">
+   285→                  <p>
+   286→                    How do you pack POS sales, inventory management, credit tracking,
+   287→                    supplier management, staff workflows, and comprehensive reporting
+   288→                    into a single application without overwhelming the user? The answer
+   289→                    was progressive disclosure: a clean dashboard that surfaces what
+   290→                    matters now, with deeper tools just a click away.
+   291→                  </p>
+   292→                  <p>
+   293→                    Every module needed to work together seamlessly — a sale at the POS
+   294→                    instantly deducts inventory, creates a sales entry, and updates the
+   295→                    dashboard. A credit order reduces stock and creates a payment
+   296→                    schedule. Data flows between modules without manual re-entry or
+   297→                    reconciliation.
+   298→                  </p>
+   299→                </div>
+   300→              </ScrollReveal>
+   301→            </div>
+   302→          </div>
+   303→        </div>
+   304→      </section>
+   305→
+   306→      <DrawLine color={ACCENT} />
+   307→
+   308→      {/* ── 5. Core Features ── */}
+   309→      <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
+   310→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   311→          <SectionHeading label="Core Features" title="Built for real business" light />
+   312→          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+   313→            <FeatureCard
+   314→              icon={ShoppingCart}
+   315→              title="Point of Sale"
+   316→              description="Fast, intuitive POS with real-time stock validation, automatic inventory deduction, and instant invoice generation. Handles discounts, multiple payment methods, and partial payments."
+   317→            />
+   318→            <FeatureCard
+   319→              icon={Package}
+   320→              title="Inventory Management"
+   321→              description="Full product lifecycle: create, categorize, update stock levels, soft-delete with restore. Category management with icons. Low-stock alerts and stock movement tracking."
+   322→            />
+   323→            <FeatureCard
+   324→              icon={CreditCard}
+   325→              title="Credit & Deposits"
+   326→              description="Customer credit orders with deposit tracking, partial payments, and automatic status progression (deposit → partial → paid). Payment history and balance calculation built in."
+   327→            />
+   328→            <FeatureCard
+   329→              icon={Users}
+   330→              title="Staff & Access Control"
+   331→              description="Role-based access with admin and staff roles. Staff approval workflows, profile management, and password security with bcrypt hashing. New staff default to limited permissions."
+   332→            />
+   333→            <FeatureCard
+   334→              icon={BarChart3}
+   335→              title="Reports & Analytics"
+   336→              description="Period-filtered reports with daily sales trends, top products, category breakdowns, payment method analysis, and credit analytics. Export to CSV, XLSX, or PDF."
+   337→            />
+   338→            <FeatureCard
+   339→              icon={Bell}
+   340→              title="Notifications & Audit"
+   341→              description="In-app notifications for sales, inventory, and tasks. Complete audit log tracking all user actions for accountability and compliance. Real-time data change events."
+   342→            />
+   343→            <FeatureCard
+   344→              icon={FileText}
+   345→              title="Sales Tracking"
+   346→              description="Comprehensive sales entry system distinguishing POS, credit, and manual entries. Search, filter, and reconcile across all sales sources with source-specific badges."
+   347→            />
+   348→            <FeatureCard
+   349→              icon={Settings}
+   350→              title="Setup Wizard"
+   351→              description="Guided first-time setup: create admin account, configure business name and currency, seed initial categories. Get running in under 2 minutes without technical knowledge."
+   352→            />
+   353→            <FeatureCard
+   354→              icon={Shield}
+   355→              title="Secure by Default"
+   356→              description="JWT session tokens stored in httpOnly cookies. bcrypt password hashing with automatic plain-text upgrade. API route protection and role verification on every request."
+   357→            />
+   358→          </div>
+   359→        </div>
+   360→      </section>
+   361→
+   362→      <DrawLine color={ACCENT} />
+   363→
+   364→      {/* ── 6. Process ── */}
+   365→      <section className="py-20 lg:py-28">
+   366→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   367→          <SectionHeading label="Process" title="How it came together" />
+   368→          <div className="space-y-12">
+   369→            {[
+   370→              {
+   371→                step: "01",
+   372→                title: "Research & Schema Design",
+   373→                description: "Mapped the full data model — 14 Prisma models with relationships covering products, categories, suppliers, sales, sale items, stock moves, purchase orders, credit orders, credit payments, notifications, settings, audit logs, and users. Designed for referential integrity with cascade deletes and soft deletes."
+   374→              },
+   375→              {
+   376→                step: "02",
+   377→                title: "API-First Development",
+   378→                description: "Built 35+ API endpoints before any UI, ensuring every data operation works independently. Each route includes authentication verification, input validation, and proper error handling. This approach meant the UI could be swapped without touching business logic."
+   379→              },
+   380→              {
+   381→                step: "03",
+   382→                title: "Component Architecture",
+   383→                description: "Used shadcn/ui with the New York style variant for consistent, professional UI components. Zustand for lightweight state management. Each module (Dashboard, POS, Inventory, Credits, Reports) is a self-contained component with its own data fetching and event handling."
+   384→              },
+   385→              {
+   386→                step: "04",
+   387→                title: "Cross-Module Integration",
+   388→                description: "The most challenging phase: connecting every module so data flows automatically. A POS sale deducts inventory, creates a sales entry, updates the dashboard, and triggers a notification. A credit order reduces stock, creates payment schedules, and appears in reports. Tested every cross-module interaction."
+   389→              },
+   390→              {
+   391→                step: "05",
+   392→                title: "Security Hardening",
+   393→                description: "Replaced plain-text passwords with bcrypt hashing and JWT cookie sessions. Added role-based access control on every API route. Protected sensitive settings like JWT secrets from exposure in API responses and backup exports. Added input validation on all mutation endpoints."
+   394→              },
+   395→            ].map((item, i) => (
+   396→              <ScrollReveal key={item.step}>
+   397→                <div className="flex gap-6 lg:gap-12">
+   398→                  <div className="flex-shrink-0">
+   399→                    <span
+   400→                      className="text-5xl lg:text-7xl font-bold font-[family-name:var(--font-poppins)] leading-none"
+   401→                      style={{ color: `${ACCENT}30` }}
+   402→                    >
+   403→                      {item.step}
+   404→                    </span>
+   405→                  </div>
+   406→                  <div>
+   407→                    <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+   408→                      {item.title}
+   409→                    </h4>
+   410→                    <p className="text-muted-foreground leading-relaxed">
+   411→                      {item.description}
+   412→                    </p>
+   413→                  </div>
+   414→                </div>
+   415→              </ScrollReveal>
+   416→            ))}
+   417→          </div>
+   418→        </div>
+   419→      </section>
+   420→
+   421→      <DrawLine color={ACCENT} />
+   422→
+   423→      {/* ── 7. Design System ── */}
+   424→      <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
+   425→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   426→          <SectionHeading label="Design System" title="Visual language" light />
+   427→          <div className="grid lg:grid-cols-2 gap-12">
+   428→            <div>
+   429→              <p className="text-white/70 leading-relaxed mb-8">
+   430→                Trendz uses shadcn/ui&apos;s New York style variant with a custom purple
+   431→                accent palette. The design prioritizes clarity and density — business
+   432→                users need to see numbers and actions quickly, not admire whitespace.
+   433→                Dark and light themes are both supported with next-themes, and the
+   434→                color system adapts automatically.
+   435→              </p>
+   436→              <div className="space-y-3">
+   437→                <ColorSwatch color={ACCENT} name="Primary Purple" hex={ACCENT} />
+   438→                <ColorSwatch color={ACCENT_LIGHT} name="Accent Light" hex={ACCENT_LIGHT} />
+   439→                <ColorSwatch color={ACCENT_DARK} name="Accent Dark" hex={ACCENT_DARK} />
+   440→                <ColorSwatch color="#10B981" name="Success Green" hex="#10B981" />
+   441→                <ColorSwatch color="#F59E0B" name="Warning Amber" hex="#F59E0B" />
+   442→                <ColorSwatch color="#EF4444" name="Error Red" hex="#EF4444" />
+   443→              </div>
+   444→            </div>
+   445→            <div>
+   446→              <p className="text-white/70 leading-relaxed mb-8">
+   447→                The component library leverages Radix UI primitives for accessibility,
+   448→                with Tailwind CSS for styling. Data-dense views use TanStack Table for
+   449→                sortable, filterable data grids, and Recharts for interactive charts
+   450→                and analytics visualizations on the dashboard and reports pages.
+   451→              </p>
+   452→              <div className="space-y-4">
+   453→                <h4 className="text-white font-bold text-sm tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
+   454→                  Typography
+   455→                </h4>
+   456→                <div className="space-y-2">
+   457→                  <p className="text-white text-2xl font-bold">Heading — Inter Bold</p>
+   458→                  <p className="text-white/70 text-base">Body — Inter Regular, optimized for data-heavy layouts</p>
+   459→                  <p className="text-white/50 text-sm font-mono">Code — JetBrains Mono for IDs and monospace data</p>
+   460→                </div>
+   461→              </div>
+   462→            </div>
+   463→          </div>
+   464→        </div>
+   465→      </section>
+   466→
+   467→      <DrawLine color={ACCENT} />
+   468→
+   469→      {/* ── 8. Tech Stack ── */}
+   470→      <section className="py-20 lg:py-28">
+   471→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   472→          <SectionHeading label="Tech Stack" title="What powers Trendz" />
+   473→          <ScrollReveal>
+   474→            <div className="flex flex-wrap gap-3">
+   475→              {[
+   476→                "Next.js 16",
+   477→                "TypeScript",
+   478→                "Prisma ORM",
+   479→                "SQLite",
+   480→                "shadcn/ui",
+   481→                "Radix UI",
+   482→                "Tailwind CSS",
+   483→                "Zustand",
+   484→                "TanStack Table",
+   485→                "Recharts",
+   486→                "React Hook Form",
+   487→                "Zod",
+   488→                "Framer Motion",
+   489→                "bcryptjs",
+   490→                "JWT (jose)",
+   491→                "next-themes",
+   492→                "next-intl",
+   493→                "jsPDF",
+   494→                "xlsx",
+   495→              ].map((tech) => (
+   496→                <TechTag key={tech} name={tech} />
+   497→              ))}
+   498→            </div>
+   499→          </ScrollReveal>
+   500→        </div>
+   501→      </section>
+   502→
+   503→      <DrawLine color={ACCENT} />
+   504→
+   505→      {/* ── 9. Outcomes ── */}
+   506→      <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
+   507→        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+   508→          <SectionHeading label="Outcomes" title="What Trendz delivers" light />
+   509→          <div className="grid sm:grid-cols-2 gap-6">
+   510→            {[
+   511→              {
+   512→                icon: CheckCircle2,
+   513→                title: "Real-time Inventory Sync",
+   514→                text: "Every sale, credit order, and stock adjustment updates inventory instantly. No more end-of-day stock counts or discrepancies between what the system says and what's on the shelf.",
+   515→              },
+   516→              {
+   517→                icon: CheckCircle2,
+   518→                title: "Credit Visibility",
+   519→                text: "Outstanding credits, overdue payments, and deposit tracking are always visible. Business owners know exactly who owes what, when it's due, and how much has been paid.",
+   520→              },
+   521→              {
+   522→                icon: CheckCircle2,
+   523→                title: "Actionable Reports",
+   524→                text: "Period-filtered reports with daily sales trends, top products, and category breakdowns give business owners the data they need to make decisions — exportable as CSV, XLSX, or PDF.",
+   525→              },
+   526→              {
+   527→                icon: CheckCircle2,
+   528→                title: "Role-Based Security",
+   529→                text: "Staff see only what they need. Admins control approvals, supplier management, and system settings. JWT sessions with bcrypt hashing keep the system secure without adding complexity.",
+   530→              },
+   531→            ].map((item, i) => (
+   532→              <ScrollReveal key={i}>
+   533→                <div className="p-6 lg:p-8 rounded-2xl bg-white/5 border border-white/10">
+   534→                  <item.icon className="w-6 h-6 mb-4" style={{ color: ACCENT }} />
+   535→                  <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-3">
+   536→                    {item.title}
+   537→                  </h4>
+   538→                  <p className="text-white/60 text-sm leading-relaxed">{item.text}</p>
+   539→                </div>
+   540→              </ScrollReveal>
+   541→            ))}
+   542→          </div>
+   543→        </div>
+   544→      </section>
+   545→
+   546→      <DrawLine color={ACCENT} />
+   547→
+   548→      {/* ── 10. Next Project ── */}
+   549→      <section className="py-20 lg:py-28">
+   550→        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
+   551→          <ScrollReveal>
+   552→            <p
+   553→              className="text-xs font-bold tracking-[0.3em] uppercase mb-4"
+   554→              style={{ color: ACCENT }}
+   555→            >
+   556→              Next Project
+   557→            </p>
+   558→          </ScrollReveal>
+   559→          <Link href="/projects/portfolio" className="group inline-block">
+   560→            <SplitTextReveal
+   561→              text="Portfolio Website"
+   562→              className="text-5xl sm:text-6xl lg:text-7xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter text-foreground group-hover:text-accent transition-colors duration-500"
+   563→            />
+   564→            <div className="mt-6 inline-flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+   565→              <span className="text-sm font-bold tracking-[0.2em] uppercase">
+   566→                View Case Study
+   567→              </span>
+   568→              <ArrowUpRight
+   569→                size={20}
+   570→                className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
+   571→              />
+   572→            </div>
+   573→          </Link>
+   574→        </div>
+   575→      </section>
+   576→
+   577→      {/* ── 11. Footer ── */}
+   578→      <footer className="py-8 border-t border-border">
+   579→        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+   580→          <p className="text-xs text-muted-foreground">
+   581→            Designed & Developed by Eugene Kihara
+   582→          </p>
+   583→          <Link
+   584→            href="https://github.com/eugenekihara/trendz"
+   585→            target="_blank"
+   586→            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+   587→          >
+   588→            <Github size={14} />
+   589→            View on GitHub
+   590→          </Link>
+   591→        </div>
+   592→      </footer>
+   593→    </div>
+   594→  );
+   595→}
+   596→
