@@ -100,7 +100,7 @@ async function main() {
       category: "Full Stack",
       categoryTag: "ERP/POS",
       technologies: "Next.js,TypeScript,Prisma,shadcn/ui,Tailwind CSS,Zustand,Recharts",
-      thumbnail: "/trendz/trendz-logo.png",
+      thumbnail: "/trendz/trendz-thumbnail.png",
       impact: "End-to-End Business Tool",
       caseStudyHref: "/projects/trendz",
       githubUrl: "https://github.com/eugenekihara/trendz",
