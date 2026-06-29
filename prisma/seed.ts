@@ -111,15 +111,14 @@ async function main() {
   ];
 
   for (const project of projects) {
-    const existing = await prisma.project.findUnique({
+    // Use upsert so seed updates existing projects (e.g. thumbnail path changes)
+    // instead of skipping them. This ensures production deploys pick up seed changes.
+    const result = await prisma.project.upsert({
       where: { slug: project.slug },
+      update: project,
+      create: project,
     });
-    if (!existing) {
-      await prisma.project.create({ data: project });
-      console.log("Project created:", project.title);
-    } else {
-      console.log("Project already exists:", project.title);
-    }
+    console.log("Project synced:", result.title);
   }
 
   console.log("Seed completed!");
