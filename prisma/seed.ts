@@ -81,7 +81,7 @@ async function main() {
       category: "Web Development",
       categoryTag: "Fullstack",
       technologies: "Next.js,TypeScript,Tailwind CSS,GSAP,Prisma",
-      thumbnail: "/portfolio/screen-home-hero.png",
+      thumbnail: "/portfolio/portfolio-thumbnail.png",
       impact: "Live & Shipped",
       caseStudyHref: "/projects/portfolio",
       githubUrl: "https://github.com/eugenekihara/Portfolio",
