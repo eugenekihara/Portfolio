@@ -91,6 +91,9 @@ function StatCard({
 }
 
 /* ─── Feature Card ─── */
+/* Reads against the dark espresso (DARK) section background.
+   Colors tuned for WCAG AA contrast: white titles, white/75 body,
+   and a lightened amber icon so the glyph stays legible on espresso. */
 function FeatureCard({
   icon: Icon,
   title,
@@ -101,17 +104,17 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-foreground/5 hover:border-[var(--accent-color)] transition-all duration-500">
+    <div className="group p-6 lg:p-8 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-[#966543] transition-all duration-500">
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110"
-        style={{ backgroundColor: `${ACCENT}15` }}
+        style={{ backgroundColor: `${ACCENT}26` }}
       >
-        <Icon className="w-6 h-6" style={{ color: ACCENT }} />
+        <Icon className="w-6 h-6" style={{ color: "#c89766" }} />
       </div>
-      <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
+      <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-3">
         {title}
       </h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">
+      <p className="text-sm text-white/75 leading-relaxed">
         {description}
       </p>
     </div>
