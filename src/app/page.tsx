@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,8 +12,6 @@ import {
   Phone,
   Github,
   Linkedin,
-  Menu,
-  X,
   Send,
   ChevronDown,
   Palette,
@@ -26,6 +24,8 @@ import {
   Database,
   Wrench,
 } from "lucide-react";
+import { SiteNav } from "@/components/site-nav";
+import { ScrollHint } from "@/components/scroll-hint";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -336,106 +336,6 @@ function FigmaMakeIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-/* ─── Navigation ─── */
-function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const navItems = [
-    { label: "Projects", href: "#projects" },
-    { label: "About", href: "#about" },
-    { label: "Skills", href: "#skills" },
-    { label: "Contact", href: "#contact" },
-  ];
-
-  return (
-    <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <MagneticHover strength={0.15}>
-              <a
-                href="#hero"
-                className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-              >
-                Eugene<span className="text-accent">.</span>
-              </a>
-            </MagneticHover>
-
-            {/* Desktop nav */}
-            <div className="hidden md:flex items-center gap-8">
-              {navItems.map((item) => (
-                <MagneticHover key={item.label} strength={0.2}>
-                  <a
-                    href={item.href}
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
-                  >
-                    {item.label}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                  </a>
-                </MagneticHover>
-              ))}
-            </div>
-
-            {/* Mobile toggle */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-lg md:hidden"
-          >
-            <div className="flex flex-col items-center justify-center gap-8 pt-20">
-              {navItems.map((item, i) => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="text-3xl font-bold font-[family-name:var(--font-poppins)] hover:text-accent transition-colors"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
-
 /* ─── Hero Section with Parallax ─── */
 function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
@@ -534,7 +434,7 @@ function HeroSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.15 }}
-              className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.9] tracking-tight"
+              className="text-hero-display font-bold font-[family-name:var(--font-poppins)]"
             >
               Eugene
             </motion.h1>
@@ -544,10 +444,9 @@ function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-6 text-lg text-muted-foreground max-w-lg leading-relaxed"
+              className="mt-6 text-body-lg text-muted-foreground max-w-lg"
             >
-              Kenya-based product designer crafting thoughtful digital solutions
-              where strategy meets aesthetics.
+              Bridging research, design, and development to create digital products that solve meaningful problems.
             </motion.p>
 
             {/* CTAs with magnetic hover */}
@@ -615,20 +514,13 @@ function HeroSection() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none scroll-indicator">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            className="flex flex-col items-center gap-2"
           >
-            <span className="text-xs text-muted-foreground">Scroll</span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </motion.div>
+            <ScrollHint />
           </motion.div>
         </div>
       </div>
@@ -919,7 +811,7 @@ function ProjectsSection() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                   />
                   <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                    <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#8b4049]">
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#8b4049]">
                       {project.category}
                     </span>
                   </div>
@@ -935,7 +827,7 @@ function ProjectsSection() {
                       {project.title}
                     </h3>
                     {project.categoryTag && (
-                      <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
+                      <span className="shrink-0 text-caption font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
                         {project.categoryTag}
                       </span>
                     )}
@@ -948,7 +840,7 @@ function ProjectsSection() {
                   {project.impact && (
                     <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
                       <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                      <span className="text-[#8b4049] text-[11px] font-bold tracking-wider uppercase">
+                      <span className="text-[#8b4049] text-caption font-bold tracking-wider uppercase">
                         {project.impact}
                       </span>
                     </div>
@@ -958,7 +850,7 @@ function ProjectsSection() {
                     {project.technologies.split(",").map((tech) => (
                       <span
                         key={tech}
-                        className="text-[10px] font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                        className="text-caption font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
                       >
                         {tech.trim()}
                       </span>
@@ -1116,7 +1008,7 @@ function SkillCategoryBlock({
           {title}
         </h3>
         {featured && (
-          <span className="ml-auto text-[10px] font-bold tracking-[0.2em] uppercase text-accent border border-accent/30 rounded-full px-3 py-1">
+          <span className="ml-auto text-caption font-bold tracking-[0.2em] uppercase text-accent border border-accent/30 rounded-full px-3 py-1">
             Core Focus
           </span>
         )}
@@ -1558,7 +1450,7 @@ export default function Home() {
   return (
     <main>
       <ScrollProgress />
-      <Navigation />
+      <SiteNav variant="home" />
       <HeroSection />
       <ServicesSection />
       <ProcessSection />

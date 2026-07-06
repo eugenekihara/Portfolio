@@ -2,9 +2,7 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
   Code2,
   Palette,
   Monitor,
@@ -21,7 +19,6 @@ import {
   Layout,
   Database,
 } from "lucide-react";
-import Link from "next/link";
 import {
   ScrollReveal,
   ScrollRevealLeft,
@@ -33,177 +30,21 @@ import {
   ClipReveal,
   MagneticHover,
 } from "@/components/scroll-animations";
+import { SiteNav } from "@/components/site-nav";
+import {
+  CaseStudySectionHeading,
+  CaseStudyStatCard,
+  CaseStudyScreenShowcase,
+  CaseStudyColorSwatch,
+  BrowserFrame,
+  CaseStudyScreenText,
+} from "@/components/case-study";
+import { ProjectNavCue } from "@/components/project-nav-cue";
 
 /* ─── Theme Constants ─── */
 const DARK = "#0a0a0a";
 const ACCENT = "#8b4049";
 const ACCENT_LIGHT = "#a85a63";
-
-/* ─── Browser Frame Wrapper ─── */
-function BrowserFrame({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div className={`relative mx-auto ${className}`} style={{ maxWidth: "900px" }}>
-      <div className="relative rounded-xl overflow-hidden border border-neutral-700 shadow-2xl bg-neutral-900">
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-800 border-b border-neutral-700">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80" />
-          </div>
-          <div className="flex-1 mx-4">
-            <div className="bg-neutral-700 rounded-md px-3 py-1 text-xs text-neutral-400 font-mono text-center">
-              eugenekihara.dev
-            </div>
-          </div>
-        </div>
-        <img src={src} alt={alt} className="w-full h-auto object-cover" />
-      </div>
-    </div>
-  );
-}
-
-/* ─── Section Heading ─── */
-function SectionHeading({
-  label,
-  title,
-  light = false,
-}: {
-  label: string;
-  title: string;
-  light?: boolean;
-}) {
-  return (
-    <div className="mb-12 lg:mb-16">
-      <ScrollReveal>
-        <p
-          className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
-          style={{ color: ACCENT }}
-        >
-          {label}
-        </p>
-      </ScrollReveal>
-      <SplitTextReveal
-        text={title}
-        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      />
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-}) {
-  return (
-    <div className="p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-foreground/5">
-      <Icon className="w-6 h-6 mb-4" style={{ color: ACCENT }} />
-      <p className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 text-foreground">
-        {value}
-      </p>
-      <p className="text-sm leading-relaxed text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-/* ─── Screen Text Content ─── */
-function ScreenTextContent({
-  title,
-  purpose,
-  rationale,
-}: {
-  title: string;
-  purpose: string;
-  rationale: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center space-y-4">
-      <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: ACCENT }}>
-          Purpose
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">{purpose}</p>
-      </div>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: ACCENT }}>
-          Design Rationale
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">{rationale}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Screen Showcase ─── */
-function ScreenShowcase({
-  src,
-  alt,
-  title,
-  purpose,
-  rationale,
-  reversed = false,
-}: {
-  src: string;
-  alt: string;
-  title: string;
-  purpose: string;
-  rationale: string;
-  reversed?: boolean;
-}) {
-  if (reversed) {
-    return (
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        <ScrollRevealRight>
-          <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-        </ScrollRevealRight>
-        <ScrollRevealLeft>
-          <BrowserFrame src={src} alt={alt} />
-        </ScrollRevealLeft>
-      </div>
-    );
-  }
-  return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-      <ScrollRevealLeft>
-        <BrowserFrame src={src} alt={alt} />
-      </ScrollRevealLeft>
-      <ScrollRevealRight>
-        <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-      </ScrollRevealRight>
-    </div>
-  );
-}
-
-/* ─── Color Swatch ─── */
-function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: string }) {
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
-      <div className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0" style={{ backgroundColor: color }} />
-      <div>
-        <p className="text-white font-medium text-sm">{name}</p>
-        <p className="text-white/50 text-xs font-mono">{hex}</p>
-      </div>
-    </div>
-  );
-}
 
 /* ────────────────────────────────────────────
    PORTFOLIO Case Study Page
@@ -212,32 +53,7 @@ export default function PortfolioPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── 1. Navigation ── */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link href="/" className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]">
-              Eugene<span className="text-accent">.</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              {["Home", "Projects", "About", "Contact"].map((item) => (
-                <Link key={item} href={`/#${item.toLowerCase()}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
-            </div>
-            <Link href="/#projects" className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300">
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Back</span>
-            </Link>
-          </div>
-        </div>
-      </motion.nav>
+      <SiteNav variant="case-study" />
 
       {/* ── 2. Hero ── */}
       <section className="relative overflow-hidden" style={{ backgroundColor: DARK }}>
@@ -249,7 +65,7 @@ export default function PortfolioPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
               <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
-                <h1 className="text-6xl sm:text-7xl lg:text-[100px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
+                <h1 className="text-case-hero font-bold font-[family-name:var(--font-poppins)] text-foreground">
                   <span className="text-white">MY</span><br />
                   <span style={{ color: ACCENT }}>PORTFOLIO</span>
                 </h1>
@@ -262,7 +78,7 @@ export default function PortfolioPage() {
                   { label: "Platform", value: "Web" },
                 ].map((item) => (
                   <div key={item.label} className="px-4 py-2 rounded-full border border-white/15 bg-white/5">
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: ACCENT }}>{item.label}: </span>
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase" style={{ color: ACCENT }}>{item.label}: </span>
                     <span className="text-sm font-medium text-white/90">{item.value}</span>
                   </div>
                 ))}
@@ -302,7 +118,7 @@ export default function PortfolioPage() {
       {/* ── 3. Overview ── */}
       <section id="overview" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Overview" title="Eating your own dog food" />
+          <CaseStudySectionHeading label="Overview" title="Eating your own dog food" accentColor="#8b4049" />
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <ScrollReveal>
               <div className="space-y-6">
@@ -331,7 +147,7 @@ export default function PortfolioPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-              <SectionHeading label="The Challenge" title="Portfolio paradox: showing vs. telling" />
+              <CaseStudySectionHeading label="The Challenge" title="Portfolio paradox: showing vs. telling" accentColor="#8b4049" />
               <ScrollReveal delay={0.2}>
                 <div className="space-y-5">
                   <p className="text-foreground/80 text-base leading-[1.8]">
@@ -348,10 +164,10 @@ export default function PortfolioPage() {
             </div>
             <div>
               <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
-                <StatCard icon={Palette} value="Show, Don't Tell" label="The portfolio itself must demonstrate the design skills described in its case studies" />
-                <StatCard icon={Zap} value="Performance" label="GSAP + Lenis animations must not compromise Core Web Vitals or load speed" />
-                <StatCard icon={Layers} value="CMS Balance" label="Custom admin panel for content management without sacrificing static performance" />
-                <StatCard icon={Monitor} value="Responsive" label="Pixel-perfect across all devices with horizontal scrolling project cards on desktop" />
+                <CaseStudyStatCard icon={Palette} value="Show, Don't Tell" label="The portfolio itself must demonstrate the design skills described in its case studies" accentColor="#8b4049" />
+                <CaseStudyStatCard icon={Zap} value="Performance" label="GSAP + Lenis animations must not compromise Core Web Vitals or load speed" accentColor="#8b4049" />
+                <CaseStudyStatCard icon={Layers} value="CMS Balance" label="Custom admin panel for content management without sacrificing static performance" accentColor="#8b4049" />
+                <CaseStudyStatCard icon={Monitor} value="Responsive" label="Pixel-perfect across all devices with horizontal scrolling project cards on desktop" accentColor="#8b4049" />
               </StaggerReveal>
             </div>
           </div>
@@ -412,20 +228,20 @@ export default function PortfolioPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-24">
-            <SectionHeading label="Key Sections" title="Every section tells a story" />
+            <CaseStudySectionHeading label="Key Sections" title="Every section tells a story" accentColor="#8b4049" />
           </div>
           <div className="space-y-20 lg:space-y-32">
-            <ScreenShowcase src="/portfolio/screen-home-hero.png" alt="Portfolio homepage hero section" title="Hero & Services" purpose="The hero section establishes identity immediately — a bold 'Eugene' headline, role badge, and interest tags that communicate specialization without requiring the user to scroll. The services grid below provides structure, showing what I offer at a glance with icon-driven cards." rationale="Research shows users form impressions in 50ms. The hero uses a typographic-first approach (large Poppins heading) rather than a photo, which loads faster and communicates confidence. The interest sidebar acts as a visual filter — potential clients can immediately see if their needs align." />
+            <CaseStudyScreenShowcase src="/portfolio/screen-home-hero.png" alt="Portfolio homepage hero section" title="Hero & Services" purpose="The hero section establishes identity immediately — a bold 'Eugene' headline, role badge, and interest tags that communicate specialization without requiring the user to scroll. The services grid below provides structure, showing what I offer at a glance with icon-driven cards." rationale="Research shows users form impressions in 50ms. The hero uses a typographic-first approach (large Poppins heading) rather than a photo, which loads faster and communicates confidence. The interest sidebar acts as a visual filter — potential clients can immediately see if their needs align." frameType="browser" accentColor="#8b4049" />
             <DrawLine direction="horizontal" color={ACCENT} className="mx-auto max-w-md" />
-            <ScreenShowcase src="/portfolio/screen-projects-dark.png" alt="Portfolio projects section with dark theme" title="Projects Showcase" purpose="The projects section uses horizontal scrolling to create a gallery-like experience. Each project card features a full-bleed thumbnail, category badge, title, description, technology tags, and a 'View Case Study' CTA — giving enough context to decide whether to dive deeper." rationale="Horizontal scrolling was chosen over a grid because it creates a narrative flow — projects unfold like chapters rather than competing for attention. The dark background with burnt-red accents creates cinematic contrast that makes project thumbnails pop." reversed />
+            <CaseStudyScreenShowcase src="/portfolio/screen-projects-dark.png" alt="Portfolio projects section with dark theme" title="Projects Showcase" purpose="The projects section uses horizontal scrolling to create a gallery-like experience. Each project card features a full-bleed thumbnail, category badge, title, description, technology tags, and a 'View Case Study' CTA — giving enough context to decide whether to dive deeper." rationale="Horizontal scrolling was chosen over a grid because it creates a narrative flow — projects unfold like chapters rather than competing for attention. The dark background with burnt-red accents creates cinematic contrast that makes project thumbnails pop." reversed frameType="browser" accentColor="#8b4049" />
             <DrawLine direction="horizontal" color={ACCENT} className="mx-auto max-w-md" />
-            <ScreenShowcase src="/portfolio/screen-case-study.png" alt="Portfolio case study detail page" title="Case Study Pages" purpose="Each project gets its own comprehensive case study with scroll-driven animations, phone/browser mockups, and structured sections: Hero, Overview, Problem, Solution, User Flow, Screens, Features, Design System, and Outcomes. This is where the real narrative lives." rationale="Case study pages are the conversion mechanism. They transform 'I made this' into 'here's how I think.' The GSAP ScrollTrigger animations create a guided reading experience — information appears exactly when the reader is ready for it." />
+            <CaseStudyScreenShowcase src="/portfolio/screen-case-study.png" alt="Portfolio case study detail page" title="Case Study Pages" purpose="Each project gets its own comprehensive case study with scroll-driven animations, phone/browser mockups, and structured sections: Hero, Overview, Problem, Solution, User Flow, Screens, Features, Design System, and Outcomes. This is where the real narrative lives." rationale="Case study pages are the conversion mechanism. They transform 'I made this' into 'here's how I think.' The GSAP ScrollTrigger animations create a guided reading experience — information appears exactly when the reader is ready for it." frameType="browser" accentColor="#8b4049" />
             <DrawLine direction="horizontal" color={ACCENT} className="mx-auto max-w-md" />
-            <ScreenShowcase src="/portfolio/screen-about.png" alt="Portfolio about section" title="About & Experience" purpose="The about section provides personal context — who I am, my current role, and a comprehensive services grid showing the breadth of my capabilities. The experience timeline adds credibility, while the service cards make it easy for potential clients to match their needs with my skills." rationale="The dual-column layout (text + visual) prevents the about section from becoming a wall of text. The eight-card services grid is more scannable than a paragraph list, and the current role timeline entry signals active availability." reversed />
+            <CaseStudyScreenShowcase src="/portfolio/screen-about.png" alt="Portfolio about section" title="About & Experience" purpose="The about section provides personal context — who I am, my current role, and a comprehensive services grid showing the breadth of my capabilities. The experience timeline adds credibility, while the service cards make it easy for potential clients to match their needs with my skills." rationale="The dual-column layout (text + visual) prevents the about section from becoming a wall of text. The eight-card services grid is more scannable than a paragraph list, and the current role timeline entry signals active availability." reversed frameType="browser" accentColor="#8b4049" />
             <DrawLine direction="horizontal" color={ACCENT} className="mx-auto max-w-md" />
-            <ScreenShowcase src="/portfolio/screen-skills.png" alt="Portfolio skills section" title="Skills & Capabilities" purpose="Skills are organized into five categories (Design, Frontend, Backend, Database, Tools & Technologies), each with its own visual block and icon set. The Design category is marked as 'Core Focus' to signal primary expertise while showing range across the full stack." rationale="Categorizing skills by domain rather than listing them alphabetically helps recruiters and clients quickly assess fit. The 'Core Focus' tag on Design directly addresses the common question about primary expertise, while showing both proves versatility." />
+            <CaseStudyScreenShowcase src="/portfolio/screen-skills.png" alt="Portfolio skills section" title="Skills & Capabilities" purpose="Skills are organized into five categories (Design, Frontend, Backend, Database, Tools & Technologies), each with its own visual block and icon set. The Design category is marked as 'Core Focus' to signal primary expertise while showing range across the full stack." rationale="Categorizing skills by domain rather than listing them alphabetically helps recruiters and clients quickly assess fit. The 'Core Focus' tag on Design directly addresses the common question about primary expertise, while showing both proves versatility." frameType="browser" accentColor="#8b4049" />
             <DrawLine direction="horizontal" color={ACCENT} className="mx-auto max-w-md" />
-            <ScreenShowcase src="/portfolio/screen-contact.png" alt="Portfolio contact section" title="Contact & Conversion" purpose="The contact section serves as the primary conversion point with a clean form (name, email, message), direct contact info, and social links. A running marquee at the bottom reinforces service offerings one final time before the page ends." rationale="Placing the form on the left (natural reading direction) and contact info on the right creates a clear action hierarchy. The marquee banner at the bottom serves as a closing statement — reinforcing brand identity at the exact moment a user is deciding whether to reach out." reversed />
+            <CaseStudyScreenShowcase src="/portfolio/screen-contact.png" alt="Portfolio contact section" title="Contact & Conversion" purpose="The contact section serves as the primary conversion point with a clean form (name, email, message), direct contact info, and social links. A running marquee at the bottom reinforces service offerings one final time before the page ends." rationale="Placing the form on the left (natural reading direction) and contact info on the right creates a clear action hierarchy. The marquee banner at the bottom serves as a closing statement — reinforcing brand identity at the exact moment a user is deciding whether to reach out." reversed frameType="browser" accentColor="#8b4049" />
           </div>
         </div>
       </section>
@@ -434,7 +250,7 @@ export default function PortfolioPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Features" title="Built different, by design" />
+            <CaseStudySectionHeading label="Features" title="Built different, by design" accentColor="#8b4049" />
           </div>
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
             <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#8b4049]/30 transition-all duration-500 hover:bg-secondary/60">
@@ -497,11 +313,11 @@ export default function PortfolioPage() {
               <div className="space-y-6">
                 <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">Color Palette</h3>
                 <div className="space-y-3">
-                  <ColorSwatch color="#0a0a0a" name="Midnight Black" hex="#0a0a0a" />
-                  <ColorSwatch color="#8b4049" name="Burnt Red" hex="#8b4049" />
-                  <ColorSwatch color="#a85a63" name="Rose Accent" hex="#a85a63" />
-                  <ColorSwatch color="#404040" name="Warm Neutral" hex="#404040" />
-                  <ColorSwatch color="#FFFFFF" name="White" hex="#FFFFFF" />
+                  <CaseStudyColorSwatch color="#0a0a0a" name="Midnight Black" hex="#0a0a0a" />
+                  <CaseStudyColorSwatch color="#8b4049" name="Burnt Red" hex="#8b4049" />
+                  <CaseStudyColorSwatch color="#a85a63" name="Rose Accent" hex="#a85a63" />
+                  <CaseStudyColorSwatch color="#404040" name="Warm Neutral" hex="#404040" />
+                  <CaseStudyColorSwatch color="#FFFFFF" name="White" hex="#FFFFFF" />
                 </div>
               </div>
             </ScrollRevealLeft>
@@ -545,7 +361,7 @@ export default function PortfolioPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Tech Stack" title="The full stack, no shortcuts" />
+            <CaseStudySectionHeading label="Tech Stack" title="The full stack, no shortcuts" accentColor="#8b4049" />
           </div>
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" stagger={0.1}>
             <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
@@ -586,7 +402,7 @@ export default function PortfolioPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Outcomes" title="Ship it, then iterate" />
+            <CaseStudySectionHeading label="Outcomes" title="Ship it, then iterate" accentColor="#8b4049" />
           </div>
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" stagger={0.12}>
             <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-background text-center">
@@ -631,22 +447,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* ── 11. Next Project ── */}
-      <section className="py-16 lg:py-24 bg-background border-t border-foreground/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <ScrollReveal>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold tracking-[0.3em] uppercase text-muted-foreground mb-2">Next Project</p>
-                <Link href="/projects/trendz" className="group inline-flex items-center gap-4">
-                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">Trendz</h3>
-                  <ArrowRight className="w-6 h-6 text-foreground group-hover:text-accent transition-all duration-300 group-hover:translate-x-2" />
-                </Link>
-                <p className="mt-2 text-muted-foreground text-sm">Business management & POS system</p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <ProjectNavCue nextProjectName="WaveEatz" nextProjectHref="/projects/waveeatz" />
     </div>
   );
 }

@@ -368,10 +368,14 @@ export function HorizontalScroll({
     const track = trackRef.current;
     if (!section || !track) return;
 
-    // Account for the px-6 / lg:px-12 padding inside the track
-    const style = getComputedStyle(track);
-    const paddingLeft = parseFloat(style.paddingLeft) || 0;
-    const paddingRight = parseFloat(style.paddingRight) || 0;
+    // Disable pinned horizontal scroll on mobile — let native scroll handle it
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    if (isMobile) return;
+
+    // Respect prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
     const totalScroll = track.scrollWidth - window.innerWidth;
 
     const tween = gsap.to(track, {

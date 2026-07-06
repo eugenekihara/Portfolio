@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
   Users,
   MapPin,
   Clock,
@@ -28,236 +27,19 @@ import {
   MagneticHover,
   ScaleIn,
 } from "@/components/scroll-animations";
+import { SiteNav } from "@/components/site-nav";
+import { ProjectNavCue } from "@/components/project-nav-cue";
+import {
+  CaseStudySectionHeading,
+  CaseStudyStatCard,
+  CaseStudyFeatureCard,
+  CaseStudyFlowStep,
+  PhoneFrame,
+  CaseStudyScreenText,
+  CaseStudyScreenShowcase,
+} from "@/components/case-study";
 
-/* ─── Phone Frame Wrapper ─── */
-function PhoneFrame({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`relative mx-auto ${className}`}
-      style={{ maxWidth: "320px" }}
-    >
-      <div className="relative rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-gray-800 shadow-2xl">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-gray-800 rounded-b-2xl z-10" />
-        <img
-          src={src}
-          alt={alt}
-          className="w-full h-auto object-cover rounded-[2rem]"
-        />
-      </div>
-    </div>
-  );
-}
 
-/* ─── Section Heading ─── */
-function SectionHeading({
-  label,
-  title,
-  light = false,
-}: {
-  label: string;
-  title: string;
-  light?: boolean;
-}) {
-  return (
-    <div className="mb-12 lg:mb-16">
-      <ScrollReveal>
-        <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C1A9A1] mb-3">
-          {label}
-        </p>
-      </ScrollReveal>
-      <SplitTextReveal
-        text={title}
-        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      />
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-  light = false,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-  light?: boolean;
-}) {
-  return (
-    <div
-      className={`p-6 lg:p-8 rounded-2xl ${
-        light
-          ? "bg-white/10 border border-white/10"
-          : "bg-secondary/50 border border-foreground/5"
-      }`}
-    >
-      <Icon
-        className={`w-6 h-6 mb-4 ${light ? "text-[#C1A9A1]" : "text-accent"}`}
-      />
-      <p
-        className={`text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      >
-        {value}
-      </p>
-      <p
-        className={`text-sm leading-relaxed ${
-          light ? "text-white/60" : "text-muted-foreground"
-        }`}
-      >
-        {label}
-      </p>
-    </div>
-  );
-}
-
-/* ─── Feature Card ─── */
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-accent/20 transition-all duration-500 hover:bg-secondary/60">
-      <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors duration-500">
-        <Icon className="w-5 h-5 text-accent" />
-      </div>
-      <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-        {title}
-      </h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-/* ─── User Flow Step ─── */
-function FlowStep({
-  number,
-  icon: Icon,
-  title,
-  description,
-  isLast = false,
-}: {
-  number: number;
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  isLast?: boolean;
-}) {
-  return (
-    <div className="flex flex-col items-center text-center relative">
-      <div className="relative z-10">
-        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-[#36170E] flex items-center justify-center border-2 border-[#C1A9A1]/30 shadow-lg">
-          <Icon className="w-7 h-7 lg:w-8 lg:h-8 text-[#C1A9A1]" />
-        </div>
-        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-accent text-white text-xs font-bold flex items-center justify-center">
-          {number}
-        </span>
-      </div>
-      <h4 className="mt-5 text-sm lg:text-base font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <p className="mt-2 text-xs lg:text-sm text-muted-foreground leading-relaxed max-w-[180px]">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-/* ─── Screen Text Content ─── */
-function ScreenTextContent({
-  title,
-  purpose,
-  rationale,
-}: {
-  title: string;
-  purpose: string;
-  rationale: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center space-y-4">
-      <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-2">
-          Purpose
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {purpose}
-        </p>
-      </div>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-2">
-          UX Rationale
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {rationale}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Screen Showcase Item ─── */
-function ScreenShowcase({
-  src,
-  alt,
-  title,
-  purpose,
-  rationale,
-  reversed = false,
-}: {
-  src: string;
-  alt: string;
-  title: string;
-  purpose: string;
-  rationale: string;
-  reversed?: boolean;
-}) {
-  if (reversed) {
-    return (
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        <ScrollRevealRight>
-          <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-        </ScrollRevealRight>
-        <ScrollRevealLeft>
-          <PhoneFrame src={src} alt={alt} />
-        </ScrollRevealLeft>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-      <ScrollRevealLeft>
-        <PhoneFrame src={src} alt={alt} />
-      </ScrollRevealLeft>
-      <ScrollRevealRight>
-        <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-      </ScrollRevealRight>
-    </div>
-  );
-}
 
 /* ─── Color Swatch ─── */
 function ColorSwatch({
@@ -290,42 +72,7 @@ export default function WaveeatzPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── 1. Sticky Navigation ── */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-            >
-              Eugene<span className="text-accent">.</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              {["Home", "Projects", "About", "Contact"].map((item) => (
-                <Link
-                  key={item}
-                  href={`/#${item.toLowerCase()}`}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
-                >
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
-            </div>
-            <Link
-              href="/#projects"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Back</span>
-            </Link>
-          </div>
-        </div>
-      </motion.nav>
+      <SiteNav variant="case-study" />
 
       {/* ── 2. Hero Section ── */}
       <section className="relative bg-[#36170E] overflow-hidden">
@@ -345,7 +92,7 @@ export default function WaveeatzPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                <h1 className="text-7xl sm:text-8xl lg:text-[128px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
+                <h1 className="text-case-hero font-bold font-[family-name:var(--font-poppins)]">
                   <span className="text-white">WAVE</span>
                   <br />
                   <span className="text-[#C1A9A1]">EATS</span>
@@ -368,7 +115,7 @@ export default function WaveeatzPage() {
                     key={item.label}
                     className="px-4 py-2 rounded-full border border-white/15 bg-white/5"
                   >
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#C1A9A1]">
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#C1A9A1]">
                       {item.label}:{" "}
                     </span>
                     <span className="text-sm font-medium text-white/90">
@@ -453,9 +200,10 @@ export default function WaveeatzPage() {
       {/* ── 3. Project Overview ── */}
       <section id="overview" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading
+          <CaseStudySectionHeading
             label="Overview"
             title="What is Wave Eats?"
+            accentColor="#C1A9A1"
           />
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -509,9 +257,10 @@ export default function WaveeatzPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-              <SectionHeading
+              <CaseStudySectionHeading
                 label="The Problem"
                 title="Delivery fees are too expensive for students"
+                accentColor="#C1A9A1"
               />
               <ScrollReveal delay={0.2}>
                 <div className="space-y-5">
@@ -543,22 +292,22 @@ export default function WaveeatzPage() {
 
             <div>
               <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
-                <StatCard
+                <CaseStudyStatCard
                   icon={DollarSign}
                   value="Ksh 300–500"
                   label="Average delivery fee per individual order"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={TrendingDown}
                   value="70%"
                   label="Of students cite delivery cost as the main barrier"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Users}
                   value="3–5×"
                   label="Redundant deliveries to the same building daily"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Clock}
                   value="45 min"
                   label="Average wait between placing and receiving an order"
@@ -645,9 +394,10 @@ export default function WaveeatzPage() {
       {/* ── 6. Research & Insights ── */}
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading
+          <CaseStudySectionHeading
             label="Research"
             title="Insights that shaped the design"
+            accentColor="#C1A9A1"
           />
 
           <StaggerReveal
@@ -834,7 +584,7 @@ export default function WaveeatzPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-20">
-            <SectionHeading label="User Flow" title="From discovery to delivery" />
+            <CaseStudySectionHeading label="User Flow" title="From discovery to delivery" accentColor="#C1A9A1" />
           </div>
 
           {/* Desktop: Horizontal Timeline */}
@@ -845,41 +595,59 @@ export default function WaveeatzPage() {
                 <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
 
                 <div className="grid grid-cols-6 gap-4 relative">
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={1}
                     icon={Search}
                     title="Discover Wave"
                     description="Browse active Waves nearby and find group orders from your favorite restaurants"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={2}
                     icon={Users}
                     title="Join Wave"
                     description="One-tap join to an existing Wave or create your own for others to discover"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={3}
                     icon={Package}
                     title="Order Food"
                     description="Browse the restaurant menu and add items to your personal order within the Wave"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={4}
                     icon={DollarSign}
                     title="Split Delivery"
                     description="Delivery fee is automatically divided among all Wave participants equally"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={5}
                     icon={Clock}
                     title="Track Delivery"
                     description="Real-time tracking of the combined order from restaurant to pickup point"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={6}
                     icon={MapPin}
                     title="Pickup Food"
                     description="Collect your order at the designated campus pickup spot with your group"
+                    stepBgColor="#36170E"
+                    stepBorderColor="rgba(193,169,161,0.3)"
+                    accentColor="#C1A9A1"
                   />
                 </div>
               </div>
@@ -961,15 +729,16 @@ export default function WaveeatzPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-24">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="App Screens"
               title="Designed for clarity and delight"
+              accentColor="#C1A9A1"
             />
           </div>
 
           <div className="space-y-20 lg:space-y-32">
             {/* Screen 1: Onboarding */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-onboarding.png"
               alt="Wave Eats onboarding screen"
               title="Onboarding"
@@ -980,7 +749,7 @@ export default function WaveeatzPage() {
             <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
 
             {/* Screen 2: Personalized Home */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-home-wave.png"
               alt="Wave Eats personalized home screen"
               title="Personalized Home"
@@ -992,7 +761,7 @@ export default function WaveeatzPage() {
             <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
 
             {/* Screen 3: Waves Hub */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-waves.png"
               alt="Wave Eats Waves listing screen"
               title="Waves Hub"
@@ -1003,7 +772,7 @@ export default function WaveeatzPage() {
             <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
 
             {/* Screen 4: Restaurant Menu */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-kfc-menu.png"
               alt="Wave Eats KFC menu screen"
               title="Restaurant Menu"
@@ -1015,7 +784,7 @@ export default function WaveeatzPage() {
             <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
 
             {/* Screen 5: Place Order */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-place-order.png"
               alt="Wave Eats order placement screen"
               title="Place Order"
@@ -1026,7 +795,7 @@ export default function WaveeatzPage() {
             <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
 
             {/* Screen 6: Confirm & Pay */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/waveeatz/screen-confirm-order.png"
               alt="Wave Eats confirm order screen"
               title="Confirm & Pay"
@@ -1042,9 +811,10 @@ export default function WaveeatzPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="Features"
               title="Built for students, powered by community"
+              accentColor="#C1A9A1"
             />
           </div>
 
@@ -1052,37 +822,37 @@ export default function WaveeatzPage() {
             className="grid sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-3 gap-6"
             stagger={0.08}
           >
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Search}
               title="Wave Discovery"
               description="Students can browse all active Waves in their delivery zone, filtered by restaurant, time remaining, and number of participants. The discovery feed updates in real-time as new Waves are created."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Users}
               title="Join Wave"
               description="One-tap joining with a clear participant counter showing available spots. Users can see who else is in the Wave and how much they'll save before committing, removing any hesitation."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Package}
               title="Create Wave"
               description="Start your own group order by selecting a restaurant, setting a time window, and inviting classmates. The Wave automatically becomes discoverable to nearby students looking to join."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={DollarSign}
               title="Shared Delivery Fee"
               description="Automatic cost splitting calculated in real-time as participants join. The delivery fee tier system visibly decreases per person with each new member, reinforcing the collaborative benefit."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Clock}
               title="Real-Time Tracking"
               description="Live order status updates from restaurant preparation through dispatch to arrival. The shared tracking view shows all participants exactly where their combined delivery is at any moment."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={MapPin}
               title="Group Pickup"
               description="Designated campus collection points that students already use and recognize. Clear directions and notifications ensure everyone knows exactly where and when to collect their food."
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={TrendingDown}
               title="Savings Summary"
               description="A post-order breakdown showing exactly how much was saved compared to solo delivery. Gamified savings milestones encourage repeat usage and sharing the app with friends."
@@ -1249,29 +1019,33 @@ export default function WaveeatzPage() {
               User Benefits
             </h4>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <StatCard
+              <CaseStudyStatCard
                 icon={TrendingDown}
                 value="70%"
                 label="Maximum savings on delivery fees through group ordering"
                 light
+                accentColor="#C1A9A1"
               />
-              <StatCard
+              <CaseStudyStatCard
                 icon={Clock}
                 value="3 min"
                 label="Average time to discover and join an active Wave"
                 light
+                accentColor="#C1A9A1"
               />
-              <StatCard
+              <CaseStudyStatCard
                 icon={Users}
                 value="5 avg"
                 label="Participants per Wave for optimal fee splitting"
                 light
+                accentColor="#C1A9A1"
               />
-              <StatCard
+              <CaseStudyStatCard
                 icon={CheckCircle2}
                 value="92%"
                 label="User satisfaction score in prototype testing"
                 light
+                accentColor="#C1A9A1"
               />
             </div>
           </ScrollReveal>
@@ -1360,6 +1134,8 @@ export default function WaveeatzPage() {
           </div>
         </div>
       </section>
+
+      <ProjectNavCue nextProjectName="TrendZ" nextProjectHref="/projects/trendz" />
     </div>
   );
 }

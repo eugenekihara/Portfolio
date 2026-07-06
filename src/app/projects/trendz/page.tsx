@@ -1,17 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   ArrowUpRight,
   Code2,
-  Monitor,
-  Layers,
-  Zap,
   Github,
   CheckCircle2,
   BarChart3,
   Database,
+  Layers,
   ShoppingCart,
   Package,
   Users,
@@ -27,10 +23,18 @@ import {
   ScrollRevealLeft,
   ScrollRevealRight,
   SplitTextReveal,
-  StaggerReveal,
   DrawLine,
   ClipReveal,
 } from "@/components/scroll-animations";
+import { SiteNav } from "@/components/site-nav";
+import {
+  CaseStudySectionHeading,
+  CaseStudyStatCard,
+  CaseStudyFeatureCard,
+  CaseStudyColorSwatch,
+  CaseStudyTechTag,
+} from "@/components/case-study";
+import { ProjectNavCue } from "@/components/project-nav-cue";
 
 /* ─── Theme Constants ─── */
 const DARK = "#1d140d"; // Rich espresso — dark backgrounds
@@ -39,111 +43,6 @@ const ACCENT_LIGHT = "#faf8f5"; // Cream — light backgrounds & highlights
 const ACCENT_MID = "#6c6158"; // Warm stone — muted text & borders
 const ACCENT_DARK = "#774826"; // Deep saddle brown — secondary accent
 
-/* ─── Section Heading ─── */
-function SectionHeading({
-  label,
-  title,
-  light = false,
-}: {
-  label: string;
-  title: string;
-  light?: boolean;
-}) {
-  return (
-    <div className="mb-12 lg:mb-16">
-      <ScrollReveal>
-        <p
-          className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
-          style={{ color: ACCENT }}
-        >
-          {label}
-        </p>
-      </ScrollReveal>
-      <SplitTextReveal
-        text={title}
-        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      />
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-}) {
-  return (
-    <div className="p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-foreground/5">
-      <Icon className="w-6 h-6 mb-4" style={{ color: ACCENT }} />
-      <p className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 text-foreground">
-        {value}
-      </p>
-      <p className="text-sm leading-relaxed text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-/* ─── Feature Card ─── */
-/* Reads against the dark espresso (DARK) section background.
-   Colors tuned for WCAG AA contrast: white titles, white/75 body,
-   and a lightened amber icon so the glyph stays legible on espresso. */
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="group p-6 lg:p-8 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-[#966543] transition-all duration-500">
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110"
-        style={{ backgroundColor: `${ACCENT}26` }}
-      >
-        <Icon className="w-6 h-6" style={{ color: "#c89766" }} />
-      </div>
-      <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-3">
-        {title}
-      </h4>
-      <p className="text-sm text-white/75 leading-relaxed">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-/* ─── Color Swatch ─── */
-function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: string }) {
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
-      <div className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0" style={{ backgroundColor: color }} />
-      <div>
-        <p className="text-white font-medium text-sm">{name}</p>
-        <p className="text-white/50 text-xs font-mono">{hex}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Tech Tag ─── */
-function TechTag({ name }: { name: string }) {
-  return (
-    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#966543]/10 border border-[#966543]/25 text-[#1d140d] text-sm font-medium">
-      <Code2 size={14} style={{ color: ACCENT }} />
-      {name}
-    </span>
-  );
-}
-
 /* ────────────────────────────────────────────
    TRENDZ Case Study Page
    ──────────────────────────────────────────── */
@@ -151,32 +50,7 @@ export default function TrendzPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── 1. Navigation ── */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link href="/" className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]">
-              Eugene<span className="text-accent">.</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              {["Home", "Projects", "About", "Contact"].map((item) => (
-                <Link key={item} href={`/#${item.toLowerCase()}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
-            </div>
-            <Link href="/#projects" className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300">
-              <ArrowLeft size={16} />
-              All Projects
-            </Link>
-          </div>
-        </div>
-      </motion.nav>
+      <SiteNav variant="case-study" />
 
       {/* ── 2. Hero Section ── */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
@@ -194,7 +68,7 @@ export default function TrendzPage() {
               </ClipReveal>
               <SplitTextReveal
                 text="Trendz"
-                className="text-6xl sm:text-7xl lg:text-8xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter text-foreground"
+                className="text-case-hero font-bold font-[family-name:var(--font-poppins)] text-foreground"
               />
               <ScrollReveal>
                 <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-lg">
@@ -245,12 +119,12 @@ export default function TrendzPage() {
       {/* ── 3. Overview Stats ── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Overview" title="By the Numbers" />
+          <CaseStudySectionHeading label="Overview" title="By the Numbers" accentColor="#966543" />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard icon={Layers} value="10+" label="Core modules from POS to reporting" />
-            <StatCard icon={Code2} value="35+" label="API endpoints handling all business logic" />
-            <StatCard icon={Database} value="14" label="Prisma models with full relational integrity" />
-            <StatCard icon={Shield} value="JWT" label="Secure cookie-based authentication" />
+            <CaseStudyStatCard icon={Layers} value="10+" label="Core modules from POS to reporting" accentColor="#966543" />
+            <CaseStudyStatCard icon={Code2} value="35+" label="API endpoints handling all business logic" accentColor="#966543" />
+            <CaseStudyStatCard icon={Database} value="14" label="Prisma models with full relational integrity" accentColor="#966543" />
+            <CaseStudyStatCard icon={Shield} value="JWT" label="Secure cookie-based authentication" accentColor="#966543" />
           </div>
         </div>
       </section>
@@ -262,7 +136,7 @@ export default function TrendzPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-              <SectionHeading label="The Problem" title="Small businesses, big operational gaps" />
+              <CaseStudySectionHeading label="The Problem" title="Small businesses, big operational gaps" accentColor="#966543" />
               <ScrollReveal>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
@@ -283,7 +157,7 @@ export default function TrendzPage() {
               </ScrollReveal>
             </div>
             <div>
-              <SectionHeading label="Design Challenge" title="Enterprise power, small-business simplicity" />
+              <CaseStudySectionHeading label="Design Challenge" title="Enterprise power, small-business simplicity" accentColor="#966543" />
               <ScrollReveal>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
@@ -312,7 +186,7 @@ export default function TrendzPage() {
       {/* ── 4b. App Screenshots ── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Screens" title="Trendz in action" />
+          <CaseStudySectionHeading label="Screens" title="Trendz in action" accentColor="#966543" />
           <ScrollReveal>
             <p className="text-muted-foreground leading-relaxed mb-12 max-w-2xl">
               From login to sale completion — every screen is designed for speed and clarity.
@@ -448,52 +322,70 @@ export default function TrendzPage() {
       {/* ── 5. Core Features ── */}
       <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Core Features" title="Built for real business" light />
+          <CaseStudySectionHeading label="Core Features" title="Built for real business" accentColor="#966543" lightAccentColor="#c89766" light />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={ShoppingCart}
               title="Point of Sale"
               description="Fast, intuitive POS with real-time stock validation, automatic inventory deduction, and instant invoice generation. Handles discounts, multiple payment methods, and partial payments."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Package}
               title="Inventory Management"
               description="Full product lifecycle: create, categorize, update stock levels, soft-delete with restore. Category management with icons. Low-stock alerts and stock movement tracking."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={CreditCard}
               title="Credit & Deposits"
               description="Customer credit orders with deposit tracking, partial payments, and automatic status progression (deposit → partial → paid). Payment history and balance calculation built in."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Users}
               title="Staff & Access Control"
               description="Role-based access with admin and staff roles. Staff approval workflows, profile management, and password security with bcrypt hashing. New staff default to limited permissions."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={BarChart3}
               title="Reports & Analytics"
               description="Period-filtered reports with daily sales trends, top products, category breakdowns, payment method analysis, and credit analytics. Export to CSV, XLSX, or PDF."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Bell}
               title="Notifications & Audit"
               description="In-app notifications for sales, inventory, and tasks. Complete audit log tracking all user actions for accountability and compliance. Real-time data change events."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={FileText}
               title="Sales Tracking"
               description="Comprehensive sales entry system distinguishing POS, credit, and manual entries. Search, filter, and reconcile across all sales sources with source-specific badges."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Settings}
               title="Setup Wizard"
               description="Guided first-time setup: create admin account, configure business name and currency, seed initial categories. Get running in under 2 minutes without technical knowledge."
+              variant="dark"
+              accentColor="#966543"
             />
-            <FeatureCard
+            <CaseStudyFeatureCard
               icon={Shield}
               title="Secure by Default"
               description="JWT session tokens stored in httpOnly cookies. bcrypt password hashing with automatic plain-text upgrade. API route protection and role verification on every request."
+              variant="dark"
+              accentColor="#966543"
             />
           </div>
         </div>
@@ -504,7 +396,7 @@ export default function TrendzPage() {
       {/* ── 6. Process ── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Process" title="How it came together" />
+          <CaseStudySectionHeading label="Process" title="How it came together" accentColor="#966543" />
           <div className="space-y-12">
             {[
               {
@@ -563,7 +455,7 @@ export default function TrendzPage() {
       {/* ── 7. Design System ── */}
       <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Design System" title="Visual language" light />
+          <CaseStudySectionHeading label="Design System" title="Visual language" accentColor="#966543" lightAccentColor="#c89766" light />
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
               <p className="text-white/70 leading-relaxed mb-8">
@@ -574,13 +466,13 @@ export default function TrendzPage() {
                 supported with next-themes, and the color system adapts automatically.
               </p>
               <div className="space-y-3">
-                <ColorSwatch color={ACCENT} name="Warm Amber" hex={ACCENT} />
-                <ColorSwatch color={ACCENT_DARK} name="Saddle Brown" hex={ACCENT_DARK} />
-                <ColorSwatch color={ACCENT_LIGHT} name="Cream" hex={ACCENT_LIGHT} />
-                <ColorSwatch color={ACCENT_MID} name="Warm Stone" hex={ACCENT_MID} />
-                <ColorSwatch color={DARK} name="Espresso" hex={DARK} />
-                <ColorSwatch color="#10B981" name="Success Green" hex="#10B981" />
-                <ColorSwatch color="#EF4444" name="Error Red" hex="#EF4444" />
+                <CaseStudyColorSwatch color={ACCENT} name="Warm Amber" hex={ACCENT} />
+                <CaseStudyColorSwatch color={ACCENT_DARK} name="Saddle Brown" hex={ACCENT_DARK} />
+                <CaseStudyColorSwatch color={ACCENT_LIGHT} name="Cream" hex={ACCENT_LIGHT} />
+                <CaseStudyColorSwatch color={ACCENT_MID} name="Warm Stone" hex={ACCENT_MID} />
+                <CaseStudyColorSwatch color={DARK} name="Espresso" hex={DARK} />
+                <CaseStudyColorSwatch color="#10B981" name="Success Green" hex="#10B981" />
+                <CaseStudyColorSwatch color="#EF4444" name="Error Red" hex="#EF4444" />
               </div>
             </div>
             <div>
@@ -610,7 +502,7 @@ export default function TrendzPage() {
       {/* ── 8. Tech Stack ── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Tech Stack" title="What powers Trendz" />
+          <CaseStudySectionHeading label="Tech Stack" title="What powers Trendz" accentColor="#966543" />
           <ScrollReveal>
             <div className="flex flex-wrap gap-3">
               {[
@@ -634,7 +526,7 @@ export default function TrendzPage() {
                 "jsPDF",
                 "xlsx",
               ].map((tech) => (
-                <TechTag key={tech} name={tech} />
+                <CaseStudyTechTag key={tech} name={tech} accentColor="#966543" />
               ))}
             </div>
           </ScrollReveal>
@@ -646,7 +538,7 @@ export default function TrendzPage() {
       {/* ── 9. Outcomes ── */}
       <section className="py-20 lg:py-28" style={{ backgroundColor: DARK }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Outcomes" title="What Trendz delivers" light />
+          <CaseStudySectionHeading label="Outcomes" title="What Trendz delivers" accentColor="#966543" lightAccentColor="#c89766" light />
           <div className="grid sm:grid-cols-2 gap-6">
             {[
               {
@@ -731,6 +623,8 @@ export default function TrendzPage() {
           </Link>
         </div>
       </footer>
+
+      <ProjectNavCue nextProjectName="Shamba Rahisi" nextProjectHref="/projects/shamba-rahisi" />
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Search,
@@ -20,7 +19,6 @@ import {
   BookOpen,
   Send,
 } from "lucide-react";
-import Link from "next/link";
 import {
   ScrollReveal,
   ScrollRevealLeft,
@@ -33,239 +31,21 @@ import {
   MagneticHover,
   ScaleIn,
 } from "@/components/scroll-animations";
+import { SiteNav } from "@/components/site-nav";
+import {
+  CaseStudySectionHeading,
+  CaseStudyStatCard,
+  CaseStudyFlowStep,
+  PhoneFrame,
+  CaseStudyScreenText,
+  CaseStudyScreenShowcase,
+} from "@/components/case-study";
+import { ProjectNavCue } from "@/components/project-nav-cue";
 
 /* ─── Theme Constants ─── */
 const PRIMARY = "#0B3A66";
 const PRIMARY_LIGHT = "#1A5C9E";
 const ACCENT = "#4A90D9";
-
-/* ─── Phone Frame Wrapper ─── */
-function PhoneFrame({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`relative mx-auto ${className}`}
-      style={{ maxWidth: "320px" }}
-    >
-      <div className="relative rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-gray-800 shadow-2xl">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-gray-800 rounded-b-2xl z-10" />
-        <img
-          src={src}
-          alt={alt}
-          className="w-full h-auto object-cover rounded-[2rem]"
-        />
-      </div>
-    </div>
-  );
-}
-
-/* ─── Section Heading ─── */
-function SectionHeading({
-  label,
-  title,
-  light = false,
-}: {
-  label: string;
-  title: string;
-  light?: boolean;
-}) {
-  return (
-    <div className="mb-12 lg:mb-16">
-      <ScrollReveal>
-        <p
-          className={`text-xs font-bold tracking-[0.3em] uppercase mb-3 ${
-            light ? "text-[#4A90D9]" : `text-[${ACCENT}]`
-          }`}
-          style={{ color: ACCENT }}
-        >
-          {label}
-        </p>
-      </ScrollReveal>
-      <SplitTextReveal
-        text={title}
-        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      />
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-  light = false,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-  light?: boolean;
-}) {
-  return (
-    <div
-      className={`p-6 lg:p-8 rounded-2xl ${
-        light
-          ? "bg-white/10 border border-white/10"
-          : "bg-secondary/50 border border-foreground/5"
-      }`}
-    >
-      <Icon
-        className={`w-6 h-6 mb-4 ${light ? "text-[#4A90D9]" : "text-accent"}`}
-      />
-      <p
-        className={`text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      >
-        {value}
-      </p>
-      <p
-        className={`text-sm leading-relaxed ${
-          light ? "text-white/60" : "text-muted-foreground"
-        }`}
-      >
-        {label}
-      </p>
-    </div>
-  );
-}
-
-/* ─── User Flow Step ─── */
-function FlowStep({
-  number,
-  icon: Icon,
-  title,
-  description,
-}: {
-  number: number;
-  icon: React.ElementType;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex flex-col items-center text-center relative">
-      <div className="relative z-10">
-        <div
-          className="w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center border-2 shadow-lg"
-          style={{
-            backgroundColor: PRIMARY,
-            borderColor: `${ACCENT}50`,
-          }}
-        >
-          <Icon className="w-7 h-7 lg:w-8 lg:h-8 text-[#4A90D9]" />
-        </div>
-        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-accent text-white text-xs font-bold flex items-center justify-center">
-          {number}
-        </span>
-      </div>
-      <h4 className="mt-5 text-sm lg:text-base font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <p className="mt-2 text-xs lg:text-sm text-muted-foreground leading-relaxed max-w-[180px]">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-/* ─── Screen Text Content ─── */
-function ScreenTextContent({
-  title,
-  purpose,
-  rationale,
-}: {
-  title: string;
-  purpose: string;
-  rationale: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center space-y-4">
-      <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <div>
-        <p
-          className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-          style={{ color: PRIMARY }}
-        >
-          Purpose
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {purpose}
-        </p>
-      </div>
-      <div>
-        <p
-          className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-          style={{ color: PRIMARY }}
-        >
-          UX Rationale
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {rationale}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Screen Showcase Item ─── */
-function ScreenShowcase({
-  src,
-  alt,
-  title,
-  purpose,
-  rationale,
-  reversed = false,
-}: {
-  src: string;
-  alt: string;
-  title: string;
-  purpose: string;
-  rationale: string;
-  reversed?: boolean;
-}) {
-  if (reversed) {
-    return (
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        <ScrollRevealRight>
-          <ScreenTextContent
-            title={title}
-            purpose={purpose}
-            rationale={rationale}
-          />
-        </ScrollRevealRight>
-        <ScrollRevealLeft>
-          <PhoneFrame src={src} alt={alt} />
-        </ScrollRevealLeft>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-      <ScrollRevealLeft>
-        <PhoneFrame src={src} alt={alt} />
-      </ScrollRevealLeft>
-      <ScrollRevealRight>
-        <ScreenTextContent
-          title={title}
-          purpose={purpose}
-          rationale={rationale}
-        />
-      </ScrollRevealRight>
-    </div>
-  );
-}
 
 /* ─── Color Swatch ─── */
 function ColorSwatch({
@@ -298,42 +78,7 @@ export default function SchoolpataPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── 1. Sticky Navigation ── */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-            >
-              Eugene<span className="text-accent">.</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              {["Home", "Projects", "About", "Contact"].map((item) => (
-                <Link
-                  key={item}
-                  href={`/#${item.toLowerCase()}`}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
-                >
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
-            </div>
-            <Link
-              href="/#projects"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Back</span>
-            </Link>
-          </div>
-        </div>
-      </motion.nav>
+      <SiteNav variant="case-study" />
 
       {/* ── 2. Hero Section ── */}
       <section className="relative overflow-hidden" style={{ backgroundColor: PRIMARY }}>
@@ -353,7 +98,7 @@ export default function SchoolpataPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                <h1 className="text-7xl sm:text-8xl lg:text-[128px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
+                <h1 className="text-case-hero font-bold font-[family-name:var(--font-poppins)] text-foreground">
                   <span className="text-white">SCHOOL</span>
                   <br />
                   <span className="text-[#4A90D9]">PATA</span>
@@ -376,7 +121,7 @@ export default function SchoolpataPage() {
                     key={item.label}
                     className="px-4 py-2 rounded-full border border-white/15 bg-white/5"
                   >
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#4A90D9]">
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#4A90D9]">
                       {item.label}:{" "}
                     </span>
                     <span className="text-sm font-medium text-white/90">
@@ -462,7 +207,7 @@ export default function SchoolpataPage() {
       {/* ── 3. Project Overview ── */}
       <section id="overview" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Overview" title="What is School Pata?" />
+          <CaseStudySectionHeading label="Overview" title="What is School Pata?" accentColor="#4A90D9" />
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <ScrollReveal>
@@ -515,9 +260,10 @@ export default function SchoolpataPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-              <SectionHeading
+              <CaseStudySectionHeading
                 label="The Problem"
                 title="Finding the right school is overwhelming"
+                accentColor="#4A90D9"
               />
               <ScrollReveal delay={0.2}>
                 <div className="space-y-5">
@@ -556,25 +302,29 @@ export default function SchoolpataPage() {
                 className="grid grid-cols-2 gap-4 lg:gap-6"
                 stagger={0.15}
               >
-                <StatCard
+                <CaseStudyStatCard
                   icon={MapPin}
                   value="5–10"
                   label="Schools parents visit on average before deciding"
+                  accentColor="#4A90D9"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Clock}
                   value="Weeks"
                   label="Time spent researching and comparing schools manually"
+                  accentColor="#4A90D9"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Search}
                   value="0"
                   label="Centralized platforms for Kenyan school discovery"
+                  accentColor="#4A90D9"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Users}
                   value="60%+"
                   label="Of parents report the school search process as stressful"
+                  accentColor="#4A90D9"
                 />
               </StaggerReveal>
             </div>
@@ -662,9 +412,10 @@ export default function SchoolpataPage() {
       {/* ── 6. Research & Insights ── */}
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading
+          <CaseStudySectionHeading
             label="Research"
             title="Insights that shaped the design"
+            accentColor="#4A90D9"
           />
 
           <StaggerReveal
@@ -897,9 +648,10 @@ export default function SchoolpataPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-20">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="User Flow"
               title="From discovery to decision"
+              accentColor="#4A90D9"
             />
           </div>
 
@@ -911,35 +663,50 @@ export default function SchoolpataPage() {
                 <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
 
                 <div className="grid grid-cols-5 gap-4 relative">
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={1}
                     icon={Search}
                     title="Search & Discover"
                     description="Search schools by name, location, curriculum, or browse top-rated and trending schools"
+                    stepBgColor="#0B3A66"
+                    stepBorderColor="rgba(74,144,217,0.3)"
+                    accentColor="#4A90D9"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={2}
                     icon={Filter}
                     title="Filter Results"
                     description="Narrow results by rating, fees, curriculum type, and location to find the best matches"
+                    stepBgColor="#0B3A66"
+                    stepBorderColor="rgba(74,144,217,0.3)"
+                    accentColor="#4A90D9"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={3}
                     icon={Heart}
                     title="Save Favorites"
                     description="Bookmark schools that catch your interest to build a personalized shortlist for later review"
+                    stepBgColor="#0B3A66"
+                    stepBorderColor="rgba(74,144,217,0.3)"
+                    accentColor="#4A90D9"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={4}
                     icon={GitCompareArrows}
                     title="Compare Schools"
                     description="Select up to 3 schools and compare ratings, fees, facilities, and curriculum side by side"
+                    stepBgColor="#0B3A66"
+                    stepBorderColor="rgba(74,144,217,0.3)"
+                    accentColor="#4A90D9"
                   />
-                  <FlowStep
+                  <CaseStudyFlowStep
                     number={5}
                     icon={CheckCircle2}
                     title="Decide with Confidence"
                     description="Review your saved schools and comparison data to make an informed enrollment decision"
+                    stepBgColor="#0B3A66"
+                    stepBorderColor="rgba(74,144,217,0.3)"
+                    accentColor="#4A90D9"
                   />
                 </div>
               </div>
@@ -1020,20 +787,22 @@ export default function SchoolpataPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-24">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="App Screens"
               title="Designed for clarity and confidence"
+              accentColor="#4A90D9"
             />
           </div>
 
           <div className="space-y-20 lg:space-y-32">
             {/* Screen 1: Home */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-home.png"
               alt="SchooPata home screen with personalized greeting and search"
               title="Home Dashboard"
               purpose="The home screen greets parents with a personalized experience, featuring a prominent search bar, recent searches as quick-access pills, and curated sections for Top Rated and Most Searched schools. It serves as the central hub from which all discovery flows originate."
               rationale="The search-first layout reflects research findings that parents almost always start their journey with a query. Recent search pills (e.g., 'British curriculum', 'Nairobi') reduce repetitive typing, while the Top Rated section leverages social proof to surface trusted institutions immediately. The Most Searched section taps into community behavior, helping parents discover popular options they might have overlooked."
+              accentColor="#0B3A66"
             />
 
             <DrawLine
@@ -1043,13 +812,14 @@ export default function SchoolpataPage() {
             />
 
             {/* Screen 2: Search & Filter */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-search-filters.png"
               alt="SchooPata search filters screen"
               title="Smart Filters"
               purpose="The filter screen allows parents to narrow their search by minimum rating, fee range (semester), curriculum type, and location. Each filter uses intuitive toggle buttons and sliders that provide instant visual feedback on the selected criteria."
               rationale="Filter design was critical because parents have strong non-negotiables (especially curriculum). Toggle buttons for curriculum and rating were chosen over dropdowns to make all options visible at once, reducing the number of interactions needed. The fee slider uses Kenyan Shilling ranges that align with real market segments, and the location input supports GPS-based discovery for mobile users."
               reversed
+              accentColor="#0B3A66"
             />
 
             <DrawLine
@@ -1059,12 +829,13 @@ export default function SchoolpataPage() {
             />
 
             {/* Screen 3: School Profile */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-school-profile.png"
               alt="SchooPata school profile page for Fairy Academy"
               title="School Profile"
               purpose="The school profile page provides a comprehensive view of a single school, including its campus photo, rating, location, key information cards (curriculum, type, student count, founding year), facilities, and similar school recommendations. A prominent 'Compare' button enables immediate action."
               rationale="Information is layered: the most critical data (name, rating, location) appears at the top, with deeper details (facilities, overview) accessible by scrolling. Key information is presented in scannable card format rather than dense paragraphs. The 'Similar Schools' section at the bottom keeps parents in the discovery loop, reducing dead-end exits and encouraging further exploration."
+              accentColor="#0B3A66"
             />
 
             <DrawLine
@@ -1074,13 +845,14 @@ export default function SchoolpataPage() {
             />
 
             {/* Screen 4: Compare Landing */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-compare-landing.png"
               alt="SchooPata compare schools landing page"
               title="Compare Landing"
               purpose="This screen introduces the comparison feature with a clean, focused layout. A visual balance scale illustration reinforces the concept of weighing options, and two clear entry points ('Add from Search' and 'Select from saved') accommodate different parental workflows."
               rationale="A dedicated landing page for comparison was intentionally designed to set expectations before parents enter the selection flow. The scale illustration provides a visual metaphor that resonates with the decision-making process. Offering two paths into the selection acknowledges that some parents already have saved schools while others want to search fresh."
               reversed
+              accentColor="#0B3A66"
             />
 
             <DrawLine
@@ -1090,12 +862,13 @@ export default function SchoolpataPage() {
             />
 
             {/* Screen 5: Comparison Results */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-comparison-results.png"
               alt="SchooPata side-by-side school comparison results"
               title="Side-by-Side Comparison"
               purpose="The comparison view presents selected schools side-by-side with filterable criteria tabs (All, Rating, Fees, Curriculum, Location). Visual progress bars for fees, percentile badges for ratings, and clear facility lists make differences between schools immediately apparent."
               rationale="The tabbed filter approach prevents information overload while allowing parents to focus on specific criteria. Progress bars for fees create an instant visual comparison that is faster to parse than raw numbers. Percentile rankings contextualize ratings beyond raw star counts, helping parents understand how a school performs relative to the broader market."
+              accentColor="#0B3A66"
             />
 
             <DrawLine
@@ -1105,13 +878,14 @@ export default function SchoolpataPage() {
             />
 
             {/* Screen 6: Saved Schools */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/schoolpata/screen-saved-schools.png"
               alt="SchooPata saved schools list"
               title="Saved Schools"
               purpose="The saved schools screen serves as a parent's personalized shortlist, displaying all bookmarked schools in a clean vertical list with thumbnail images, ratings, and locations. This becomes the go-to reference during the final decision-making phase."
               rationale="The list format was chosen over a grid to maximize scannability on mobile screens. Each card shows just enough information (name, rating, location) for parents to quickly identify schools without needing to open each profile. The screen acts as a persistent memory aid, directly addressing the research insight that parents forget promising schools over long decision timelines."
               reversed
+              accentColor="#0B3A66"
             />
           </div>
         </div>
@@ -1121,9 +895,10 @@ export default function SchoolpataPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="Features"
               title="Everything parents need"
+              accentColor="#4A90D9"
             />
           </div>
 
@@ -1417,9 +1192,10 @@ export default function SchoolpataPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading
+            <CaseStudySectionHeading
               label="Outcomes"
               title="Making school selection effortless"
+              accentColor="#4A90D9"
             />
           </div>
 
@@ -1561,32 +1337,7 @@ export default function SchoolpataPage() {
         </div>
       </section>
 
-      {/* ── 13. Next Project ── */}
-      <section className="py-16 lg:py-24 bg-secondary/30 border-t border-foreground/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <ScrollReveal>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold tracking-[0.3em] uppercase text-muted-foreground mb-2">
-                  Next Project
-                </p>
-                <Link
-                  href="/projects/waveeatz"
-                  className="group inline-flex items-center gap-4"
-                >
-                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    Wave Eats
-                  </h3>
-                  <ArrowRight className="w-6 h-6 text-foreground group-hover:text-accent transition-all duration-300 group-hover:translate-x-2" />
-                </Link>
-                <p className="mt-2 text-muted-foreground text-sm">
-                  Group food delivery for university students
-                </p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <ProjectNavCue nextProjectName="Portfolio" nextProjectHref="/projects/portfolio" />
     </div>
   );
 }

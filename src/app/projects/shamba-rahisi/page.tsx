@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Search,
@@ -22,7 +21,6 @@ import {
   Leaf,
   Languages,
 } from "lucide-react";
-import Link from "next/link";
 import {
   ScrollReveal,
   ScrollRevealLeft,
@@ -33,8 +31,18 @@ import {
   DrawLine,
   ClipReveal,
   MagneticHover,
-  ScaleIn,
 } from "@/components/scroll-animations";
+import { SiteNav } from "@/components/site-nav";
+import {
+  CaseStudySectionHeading,
+  CaseStudyStatCard,
+  CaseStudyFlowStep,
+  PhoneFrame,
+  CaseStudyScreenText,
+  CaseStudyScreenShowcase,
+  CaseStudyColorSwatch,
+} from "@/components/case-study";
+import { ProjectNavCue } from "@/components/project-nav-cue";
 
 /* ─── Theme Constants ─── */
 const GREEN = "#2E5C3E";
@@ -43,230 +51,7 @@ const ORANGE = "#ED6C02";
 const ORANGE_LIGHT = "#F5923A";
 const ACCENT_GREEN = "#4A8B5E";
 
-/* ─── Phone Frame Wrapper ─── */
-function PhoneFrame({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`relative mx-auto ${className}`}
-      style={{ maxWidth: "320px" }}
-    >
-      <div className="relative rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-gray-800 shadow-2xl">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-gray-800 rounded-b-2xl z-10" />
-        <img
-          src={src}
-          alt={alt}
-          className="w-full h-auto object-cover rounded-[2rem]"
-        />
-      </div>
-    </div>
-  );
-}
 
-/* ─── Section Heading ─── */
-function SectionHeading({
-  label,
-  title,
-  light = false,
-  accentColor,
-}: {
-  label: string;
-  title: string;
-  light?: boolean;
-  accentColor?: string;
-}) {
-  return (
-    <div className="mb-12 lg:mb-16">
-      <ScrollReveal>
-        <p
-          className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
-          style={{ color: accentColor || ORANGE }}
-        >
-          {label}
-        </p>
-      </ScrollReveal>
-      <SplitTextReveal
-        text={title}
-        className={`text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      />
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon: Icon,
-  value,
-  label,
-  light = false,
-}: {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-  light?: boolean;
-}) {
-  return (
-    <div
-      className={`p-6 lg:p-8 rounded-2xl ${
-        light
-          ? "bg-white/10 border border-white/10"
-          : "bg-secondary/50 border border-foreground/5"
-      }`}
-    >
-      <Icon className="w-6 h-6 mb-4" style={{ color: light ? ORANGE_LIGHT : ORANGE }} />
-      <p
-        className={`text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] mb-2 ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      >
-        {value}
-      </p>
-      <p
-        className={`text-sm leading-relaxed ${
-          light ? "text-white/60" : "text-muted-foreground"
-        }`}
-      >
-        {label}
-      </p>
-    </div>
-  );
-}
-
-/* ─── User Flow Step ─── */
-function FlowStep({
-  number,
-  icon: Icon,
-  title,
-  description,
-}: {
-  number: number;
-  icon: React.ElementType;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex flex-col items-center text-center relative">
-      <div className="relative z-10">
-        <div
-          className="w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center border-2 shadow-lg"
-          style={{ backgroundColor: GREEN, borderColor: `${ACCENT_GREEN}50` }}
-        >
-          <Icon className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: ACCENT_GREEN }} />
-        </div>
-        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ backgroundColor: ORANGE }}>
-          {number}
-        </span>
-      </div>
-      <h4 className="mt-5 text-sm lg:text-base font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <p className="mt-2 text-xs lg:text-sm text-muted-foreground leading-relaxed max-w-[180px]">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-/* ─── Screen Text Content ─── */
-function ScreenTextContent({
-  title,
-  purpose,
-  rationale,
-}: {
-  title: string;
-  purpose: string;
-  rationale: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center space-y-4">
-      <h4 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
-        {title}
-      </h4>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: GREEN }}>
-          Purpose
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {purpose}
-        </p>
-      </div>
-      <div>
-        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: GREEN }}>
-          UX Rationale
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {rationale}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Screen Showcase Item ─── */
-function ScreenShowcase({
-  src,
-  alt,
-  title,
-  purpose,
-  rationale,
-  reversed = false,
-}: {
-  src: string;
-  alt: string;
-  title: string;
-  purpose: string;
-  rationale: string;
-  reversed?: boolean;
-}) {
-  if (reversed) {
-    return (
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        <ScrollRevealRight>
-          <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-        </ScrollRevealRight>
-        <ScrollRevealLeft>
-          <PhoneFrame src={src} alt={alt} />
-        </ScrollRevealLeft>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-      <ScrollRevealLeft>
-        <PhoneFrame src={src} alt={alt} />
-      </ScrollRevealLeft>
-      <ScrollRevealRight>
-        <ScreenTextContent title={title} purpose={purpose} rationale={rationale} />
-      </ScrollRevealRight>
-    </div>
-  );
-}
-
-/* ─── Color Swatch ─── */
-function ColorSwatch({ color, name, hex }: { color: string; name: string; hex: string }) {
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
-      <div
-        className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0"
-        style={{ backgroundColor: color }}
-      />
-      <div>
-        <p className="text-white font-medium text-sm">{name}</p>
-        <p className="text-white/50 text-xs font-mono">{hex}</p>
-      </div>
-    </div>
-  );
-}
 
 /* ────────────────────────────────────────────
    SHAMBA RAHISI Case Study Page
@@ -275,42 +60,7 @@ export default function ShambaRahisiPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── 1. Sticky Navigation ── */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight font-[family-name:var(--font-poppins)]"
-            >
-              Eugene<span className="text-accent">.</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              {["Home", "Projects", "About", "Contact"].map((item) => (
-                <Link
-                  key={item}
-                  href={`/#${item.toLowerCase()}`}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
-                >
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
-            </div>
-            <Link
-              href="/#projects"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground/5 hover:bg-foreground/10 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Back</span>
-            </Link>
-          </div>
-        </div>
-      </motion.nav>
+      <SiteNav variant="case-study" />
 
       {/* ── 2. Hero Section ── */}
       <section className="relative overflow-hidden" style={{ backgroundColor: GREEN }}>
@@ -330,7 +80,7 @@ export default function ShambaRahisiPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                <h1 className="text-6xl sm:text-7xl lg:text-[100px] font-bold leading-[0.85] tracking-tight font-[family-name:var(--font-poppins)]">
+                <h1 className="text-case-hero font-bold font-[family-name:var(--font-poppins)]">
                   <span className="text-white">SHAMBA</span>
                   <br />
                   <span style={{ color: ORANGE }}>RAHISI</span>
@@ -353,7 +103,7 @@ export default function ShambaRahisiPage() {
                     key={item.label}
                     className="px-4 py-2 rounded-full border border-white/15 bg-white/5"
                   >
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: ORANGE }}>
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase" style={{ color: ORANGE }}>
                       {item.label}:{" "}
                     </span>
                     <span className="text-sm font-medium text-white/90">
@@ -432,7 +182,7 @@ export default function ShambaRahisiPage() {
       {/* ── 3. Project Overview ── */}
       <section id="overview" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading label="Overview" title="The voice of your soil" accentColor={ORANGE} />
+          <CaseStudySectionHeading label="Overview" title="The voice of your soil" accentColor="#ED6C02" />
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <ScrollReveal>
@@ -486,10 +236,10 @@ export default function ShambaRahisiPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-              <SectionHeading
+              <CaseStudySectionHeading
                 label="The Problem"
                 title="Data-rich, insight-poor"
-                accentColor={ORANGE}
+                accentColor="#ED6C02"
               />
               <ScrollReveal delay={0.2}>
                 <div className="space-y-5">
@@ -525,25 +275,29 @@ export default function ShambaRahisiPage() {
 
             <div>
               <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
-                <StatCard
+                <CaseStudyStatCard
                   icon={BarChart3}
                   value="Raw Data"
                   label="Complex sensor data that farmers cannot interpret without technical knowledge"
+                  accentColor="#ED6C02"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Languages}
                   value="English Only"
                   label="Most AgTech platforms ignore local and native languages"
+                  accentColor="#ED6C02"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Clock}
                   value="Missed Deadlines"
                   label="No timely reminders for critical farming activities like planting windows"
+                  accentColor="#ED6C02"
                 />
-                <StatCard
+                <CaseStudyStatCard
                   icon={Sprout}
                   value="Yield Gap"
                   label="The disconnect between available data and farmer action reduces productivity"
+                  accentColor="#ED6C02"
                 />
               </StaggerReveal>
             </div>
@@ -633,10 +387,10 @@ export default function ShambaRahisiPage() {
       {/* ── 6. Research Insights ── */}
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <SectionHeading
+          <CaseStudySectionHeading
             label="Research Insights"
             title="What farmers told us"
-            accentColor={ORANGE}
+            accentColor="#ED6C02"
           />
 
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.1}>
@@ -823,7 +577,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-20">
-            <SectionHeading label="User Flow" title="From data to action" accentColor={ORANGE} />
+            <CaseStudySectionHeading label="User Flow" title="From data to action" accentColor="#ED6C02" />
           </div>
 
           {/* Desktop: Horizontal Timeline */}
@@ -832,11 +586,11 @@ export default function ShambaRahisiPage() {
               <div className="relative">
                 <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
                 <div className="grid grid-cols-5 gap-4 relative">
-                  <FlowStep number={1} icon={Sprout} title="Welcome" description="Splash screen introduces the brand and gets farmers started with the app" />
-                  <FlowStep number={2} icon={BarChart3} title="Provide Data" description="Choose how to share soil data — soil test results, extension officer, or manual entry" />
-                  <FlowStep number={3} icon={MapPin} title="Map Farm" description="Trace field boundaries on satellite maps and connect Synnefa sensor accounts" />
-                  <FlowStep number={4} icon={Lightbulb} title="Get Insights" description="Receive personalized recommendations in your language with cost estimates and deadlines" />
-                  <FlowStep number={5} icon={CheckCircle2} title="Take Action" description="Follow step-by-step task instructions with location verification and smart reminders" />
+                  <CaseStudyFlowStep number={1} icon={Sprout} title="Welcome" description="Splash screen introduces the brand and gets farmers started with the app" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
+                  <CaseStudyFlowStep number={2} icon={BarChart3} title="Provide Data" description="Choose how to share soil data — soil test results, extension officer, or manual entry" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
+                  <CaseStudyFlowStep number={3} icon={MapPin} title="Map Farm" description="Trace field boundaries on satellite maps and connect Synnefa sensor accounts" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
+                  <CaseStudyFlowStep number={4} icon={Lightbulb} title="Get Insights" description="Receive personalized recommendations in your language with cost estimates and deadlines" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
+                  <CaseStudyFlowStep number={5} icon={CheckCircle2} title="Take Action" description="Follow step-by-step task instructions with location verification and smart reminders" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
                 </div>
               </div>
             </ScrollReveal>
@@ -874,109 +628,118 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16 lg:mb-24">
-            <SectionHeading label="App Screens" title="From soil data to farmer action" accentColor={ORANGE} />
+            <CaseStudySectionHeading label="App Screens" title="From soil data to farmer action" accentColor="#ED6C02" />
           </div>
 
           <div className="space-y-20 lg:space-y-32">
             {/* Screen 1: Splash */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-splash.png"
               alt="Shamba Rahisi splash welcome screen"
               title="Welcome Screen"
               purpose="The splash screen establishes the brand identity with authentic agricultural imagery — a real farmer working in a field. The bold 'Shamba Rahisi' branding in orange alongside the tagline 'The Voice of Your Soil' immediately communicates the app's mission to give farmers a voice through their soil data."
               rationale="Research showed that farmers respond to authentic, relatable imagery rather than abstract tech visuals. The dual-path entry (Get Started for new users, Log In for returning) reduces friction. The orange brand text against the natural photography creates visual warmth that resonates with the agricultural community."
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 2: Onboarding Data Source */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-onboarding-data-source.png"
               alt="Shamba Rahisi onboarding data source selection"
               title="Data Source Selection"
               purpose="The first onboarding step asks farmers how they'd like to provide soil and farm information. Three clear options — Soil Test Results, Extension Officer, or Manual Entry — accommodate different farmer profiles and data access levels."
               rationale="Bilingual presentation (English + Swahili) from the very first interaction reinforces the app's commitment to accessibility. The three-card layout was designed to be scannable without reading long paragraphs. Offering multiple data input methods ensures the app is useful even for farmers without recent lab results or sensor access."
               reversed
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 3: Home Dashboard */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-home-dashboard.png"
               alt="Shamba Rahisi home dashboard with farm overview and priority task"
               title="Home Dashboard"
               purpose="The home dashboard serves as the farmer's central hub, displaying a personalized greeting, real-time farm summary (Farm Size, Soil pH, Crop), weather conditions, priority tasks, quick actions, and recent activity — all above the fold."
               rationale="The priority task card uses Swahili for the recommendation title ('Tumia Mbolea yenye Naitrojeni Nyingi') to demonstrate the multilingual approach. Including potential savings (Ksh 15,000) alongside the task provides financial motivation. Weather integration helps farmers contextualize recommendations against current conditions."
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 4: Recommendation */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-recommendation.png"
               alt="Shamba Rahisi recommendation with actionable insights"
               title="Smart Recommendations"
               purpose="The recommendation screen is where complex data becomes simple action. It shows the sensor source, soil status cards (Nitrogen, pH, Moisture), a conversational explanation using metaphors, recommended action with cost estimates, step-by-step instructions, and CTAs to add to tasks or set savings goals."
               rationale="The metaphor-based explanation ('Your soil is hungry for nitrogen') was a direct result of research finding that farmers prefer conversational language over scientific terminology. Including estimated cost (2,800 KES) and deadline context ('before rain') transforms an abstract recommendation into a concrete, plannable action. The 'Watch Demo Video' option caters to visual learners."
               reversed
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 5: Voice Settings */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-voice-settings.png"
               alt="Shamba Rahisi voice settings with language selection"
               title="Voice & Language Settings"
               purpose="The voice settings screen allows farmers to choose their preferred language (Kiswahili, English, Kalenjin, or Kikuyu) and voice gender for audio recommendations. A preview feature lets users sample the voice before committing."
               rationale="This screen directly addresses the research insight that local language is non-negotiable. Including native languages like Kalenjin and Kikuyu (with their native script: 'Gikuyu') demonstrates genuine localization rather than token translation. The voice gender option adds personalization, and the preview function builds confidence before committing to settings."
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 6: Connect Synnefa */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-onboarding-connect-synnefa.png"
               alt="Shamba Rahisi Synnefa FarmShield sensor connection screen"
               title="Connect Synnefa Sensors"
               purpose="Step 2 of onboarding integrates the farmer's Synnefa FarmShield account to sync real-time IoT sensor data. A simple login form with phone number and password fields bridges the gap between sensor hardware and the recommendation engine."
               rationale="Placing sensor integration early in onboarding ensures the app can deliver data-driven recommendations from the very first session. The phone number field with Kenyan format hint (+254) reduces input errors. By separating this step from data source selection, farmers who choose manual entry aren't forced through a sensor login they don't need — the flow adapts to their earlier choice."
               reversed
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 7: Map Farm */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-onboarding-map-farm.png"
               alt="Shamba Rahisi farm mapping with satellite view"
               title="Farm Mapping"
               purpose="The final onboarding step enables farmers to trace their field boundaries on a satellite map. The satellite imagery provides a realistic aerial view, while simple drawing tools let users outline their plots with precision. Undo and Save Field controls ensure confidence before committing."
               rationale="Satellite imagery was chosen over map views because farmers can visually identify their own land — landmarks, buildings, and field shapes act as natural verification. The three-action button system (Undo, Save Field, Finish Setup) breaks the complex task of boundary tracing into manageable steps. Completing this step enables location-specific sensor data correlation."
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 8: Tasks */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-tasks.png"
               alt="Shamba Rahisi task management with priority levels"
               title="Task Management"
               purpose="The tasks screen organizes all farming activities by urgency. Today's high-priority task sits at the top with a bold orange border and immediate 'Start Task' CTA, while this week's medium-priority items appear below. Completed tasks are accessible via a separate link."
               rationale="Priority-based visual hierarchy (orange border for HIGH, lighter for MEDIUM) ensures farmers see the most urgent action first. The 'Start Task' button on high-priority items reduces the friction between seeing a task and beginning it. Separating completed tasks prevents clutter while maintaining a sense of progress and accomplishment."
               reversed
+            accentColor="#2E5C3E"
             />
 
             <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
 
             {/* Screen 9: Task Details */}
-            <ScreenShowcase
+            <CaseStudyScreenShowcase
               src="/shamba-rahisi/screen-task-details.png"
               alt="Shamba Rahisi task detail with step-by-step instructions and location check"
               title="Task Execution"
               purpose="The task detail screen guides farmers through execution with numbered step-by-step instructions, resource verification (confirming available fertilizer in storage), and GPS-based location confirmation. An aerial map view confirms the farmer is at the correct field before starting."
               rationale="Location verification addresses a real-world problem — farmers with multiple fields applying the wrong treatment to the wrong plot. The resource check ('You have 50kg DAP in storage') removes the guesswork around material availability. Numbered instructions with precise measurements (e.g., '10g per planting hole') translate recommendations into unambiguous actions that leave no room for misinterpretation."
+            accentColor="#2E5C3E"
             />
           </div>
         </div>
@@ -986,7 +749,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Features" title="Built for the field, not the lab" accentColor={ORANGE} />
+            <CaseStudySectionHeading label="Features" title="Built for the field, not the lab" accentColor="#ED6C02" />
           </div>
 
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
@@ -1097,11 +860,11 @@ export default function ShambaRahisiPage() {
               <div className="space-y-6">
                 <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">Color Palette</h3>
                 <div className="space-y-3">
-                  <ColorSwatch color="#2E5C3E" name="Deep Forest Green" hex="#2E5C3E" />
-                  <ColorSwatch color="#4A8B5E" name="Leaf Green" hex="#4A8B5E" />
-                  <ColorSwatch color="#ED6C02" name="Burnt Orange" hex="#ED6C02" />
-                  <ColorSwatch color="#F5923A" name="Harvest Gold" hex="#F5923A" />
-                  <ColorSwatch color="#FFFFFF" name="White" hex="#FFFFFF" />
+                  <CaseStudyColorSwatch color="#2E5C3E" name="Deep Forest Green" hex="#2E5C3E" />
+                  <CaseStudyColorSwatch color="#4A8B5E" name="Leaf Green" hex="#4A8B5E" />
+                  <CaseStudyColorSwatch color="#ED6C02" name="Burnt Orange" hex="#ED6C02" />
+                  <CaseStudyColorSwatch color="#F5923A" name="Harvest Gold" hex="#F5923A" />
+                  <CaseStudyColorSwatch color="#FFFFFF" name="White" hex="#FFFFFF" />
                 </div>
               </div>
             </ScrollRevealLeft>
@@ -1157,7 +920,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Tools & Technology" title="The stack behind the solution" accentColor={ORANGE} />
+            <CaseStudySectionHeading label="Tools & Technology" title="The stack behind the solution" accentColor="#ED6C02" />
           </div>
 
           <StaggerReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" stagger={0.08}>
@@ -1240,7 +1003,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <SectionHeading label="Outcomes" title="Empowering farmers through understanding" accentColor={ORANGE} />
+            <CaseStudySectionHeading label="Outcomes" title="Empowering farmers through understanding" accentColor="#ED6C02" />
           </div>
 
           <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" stagger={0.12}>
@@ -1323,32 +1086,8 @@ export default function ShambaRahisiPage() {
         </div>
       </section>
 
-      {/* ── 13. Next Project ── */}
-      <section className="py-16 lg:py-24 bg-secondary/30 border-t border-foreground/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <ScrollReveal>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold tracking-[0.3em] uppercase text-muted-foreground mb-2">
-                  Next Project
-                </p>
-                <Link
-                  href="/projects/schoolpata"
-                  className="group inline-flex items-center gap-4"
-                >
-                  <h3 className="text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    School Pata
-                  </h3>
-                  <ArrowRight className="w-6 h-6 text-foreground group-hover:text-accent transition-all duration-300 group-hover:translate-x-2" />
-                </Link>
-                <p className="mt-2 text-muted-foreground text-sm">
-                  School discovery and comparison platform for parents
-                </p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* ── Next Project ── */}
+      <ProjectNavCue nextProjectName="SchoolPata" nextProjectHref="/projects/schoolpata" />
     </div>
   );
 }
