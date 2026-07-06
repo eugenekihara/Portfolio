@@ -418,26 +418,26 @@ function HeroSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-16 w-full hero-content">
         <div className="grid lg:grid-cols-3 gap-12 items-center">
           <div className="lg:col-span-2">
+            {/* Name — primary focal point */}
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.05 }}
+              className="text-hero-focal font-black font-[family-name:var(--font-poppins)] -mb-2"
+            >
+              Eugene
+            </motion.h1>
+
             {/* Label */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
               <span className="inline-block text-xs tracking-[0.2em] uppercase text-accent font-medium border border-accent/30 rounded-full px-4 py-1.5 mb-8">
                 UI/UX Designer &amp; Developer
               </span>
             </motion.div>
-
-            {/* Name with split text reveal */}
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="text-hero-display font-bold font-[family-name:var(--font-poppins)]"
-            >
-              Eugene
-            </motion.h1>
 
             {/* Subtitle */}
             <motion.p

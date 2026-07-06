@@ -229,6 +229,13 @@ section[id] {
   letter-spacing: -0.03em;
 }
 
+/* Hero focal name — larger & bolder than hero-display */
+.text-hero-focal {
+  font-size: clamp(6rem, 16vw + 1.5rem, 11rem);
+  line-height: 0.82;
+  letter-spacing: -0.035em;
+}
+
 /* Case study hero title */
 .text-case-hero {
   font-size: clamp(3rem, 8vw + 0.5rem, 6rem);
