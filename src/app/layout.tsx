@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { NextAuthProvider } from "@/components/providers/next-auth-provider";
 import { MarqueeBanner } from "@/components/marquee-banner";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothScrollProvider } from "@/components/smooth-scroll-provider";
@@ -69,14 +68,12 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-background text-foreground`}
       >
         <SmoothScrollProvider>
-          <NextAuthProvider>
-            <SkipToContent />
-            <div className="flex flex-col min-h-screen">
-              <div id="main-content" className="flex-1">{children}</div>
-              <MarqueeBanner />
-              <SiteFooter />
-            </div>
-          </NextAuthProvider>
+          <SkipToContent />
+          <div className="flex flex-col min-h-screen">
+            <div id="main-content" className="flex-1">{children}</div>
+            <MarqueeBanner />
+            <SiteFooter />
+          </div>
           <Toaster />
           <BackToTop />
         </SmoothScrollProvider>
