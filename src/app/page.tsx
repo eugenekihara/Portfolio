@@ -801,7 +801,7 @@ function ProjectsSection() {
       <HorizontalScroll className="pb-20 lg:pb-28">
         {projects.map((project, i) => (
           <Link key={project.id} href={`/projects/${project.slug}`}>
-            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full">
+            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full snap-start">
               <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
                 {/* Image */}
                 <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
