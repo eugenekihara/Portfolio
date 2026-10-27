@@ -399,7 +399,10 @@ export function HorizontalScroll({
   }, []);
 
   return (
-    <div ref={sectionRef} className={`overflow-hidden ${className}`}>
+    <div
+      ref={sectionRef}
+      className={`overflow-x-auto lg:overflow-hidden snap-x snap-mandatory scroll-pl-6 lg:scroll-pl-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [overscroll-behavior-x:contain] ${className}`}
+    >
       <div ref={trackRef} className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-[25vw] will-change-transform items-stretch">
         {children}
       </div>

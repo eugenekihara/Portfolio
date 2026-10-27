@@ -770,7 +770,7 @@ function ProjectsSection() {
       className="bg-[#0a0a0a] text-white overflow-hidden"
     >
       {/* Section Header — above the pinned area */}
-      <div className="pt-28 lg:pt-40 pb-12 lg:pb-16">
+      <div className="pt-20 lg:pt-28 pb-8 lg:pb-10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <ScrollReveal>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
@@ -780,7 +780,7 @@ function ProjectsSection() {
                 </span>
                 <SplitTextReveal
                   text="Projects"
-                  className="mt-4 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
+                  className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
                 />
               </div>
 
@@ -793,15 +793,15 @@ function ProjectsSection() {
             </div>
           </ScrollReveal>
 
-          <DrawLine className="mt-8 lg:mt-12" color="#8b4049" />
+          <DrawLine className="mt-6 lg:mt-8" color="#8b4049" />
         </div>
       </div>
 
       {/* Horizontal scrolling project cards */}
-      <HorizontalScroll className="pb-28 lg:pb-40">
+      <HorizontalScroll className="pb-20 lg:pb-28">
         {projects.map((project, i) => (
           <Link key={project.id} href={`/projects/${project.slug}`}>
-            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full">
+            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full snap-start">
               <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
                 {/* Image */}
                 <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
