@@ -59,7 +59,7 @@ if (existsSync(dbFile)) {
 // Run seed to populate initial data (projects + admin user)
 console.log(`[Setup DB] Running database seed...`);
 try {
-  execSync("bunx tsx prisma/seed.ts", {
+  execSync("npx tsx prisma/seed.ts", {
     stdio: "inherit",
     env: {
       ...process.env,
@@ -69,6 +69,6 @@ try {
   });
   console.log(`[Setup DB] ✅ Database seeded successfully`);
 } catch (err) {
-  console.warn(`[Setup DB] ⚠️ Seed failed (data may already exist). Continuing...`);
-  // Don't exit — seed failure is non-fatal (data may already be there)
+  console.warn(`[Setup DB] ⚠️ Seed failed. If the Projects section is empty, run "npm run db:seed" and check the error above. Continuing...`);
+  // Don't exit — seed failure is non-fatal if the data is already there
 }

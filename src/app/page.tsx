@@ -1058,13 +1058,17 @@ function ProjectsSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
+    let cancelled = false;
     fetch("/api/projects")
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data) => {
+        if (cancelled) return;
         if (Array.isArray(data)) {
           setProjects(data);
         } else if (data && typeof data.error === "string") {
@@ -1075,11 +1079,15 @@ function ProjectsSection() {
         setLoading(false);
       })
       .catch((err) => {
+        if (cancelled) return;
         setError(err.message || "Failed to load projects");
         setProjects([]);
         setLoading(false);
       });
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [attempt]);
 
   if (loading) {
     return (
@@ -1105,8 +1113,27 @@ function ProjectsSection() {
             Projects
           </h2>
           <p className="mt-6 text-neutral-400 text-sm">
-            {error ? "Unable to load projects. Please try again later." : "No projects yet. Check back soon!"}
+            {error ? "We couldn\u2019t load the projects just now." : "No projects yet. Check back soon!"}
           </p>
+          {error && (
+            <button
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                setAttempt((n) => n + 1);
+              }}
+              className="mt-5 inline-flex items-center gap-2 border-2 border-neutral-600 px-4 py-2 text-xs font-bold tracking-[0.2em] uppercase text-neutral-300 hover:border-[#8b4049] hover:text-white transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b4049]"
+            >
+              Try again
+            </button>
+          )}
+          {process.env.NODE_ENV === "development" && (
+            <p className="mt-6 text-xs text-neutral-600">
+              Dev hint: {error ? `${error}. ` : "the database has no published projects. "}
+              Open /api/projects, then run <code>npm run db:seed</code>.
+            </p>
+          )}
         </div>
       </section>
     );
@@ -1237,7 +1264,7 @@ function AboutSection() {
   ];
 
   return (
-    <section id="about" className="py-24 lg:py-32 bg-card">
+    <section id="about" className="py-24 lg:py-32 bg-card overflow-x-clip">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* Left: Text - reveals from left */}
@@ -1458,7 +1485,7 @@ function SkillsSection() {
   };
 
   return (
-    <section id="skills" className="py-24 lg:py-32">
+    <section id="skills" className="py-24 lg:py-32 overflow-x-clip">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <ScrollReveal>
           <div className="text-center mb-16">
@@ -1648,7 +1675,7 @@ function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 lg:py-32 bg-card">
+    <section id="contact" className="py-24 lg:py-32 bg-card overflow-x-clip">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <ScrollReveal>
           <div className="text-center mb-16">
