@@ -1087,7 +1087,7 @@ export default function ShambaRahisiPage() {
       </section>
 
       {/* ── Next Project ── */}
-      <ProjectNavCue nextProjectName="SchoolPata" nextProjectHref="/projects/schoolpata" />
+      <ProjectNavCue currentSlug="shamba-rahisi" />
     </div>
   );
 }

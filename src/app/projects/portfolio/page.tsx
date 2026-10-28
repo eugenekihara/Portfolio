@@ -447,7 +447,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* ── 11. Next Project ── */}
-      <ProjectNavCue nextProjectName="WaveEatz" nextProjectHref="/projects/waveeatz" />
+      <ProjectNavCue currentSlug="portfolio" />
     </div>
   );
 }

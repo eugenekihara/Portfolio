@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
-  ArrowRight,
   Users,
   MapPin,
   Clock,
@@ -21,12 +19,7 @@ import {
   AlertCircle,
   Bell,
 } from "lucide-react";
-import Link from "next/link";
-import {
-  ScrollReveal,
-  ScrollRevealLeft,
-  ScrollRevealRight,
-} from "@/components/scroll-animations";
+import { ScrollReveal, ScrollRevealRight } from "@/components/scroll-animations";
 import { SiteNav } from "@/components/site-nav";
 import { ProjectNavCue } from "@/components/project-nav-cue";
 import {
@@ -622,47 +615,7 @@ export default function WaveeatzPage() {
         </div>
       </section>
 
-      {/* ── Project navigation ── */}
-      <section className="py-16 lg:py-24 bg-background border-t border-foreground/5">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid sm:grid-cols-2 gap-6">
-            <ScrollRevealLeft>
-              <Link
-                href="/projects/shamba-rahisi"
-                className="group flex items-center justify-between p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-accent/20 transition-all duration-500"
-              >
-                <div>
-                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-2">Previous Project</p>
-                  <h3 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    Shamba Rahisi
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-accent/10 transition-colors duration-300">
-                  <ArrowLeft className="w-5 h-5 text-foreground group-hover:text-accent transition-colors duration-300" />
-                </div>
-              </Link>
-            </ScrollRevealLeft>
-            <ScrollRevealRight>
-              <Link
-                href="/projects/schoolpata"
-                className="group flex items-center justify-between p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-accent/20 transition-all duration-500"
-              >
-                <div>
-                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-2">Next Project</p>
-                  <h3 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    Schoolpata
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-accent/10 transition-colors duration-300">
-                  <ArrowRight className="w-5 h-5 text-foreground group-hover:text-accent transition-colors duration-300" />
-                </div>
-              </Link>
-            </ScrollRevealRight>
-          </div>
-        </div>
-      </section>
-
-      <ProjectNavCue nextProjectName="TrendZ" nextProjectHref="/projects/trendz" />
+      <ProjectNavCue currentSlug="waveeatz" />
     </div>
   );
 }

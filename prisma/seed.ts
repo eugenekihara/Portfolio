@@ -35,7 +35,7 @@ async function main() {
       caseStudyHref: "/projects/waveeatz",
       featured: true,
       published: true,
-      order: 0,
+      order: 1,
     },
     {
       title: "SchooPata",
@@ -52,7 +52,7 @@ async function main() {
       caseStudyHref: "https://www.figma.com/design/SZE5vqXtIOX3bYFNrARVW7/Eugene%7C-SchoolPata-%7C-FINAL--Copy-?node-id=1506-226&t=V4tfu9CevRCsSz4N-1",
       featured: false,
       published: true,
-      order: 1,
+      order: 2,
     },
     {
       title: "Shamba Rahisi",
@@ -69,7 +69,7 @@ async function main() {
       caseStudyHref: "https://www.figma.com/deck/lZy1RpGIHIaL2WsBdfbuDT",
       featured: false,
       published: true,
-      order: 2,
+      order: 0,
     },
     {
       title: "Portfolio Website",
