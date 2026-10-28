@@ -578,35 +578,6 @@ export default function TrendzPage() {
 
       <DrawLine color={ACCENT} />
 
-      {/* ── 10. Next Project ── */}
-      <section className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-          <ScrollReveal>
-            <p
-              className="text-xs font-bold tracking-[0.3em] uppercase mb-4"
-              style={{ color: ACCENT }}
-            >
-              Next Project
-            </p>
-          </ScrollReveal>
-          <Link href="/projects/portfolio" className="group inline-block">
-            <SplitTextReveal
-              text="Portfolio Website"
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter text-foreground group-hover:text-accent transition-colors duration-500"
-            />
-            <div className="mt-6 inline-flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-              <span className="text-sm font-bold tracking-[0.2em] uppercase">
-                View Case Study
-              </span>
-              <ArrowUpRight
-                size={20}
-                className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
-              />
-            </div>
-          </Link>
-        </div>
-      </section>
-
       {/* ── 11. Footer ── */}
       <footer className="py-8 border-t border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -624,7 +595,7 @@ export default function TrendzPage() {
         </div>
       </footer>
 
-      <ProjectNavCue nextProjectName="Shamba Rahisi" nextProjectHref="/projects/shamba-rahisi" />
+      <ProjectNavCue currentSlug="trendz" />
     </div>
   );
 }

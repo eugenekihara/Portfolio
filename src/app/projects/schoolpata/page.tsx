@@ -1337,7 +1337,7 @@ export default function SchoolpataPage() {
         </div>
       </section>
 
-      <ProjectNavCue nextProjectName="Portfolio" nextProjectHref="/projects/portfolio" />
+      <ProjectNavCue currentSlug="schoolpata" />
     </div>
   );
 }

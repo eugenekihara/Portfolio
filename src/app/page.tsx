@@ -23,6 +23,7 @@ import {
   Code2,
   Database,
   Wrench,
+  Check,
 } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { ScrollHint } from "@/components/scroll-hint";
@@ -529,39 +530,128 @@ function HeroSection() {
 }
 
 /* ─── Services Section ─── */
+interface ServiceOffer {
+  id: string;
+  title: string;
+  teaser: string;
+  headline: string;
+  value: string;
+  activities: string[];
+  deliverables: string[];
+  fit: string;
+}
+
+const SERVICE_OFFERS: ServiceOffer[] = [
+  {
+    id: "product-design",
+    title: "Product Design",
+    teaser: "From a loose problem to a prototype your team can build.",
+    headline: "A clear path from problem to buildable prototype.",
+    value:
+      "I work with you to understand who the product is for, decide what to solve first, and shape it into flows and screens that can be tested and built.",
+    activities: [
+      "User research: interviews and observation",
+      "Problem framing, personas and user flows",
+      "Wireframes and interactive Figma prototypes",
+      "Feedback rounds and iteration",
+    ],
+    deliverables: [
+      "Research summary and problem statement",
+      "User flows and screen map",
+      "Wireframes",
+      "High-fidelity, clickable prototype",
+    ],
+    fit: "You have an idea or a problem and need it turned into a product direction.",
+  },
+  {
+    id: "ux-audits",
+    title: "UI/UX Audits",
+    teaser: "See what blocks your users and what to fix first.",
+    headline: "A prioritized view of what is getting in your users\u2019 way.",
+    value:
+      "I review an existing product against usability principles and its key user flows, then turn the findings into a short, ordered list of fixes.",
+    activities: [
+      "Walkthrough of key user flows",
+      "Heuristic usability review",
+      "Accessibility and consistency checks",
+      "Prioritizing issues by severity and effort",
+    ],
+    deliverables: [
+      "Annotated screenshots of findings",
+      "Prioritized issue list",
+      "Recommended fixes and quick wins",
+      "A walkthrough of the results",
+    ],
+    fit: "Users drop off, the same questions keep coming back, or the product has grown inconsistent.",
+  },
+  {
+    id: "design-systems",
+    title: "Design Systems",
+    teaser: "Consistent screens and faster design decisions.",
+    headline: "One shared set of components instead of one-off screens.",
+    value:
+      "I turn repeated UI patterns into a documented library of tokens and components, so designers and developers work from the same source.",
+    activities: [
+      "Audit existing UI for repeated and conflicting patterns",
+      "Define color, type and spacing tokens",
+      "Build reusable Figma components with states and variants",
+      "Write short usage guidelines",
+    ],
+    deliverables: [
+      "Figma component library",
+      "Style tokens: color, type, spacing",
+      "Component usage guidelines",
+      "Naming conventions for handoff",
+    ],
+    fit: "Your product is growing and screens no longer look or behave the same.",
+  },
+  {
+    id: "handoff-qa",
+    title: "Frontend Handoff & QA",
+    teaser: "Designs that get built the way they were designed.",
+    headline: "Fewer surprises between the design file and the live product.",
+    value:
+      "I prepare designs for developers with clear specs, then check the built screens against the design and log what needs fixing.",
+    activities: [
+      "Annotated specs, states and responsive behavior",
+      "Organized files and exported assets",
+      "Component and interaction documentation",
+      "Design QA of built screens against Figma",
+    ],
+    deliverables: [
+      "Developer-ready Figma file",
+      "Specs and interaction notes",
+      "QA checklist",
+      "Issue log with screenshots",
+    ],
+    fit: "A design is ready to build, or a build does not match the design.",
+  },
+];
+
+/* ─── Services: outcome-focused offers, tabbed split view ─── */
 function ServicesSection() {
-  const services = [
-    {
-      icon: "◈",
-      title: "Web Design",
-      description:
-        "Clean, responsive websites that balance aesthetics with usability, built to engage and convert.",
-    },
-    {
-      icon: "◉",
-      title: "Product Design",
-      description:
-        "End-to-end product experiences from research to high-fidelity prototypes, solving real user problems.",
-    },
-    {
-      icon: "◎",
-      title: "UX Audit & Strategy",
-      description:
-        "In-depth analysis of existing products to identify friction points and optimize the user journey.",
-    },
-    {
-      icon: "◆",
-      title: "Branding & Identity",
-      description:
-        "Cohesive visual identities that communicate your brand's values and stand out in the market.",
-    },
-  ];
+  const [active, setActive] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const service = SERVICE_OFFERS[active];
+
+  const onKeyDown = (e: React.KeyboardEvent, i: number) => {
+    const last = SERVICE_OFFERS.length - 1;
+    let next = i;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+    else return;
+    e.preventDefault();
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  };
 
   return (
-    <section className="py-24 lg:py-32">
+    <section id="services" className="py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <ScrollReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 lg:mb-14">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               What I Offer
             </span>
@@ -569,96 +659,235 @@ function ServicesSection() {
               text="Services"
               className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
             />
+            <p className="mt-4 max-w-xl mx-auto text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Four ways I can help, each with a clear outcome and defined deliverables.
+            </p>
           </div>
         </ScrollReveal>
 
-        <StaggerReveal stagger={0.15} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service) => (
-            <div key={service.title} className="bg-card border border-border rounded-2xl p-8 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <span className="text-3xl text-accent">{service.icon}</span>
-              <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
-                {service.title}
+        <div className="grid lg:grid-cols-12 gap-5 lg:gap-8 items-start">
+          {/* Tabs */}
+          <div
+            role="tablist"
+            aria-label="Services"
+            aria-orientation="vertical"
+            className="lg:col-span-5 grid grid-cols-2 gap-3 lg:flex lg:flex-col"
+          >
+            {SERVICE_OFFERS.map((item, i) => {
+              const selected = i === active;
+              return (
+                <button
+                  key={item.id}
+                  ref={(el) => {
+                    tabRefs.current[i] = el;
+                  }}
+                  role="tab"
+                  id={`service-tab-${item.id}`}
+                  aria-selected={selected}
+                  aria-controls={`service-panel-${item.id}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setActive(i)}
+                  onKeyDown={(e) => onKeyDown(e, i)}
+                  className={`group text-left rounded-2xl border p-4 lg:p-5 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                    selected
+                      ? "bg-card border-accent shadow-sm"
+                      : "border-border hover:border-accent/50 hover:bg-card/60"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-xs font-medium tracking-[0.2em] text-accent">
+                      0{i + 1}
+                    </span>
+                    <ArrowRight
+                      size={16}
+                      aria-hidden="true"
+                      className={`hidden lg:block shrink-0 transition-all duration-300 ${
+                        selected
+                          ? "text-accent translate-x-0 opacity-100"
+                          : "text-muted-foreground -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                      }`}
+                    />
+                  </div>
+                  <h3 className="mt-2 text-base lg:text-lg font-bold font-[family-name:var(--font-poppins)] leading-snug">
+                    {item.title}
+                  </h3>
+                  <p className="hidden lg:block mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                    {item.teaser}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Panel */}
+          <div
+            role="tabpanel"
+            id={`service-panel-${service.id}`}
+            aria-labelledby={`service-tab-${service.id}`}
+            tabIndex={0}
+            className="lg:col-span-7 rounded-2xl border border-border bg-card p-6 sm:p-8 lg:p-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
+                Outcome
+              </span>
+              <h3 className="mt-3 text-2xl sm:text-3xl font-bold font-[family-name:var(--font-poppins)] leading-tight">
+                {service.headline}
               </h3>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                {service.description}
-              </p>
-            </div>
-          ))}
-        </StaggerReveal>
+              <p className="mt-4 text-muted-foreground leading-relaxed">{service.value}</p>
+
+              <div className="mt-8 grid sm:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground">
+                    What I do
+                  </h4>
+                  <ul className="mt-4 space-y-3">
+                    {service.activities.map((a) => (
+                      <li key={a} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
+                        <Check size={16} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+                        <span>{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground">
+                    What you get
+                  </h4>
+                  <ul className="mt-4 space-y-3">
+                    {service.deliverables.map((d) => (
+                      <li key={d} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-accent" aria-hidden="true" />
+                        <span>{d}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <p className="text-sm text-muted-foreground leading-relaxed sm:max-w-sm">
+                  <span className="font-medium text-foreground">Good fit when: </span>
+                  {service.fit}
+                </p>
+                <a
+                  href="#contact"
+                  className="group/cta inline-flex items-center gap-2 text-sm font-medium text-accent shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
+                >
+                  Discuss this service
+                  <ArrowRight size={16} className="transition-transform duration-300 group-hover/cta:translate-x-1" aria-hidden="true" />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ─── Process Section with Scroll-Driven Number Animation ─── */
+interface WorkStage {
+  id: string;
+  number: string;
+  title: string;
+  purpose: string;
+  actions: string[];
+  outputs: string[];
+  focus: string[];
+}
+
+const WORK_STAGES: WorkStage[] = [
+  {
+    id: "frame-align",
+    number: "01",
+    title: "Frame & Align",
+    purpose:
+      "Agree on the problem, the people it affects and what success looks like before any screen is drawn.",
+    actions: [
+      "Kick off with stakeholders: goals, constraints and scope",
+      "Run user research: interviews, observation, review of the existing product",
+      "Synthesize findings into a problem statement and personas",
+      "Prioritize what to solve first, together",
+    ],
+    outputs: ["Problem statement", "Research summary", "Agreed scope and priorities"],
+    focus: ["Research", "Prioritization", "Collaboration"],
+  },
+  {
+    id: "architecture-strategy",
+    number: "02",
+    title: "Architecture & Strategy",
+    purpose:
+      "Turn the problem into structure: what the product does, for whom, and in what order.",
+    actions: [
+      "Map user flows, including the error and edge-case paths",
+      "List every screen and group them into a clear structure",
+      "Rank features into must-have, should-have and later",
+      "Sketch low-fidelity wireframes to test the structure early",
+    ],
+    outputs: ["User flow diagrams", "Screen inventory", "Low-fidelity wireframes"],
+    focus: ["User flows", "Prioritization", "Wireframing"],
+  },
+  {
+    id: "design-iteration",
+    number: "03",
+    title: "Design & Iteration",
+    purpose:
+      "Build the interface in layers, put it in front of people, and refine it based on what they say.",
+    actions: [
+      "Design high-fidelity screens from consistent components",
+      "Link the key flows into an interactive prototype",
+      "Gather feedback from users and teammates",
+      "Revise usability and accessibility issues, then review again",
+    ],
+    outputs: ["High-fidelity screens", "Clickable prototype", "Feedback notes and revisions"],
+    focus: ["Prototyping", "Feedback", "Collaboration"],
+  },
+  {
+    id: "production-handoff",
+    number: "04",
+    title: "Production & Handoff",
+    purpose:
+      "Make sure what gets built matches what was designed, and that the team can keep going without me.",
+    actions: [
+      "Organize files and annotate specs, states and responsive behavior",
+      "Document components and the reasoning behind key decisions",
+      "Review built screens against the design with developers",
+      "Log, track and re-check fixes until they are resolved",
+    ],
+    outputs: ["Developer-ready Figma file", "Specs and component notes", "QA checklist and issue log"],
+    focus: ["Documentation", "Quality checks", "Collaboration"],
+  },
+];
+
+/* ─── Process: four-stage interactive timeline ─── */
 function ProcessSection() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const stepRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const stage = WORK_STAGES[active];
+  const last = WORK_STAGES.length - 1;
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const cards = section.querySelectorAll(".process-card");
-
-    cards.forEach((card, i) => {
-      // Staggered reveal from left/right alternating
-      const direction = i % 2 === 0 ? -60 : 60;
-      gsap.set(card, { opacity: 0, x: direction });
-
-      ScrollTrigger.create({
-        trigger: card,
-        start: "top 85%",
-        onEnter: () => {
-          gsap.to(card, {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            delay: i * 0.05,
-            ease: "power3.out",
-          });
-        },
-      });
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => {
-        if (section.contains(t.trigger as Element)) t.kill();
-      });
-    };
-  }, []);
-
-  const steps = [
-    {
-      number: "01",
-      title: "Discover",
-      description:
-        "Understanding the problem, the users, and the business goals through research and stakeholder interviews.",
-    },
-    {
-      number: "02",
-      title: "Define",
-      description:
-        "Synthesizing insights into clear problem statements and defining the project direction and scope.",
-    },
-    {
-      number: "03",
-      title: "Design",
-      description:
-        "Crafting wireframes, prototypes, and visual designs that balance user needs with business objectives.",
-    },
-    {
-      number: "04",
-      title: "Deliver",
-      description:
-        "Refining and handoff with detailed specifications, ensuring pixel-perfect implementation.",
-    },
-  ];
+  const onKeyDown = (e: React.KeyboardEvent, i: number) => {
+    let next = i;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+    else return;
+    e.preventDefault();
+    setActive(next);
+    stepRefs.current[next]?.focus();
+  };
 
   return (
-    <section ref={sectionRef} className="py-24 lg:py-32 bg-card">
+    <section id="process" className="py-20 lg:py-28 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <ScrollReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 lg:mb-14">
             <span className="text-xs tracking-[0.2em] uppercase text-accent font-medium">
               How I Work
             </span>
@@ -666,23 +895,142 @@ function ProcessSection() {
               text="Process"
               className="mt-4 text-4xl sm:text-5xl font-bold font-[family-name:var(--font-poppins)]"
             />
+            <p className="mt-4 max-w-xl mx-auto text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Four stages, from the first conversation to shipped screens. Select a stage to see what happens in it.
+            </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step) => (
-            <div key={step.title} className="process-card p-8 border border-border rounded-2xl bg-background hover:border-accent/50 transition-all duration-300">
-              <span className="text-5xl font-bold text-accent/20 font-[family-name:var(--font-poppins)]">
-                {step.number}
+        {/* Timeline */}
+        <div role="tablist" aria-label="Workflow stages" className="relative grid grid-cols-4 gap-2 mb-8 lg:mb-10 max-w-3xl mx-auto">
+          <div className="absolute top-5 left-[12.5%] right-[12.5%] h-px bg-border" aria-hidden="true">
+            <div
+              className="h-full bg-accent transition-[width] duration-500 ease-out"
+              style={{ width: `${(active / last) * 100}%` }}
+            />
+          </div>
+          {WORK_STAGES.map((item, i) => {
+            const selected = i === active;
+            const done = i < active;
+            return (
+              <button
+                key={item.id}
+                ref={(el) => {
+                  stepRefs.current[i] = el;
+                }}
+                role="tab"
+                id={`stage-tab-${item.id}`}
+                aria-selected={selected}
+                aria-controls={`stage-panel-${item.id}`}
+                aria-label={`Stage ${item.number}: ${item.title}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActive(i)}
+                onKeyDown={(e) => onKeyDown(e, i)}
+                className="group relative flex flex-col items-center text-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              >
+                <span
+                  className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold font-[family-name:var(--font-poppins)] transition-colors duration-300 ${
+                    selected
+                      ? "bg-accent border-accent text-accent-foreground"
+                      : done
+                      ? "bg-card border-accent text-accent"
+                      : "bg-card border-border text-muted-foreground group-hover:border-accent/60 group-hover:text-accent"
+                  }`}
+                >
+                  {done ? <Check size={16} aria-hidden="true" /> : item.number}
+                </span>
+                <span
+                  className={`hidden sm:block mt-3 text-sm font-semibold leading-snug transition-colors duration-300 ${
+                    selected ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                  }`}
+                >
+                  {item.title}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Stage detail */}
+        <div
+          role="tabpanel"
+          id={`stage-panel-${stage.id}`}
+          aria-labelledby={`stage-tab-${stage.id}`}
+          tabIndex={0}
+          className="rounded-2xl border border-border bg-background p-6 sm:p-8 lg:p-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <motion.div
+            key={stage.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="grid lg:grid-cols-12 gap-8 lg:gap-12"
+          >
+            <div className="lg:col-span-5">
+              <span className="text-5xl font-bold text-accent/20 font-[family-name:var(--font-poppins)] leading-none">
+                {stage.number}
               </span>
-              <h3 className="mt-4 text-lg font-bold font-[family-name:var(--font-poppins)]">
-                {step.title}
+              <h3 className="mt-3 text-2xl sm:text-3xl font-bold font-[family-name:var(--font-poppins)] leading-tight">
+                {stage.title}
               </h3>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                {step.description}
-              </p>
+              <p className="mt-4 text-muted-foreground leading-relaxed">{stage.purpose}</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {stage.focus.map((f) => (
+                  <span
+                    key={f}
+                    className="text-caption font-medium tracking-wider uppercase text-accent border border-accent/30 bg-accent/5 px-2.5 py-1 rounded-full"
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
             </div>
-          ))}
+
+            <div className="lg:col-span-7 grid sm:grid-cols-5 gap-8">
+              <div className="sm:col-span-3">
+                <h4 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground">What happens</h4>
+                <ul className="mt-4 space-y-3">
+                  {stage.actions.map((a) => (
+                    <li key={a} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
+                      <Check size={16} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="sm:col-span-2">
+                <h4 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground">You leave with</h4>
+                <ul className="mt-4 space-y-3">
+                  {stage.outputs.map((o) => (
+                    <li key={o} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-accent" aria-hidden="true" />
+                      <span>{o}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setActive((v) => Math.max(0, v - 1))}
+              disabled={active === 0}
+              className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors disabled:opacity-0 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
+            >
+              Previous stage
+            </button>
+            <button
+              type="button"
+              onClick={() => setActive((v) => Math.min(last, v + 1))}
+              disabled={active === last}
+              className="group/next inline-flex items-center gap-2 text-sm font-medium text-accent disabled:opacity-0 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
+            >
+              Next stage
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover/next:translate-x-1" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -773,7 +1121,7 @@ function ProjectsSection() {
       <div className="pt-20 lg:pt-28 pb-8 lg:pb-10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <ScrollReveal>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
               <div>
                 <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
                   Selected Work
@@ -784,10 +1132,9 @@ function ProjectsSection() {
                 />
               </div>
 
-              <ScrollRevealRight className="max-w-sm" delay={0.3}>
+              <ScrollRevealRight className="max-w-md" delay={0.3}>
                 <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
-                  Each project is a case study — not just a screenshot. Strategy,
-                  design, and outcome fused into one narrative.
+                  From the first user insight to the final interface, every project shows how I turn problems into practical digital experiences.
                 </p>
               </ScrollRevealRight>
             </div>
@@ -798,78 +1145,81 @@ function ProjectsSection() {
       </div>
 
       {/* Horizontal scrolling project cards */}
-      <HorizontalScroll className="pb-20 lg:pb-28">
-        {projects.map((project, i) => (
-          <Link key={project.id} href={`/projects/${project.slug}`}>
-            <div className="group cursor-pointer flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] xl:w-[38vw] h-full snap-start">
-              <div className="border-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500 h-full flex flex-col">
+      <HorizontalScroll className="pb-16 lg:pb-20" pinOffset={96}>
+        {projects.map((project, i) => {
+          const tag =
+            project.categoryTag && project.categoryTag !== project.category
+              ? project.categoryTag
+              : null;
+          const techs = project.technologies.split(",").map((t) => t.trim()).filter(Boolean);
+          return (
+            <Link
+              key={project.id}
+              href={`/projects/${project.slug}`}
+              aria-label={`${project.title}: view case study`}
+              className="group flex flex-shrink-0 snap-start w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[42vw] xl:w-[36vw] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b4049]"
+            >
+              <article className="flex w-full flex-col border-2 border-neutral-700 group-hover:border-[#8b4049] group-focus-visible:border-[#8b4049] transition-colors duration-300">
                 {/* Image */}
                 <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
                   <img
                     src={project.thumbnail}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                    alt=""
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
-                  <div className="absolute top-5 left-5 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
+                  <div className="absolute top-4 left-4 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
                     <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#8b4049]">
                       {project.category}
                     </span>
                   </div>
-                  <span className="absolute bottom-4 right-5 text-6xl font-bold font-[family-name:var(--font-poppins)] text-neutral-800/50 leading-none select-none">
-                    0{i + 1}
-                  </span>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 sm:p-8 flex flex-col flex-1 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-500">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[0.9]">
-                      {project.title}
-                    </h3>
-                    {project.categoryTag && (
-                      <span className="shrink-0 text-caption font-bold tracking-[0.2em] uppercase text-neutral-500 border-2 border-neutral-700 px-2.5 py-1 mt-1">
-                        {project.categoryTag}
-                      </span>
+                <div className="flex flex-1 flex-col p-5 sm:p-6 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-300">
+                  <p className="flex items-center gap-2 text-caption font-bold tracking-[0.2em] uppercase">
+                    <span className="text-[#8b4049]">0{i + 1}</span>
+                    {tag && (
+                      <>
+                        <span className="h-px w-4 bg-neutral-700" aria-hidden="true" />
+                        <span className="text-neutral-500">{tag}</span>
+                      </>
                     )}
-                  </div>
+                  </p>
 
-                  <p className="text-neutral-400 text-sm leading-relaxed flex-1">
+                  <h3 className="mt-3 text-2xl sm:text-3xl lg:text-[2.25rem] font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[1.05]">
+                    {project.title}
+                  </h3>
+
+                  <p className="mt-3 text-neutral-400 text-sm leading-relaxed line-clamp-3 flex-1">
                     {project.shortDescription}
                   </p>
 
-                  {project.impact && (
-                    <div className="mt-5 inline-flex items-center gap-2 border-2 border-[#8b4049]/40 bg-[#8b4049]/10 px-3 py-1.5 w-fit">
-                      <span className="w-1.5 h-1.5 bg-[#8b4049]" />
-                      <span className="text-[#8b4049] text-caption font-bold tracking-wider uppercase">
-                        {project.impact}
-                      </span>
-                    </div>
+                  {techs.length > 0 && (
+                    <ul className="flex flex-wrap gap-2 mt-5" aria-label="Tools and skills">
+                      {techs.slice(0, 3).map((tech) => (
+                        <li
+                          key={tech}
+                          className="text-caption font-medium tracking-wider uppercase text-neutral-500 border border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
+                        >
+                          {tech}
+                        </li>
+                      ))}
+                    </ul>
                   )}
 
-                  <div className="flex flex-wrap gap-2 mt-5">
-                    {project.technologies.split(",").map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-caption font-medium tracking-wider uppercase text-neutral-500 border-2 border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                      >
-                        {tech.trim()}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 pt-5 border-t-2 border-neutral-800 flex items-center justify-between">
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-[#8b4049] transition-colors duration-300">
+                  <div className="mt-5 pt-4 border-t-2 border-neutral-800 flex items-center justify-between">
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-white transition-colors duration-300">
                       View Case Study
                     </span>
                     <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                      <ArrowUpRight size={14} strokeWidth={2.5} />
+                      <ArrowUpRight size={14} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-px group-hover:-translate-y-px" />
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+              </article>
+            </Link>
+          );
+        })}
       </HorizontalScroll>
     </section>
   );

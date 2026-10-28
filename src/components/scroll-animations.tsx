@@ -356,9 +356,12 @@ export function StaggerReveal({
 export function HorizontalScroll({
   children,
   className = "",
+  pinOffset = 0,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Distance in px from the top of the viewport where the section pins (e.g. to clear a fixed nav). */
+  pinOffset?: number;
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -368,13 +371,16 @@ export function HorizontalScroll({
     const track = trackRef.current;
     if (!section || !track) return;
 
-    // Disable pinned horizontal scroll on mobile — let native scroll handle it
+    // On mobile (and with reduced motion) skip the pinned animation. The wrapper is
+    // natively scrollable sideways (overflow-x-auto) so every card stays reachable.
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
     if (isMobile) return;
 
-    // Respect prefers-reduced-motion
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
+
+    // The GSAP animation drives the horizontal movement, so hide native overflow while it runs.
+    section.style.overflowX = "hidden";
 
     const totalScroll = track.scrollWidth - window.innerWidth;
 
@@ -383,7 +389,7 @@ export function HorizontalScroll({
       ease: "none",
       scrollTrigger: {
         trigger: section,
-        start: "top top",
+        start: pinOffset ? `top ${pinOffset}px` : "top top",
         end: () => `+=${totalScroll}`,
         pin: true,
         scrub: 1,
@@ -395,19 +401,22 @@ export function HorizontalScroll({
     return () => {
       tween.scrollTrigger?.kill();
       tween.kill();
+      section.style.overflowX = "";
     };
-  }, []);
+  }, [pinOffset]);
 
-  return (
     <div
       ref={sectionRef}
-      className={`overflow-x-auto lg:overflow-hidden snap-x snap-mandatory scroll-pl-6 lg:scroll-pl-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [overscroll-behavior-x:contain] ${className}`}
+      className={`overflow-x-auto overflow-y-hidden overscroll-x-contain max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
     >
-      <div ref={trackRef} className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-[25vw] will-change-transform items-stretch">
+      <div
+        ref={trackRef}
+        className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch"
+      >
         {children}
       </div>
     </div>
-  );
+
 }
 
 /* ─── Draw Line: Animates a line width/height on scroll ─── */

@@ -2,68 +2,176 @@
 
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
-  ArrowRight,
   Users,
   MapPin,
   Clock,
-  DollarSign,
-  TrendingDown,
+  Wallet,
   Search,
   CheckCircle2,
   Package,
-  ChevronRight,
+  Lightbulb,
+  Timer,
+  UserPlus,
+  ShoppingBag,
+  Smartphone,
+  Waves,
+  Repeat,
+  AlertCircle,
+  Bell,
 } from "lucide-react";
-import Link from "next/link";
-import {
-  ScrollReveal,
-  ScrollRevealLeft,
-  ScrollRevealRight,
-  Parallax,
-  SplitTextReveal,
-  StaggerReveal,
-  DrawLine,
-  ClipReveal,
-  MagneticHover,
-  ScaleIn,
-} from "@/components/scroll-animations";
+import { ScrollReveal, ScrollRevealRight } from "@/components/scroll-animations";
 import { SiteNav } from "@/components/site-nav";
 import { ProjectNavCue } from "@/components/project-nav-cue";
 import {
   CaseStudySectionHeading,
-  CaseStudyStatCard,
   CaseStudyFeatureCard,
   CaseStudyFlowStep,
   PhoneFrame,
-  CaseStudyScreenText,
   CaseStudyScreenShowcase,
+  CaseStudyColorSwatch,
 } from "@/components/case-study";
 
+const S = "/waveeatz/screens";
+const ORANGE = "#FF4F00";
+const SAND = "#C1A9A1";
 
+/* ─── Content (all facts come from the team's own documents) ─── */
+const meta = [
+  { label: "Type", value: "UX/UI Design · Group Project" },
+  { label: "Program", value: "Moringa School Product Design" },
+  { label: "Duration", value: "A few weeks" },
+  { label: "My Role", value: "UX Research, User Flows, UI Design" },
+  { label: "Team", value: "Esther & Collins" },
+];
 
-/* ─── Color Swatch ─── */
-function ColorSwatch({
-  color,
-  name,
-  hex,
-}: {
-  color: string;
-  name: string;
-  hex: string;
-}) {
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
-      <div
-        className="w-14 h-14 rounded-xl border border-white/10 flex-shrink-0"
-        style={{ backgroundColor: color }}
-      />
-      <div>
-        <p className="text-white font-medium text-sm">{name}</p>
-        <p className="text-white/50 text-xs font-mono">{hex}</p>
-      </div>
-    </div>
-  );
-}
+const painPoints = [
+  {
+    icon: Wallet,
+    title: "Higher individual spending",
+    text: "The food is affordable, but once delivery is added the total stops feeling worth it.",
+  },
+  {
+    icon: Repeat,
+    title: "Fewer orders",
+    text: "Students abandon checkout when the delivery fee feels unreasonable next to the meal.",
+  },
+  {
+    icon: Users,
+    title: "Missed shared moments",
+    text: "Neighbours order the same meal separately and often only find out after it arrives.",
+  },
+];
+
+const insights = [
+  "Students are price-sensitive and tend to abandon an order when delivery feels unreasonable.",
+  "Eating together is a social and emotional relief, so shared food moments matter.",
+  "Students are open to ordering collaboratively but lack a simple way to coordinate it.",
+];
+
+const ideas = [
+  {
+    name: "Artist & Band Website",
+    by: "Eugene",
+    text: "A five-page site with music, gallery and a booking form to help artists promote and take bookings.",
+    chosen: false,
+  },
+  {
+    name: "UniLink",
+    by: "Collins",
+    text: "A campus collaboration platform that matches students to projects and teammates by skill.",
+    chosen: false,
+  },
+  {
+    name: "Wave Eats",
+    by: "Esther",
+    text: "Group food ordering for hostels, so neighbours share one delivery fee. This became the team's final idea.",
+    chosen: true,
+  },
+];
+
+const personas = [
+  {
+    name: "Esther",
+    title: "The Budget-Conscious Craver",
+    quote: "I love treats… but the delivery fee stresses me more than my course work.",
+    profile: "20 · Kenyatta University · Ladies Hostel 2",
+    goals: [
+      "Enjoy affordable treats without breaking her weekly budget",
+      "Avoid paying KES 150–300 delivery alone",
+      "Order quickly without coordinating on WhatsApp",
+    ],
+    pains: [
+      "Delivery feels unreasonable compared to the meal",
+      "Cancels orders last minute because of the total",
+      "Finds out too late that others ordered the same thing",
+    ],
+  },
+  {
+    name: "Eugene",
+    title: "The Food Plug & Social Connector",
+    quote: "If there's a food deal happening on campus, I know about it.",
+    profile: "23 · JKUAT · Hostel Block C · part-time micro-rider",
+    goals: [
+      "Do fewer, larger drop-offs and earn more per trip",
+      "Make ordering smoother for students in his block",
+      "Become the go-to Wave starter",
+    ],
+    pains: [
+      "Many small, last-minute delivery requests",
+      "Multiple runs to the same restaurant",
+      "Hard to coordinate 4–7 people through chat groups",
+    ],
+  },
+];
+
+const joinFlow = [
+  { icon: Smartphone, title: "Open the app", description: "Land on the Waves happening around your hostel." },
+  { icon: Search, title: "Choose a Wave", description: "See the restaurant, who has joined and the shared fee." },
+  { icon: UserPlus, title: "Join the Wave", description: "Tap Join Wave and the restaurant menu opens." },
+  { icon: ShoppingBag, title: "Add your food", description: "Pick items and place your order; your fee drops." },
+  { icon: Clock, title: "Wait together", description: "Track joiners, rider ETA, drop-off and the Wave timer." },
+  { icon: Package, title: "Collect", description: "Meet the rider at the entrance and the Wave ends." },
+];
+
+const startFlow = [
+  { icon: Waves, title: "Start a Wave", description: "No good Waves nearby? Pick a restaurant." },
+  { icon: ShoppingBag, title: "Order first", description: "Choose your food and the drop-off point." },
+  { icon: Bell, title: "Go live", description: "Nearby students are notified to join." },
+  { icon: Users, title: "Others join", description: "The delivery fee gets cheaper as the Wave grows." },
+  { icon: Timer, title: "Timer ends", description: "The combined order is sent as one delivery." },
+  { icon: Package, title: "Pick up", description: "Everyone collects at the drop-off point." },
+];
+
+const screenAreas = [
+  { name: "Onboarding", count: 6, items: "Welcome, What is a Wave, How you save, Campus life, Location, Hostel/Block" },
+  { name: "Authentication", count: 3, items: "Login, Sign up, Forgot password" },
+  { name: "Home", count: 3, items: "Wave feed, Filters, Notifications" },
+  { name: "Wave interaction", count: 7, items: "Menu, Add to order, Review, Payment, Live tracking, Drop-off, Savings summary" },
+  { name: "Start a Wave", count: 5, items: "Restaurant, First order, Join time limit, Drop-off point, Owner view" },
+  { name: "Profile", count: 4, items: "Profile, Saved hostels, Order history, Saved restaurants" },
+];
+
+const features = [
+  { icon: Waves, title: "Wave Feed", description: "Live Waves near your hostel, with participants, place and time left on each card." },
+  { icon: UserPlus, title: "Add Wave Order", description: "Join a group order straight from a meal, with Solo Order kept as a clear second choice." },
+  { icon: Wallet, title: "Tiered delivery fee", description: "The fee steps down as more people join: Ksh 180 for 5, Ksh 120 for 10, Ksh 90 for 20." },
+  { icon: Timer, title: "Wave timer", description: "The person starting a Wave chooses how long it stays open: 20 mins, 30 mins or custom." },
+  { icon: MapPin, title: "Delivery location", description: "A saved campus address sits at the top of every ordering screen and can be changed on a map." },
+  { icon: CheckCircle2, title: "Clear order summary", description: "Price, shared delivery fee and total are broken out, with the Wave icon marking Wave-affected amounts." },
+];
+
+const gallery = [
+  { src: `${S}/01-splash.png`, alt: "Splash screen", label: "Splash" },
+  { src: `${S}/03-login.png`, alt: "Login screen", label: "Login" },
+  { src: `${S}/04-signup.png`, alt: "Sign up screen", label: "Sign up" },
+  { src: `${S}/05-verify-email.png`, alt: "Email verification screen", label: "Verify email" },
+  { src: `${S}/06-forgot-password.png`, alt: "Forgot password screen", label: "Forgot password" },
+  { src: `${S}/07-account-complete.png`, alt: "Account complete screen", label: "Account created" },
+  { src: `${S}/09-stores.png`, alt: "Stores screen", label: "Stores" },
+  { src: `${S}/14-location.png`, alt: "Delivery location map screen", label: "Location" },
+  { src: `${S}/17-payment-methods.png`, alt: "Payment methods screen", label: "Payment" },
+  { src: `${S}/19-your-orders.png`, alt: "Your orders screen", label: "Your orders" },
+];
 
 /* ────────────────────────────────────────────
    WAVEEATZ Case Study Page
@@ -71,1071 +179,443 @@ function ColorSwatch({
 export default function WaveeatzPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* ── 1. Sticky Navigation ── */}
       <SiteNav variant="case-study" />
 
-      {/* ── 2. Hero Section ── */}
+      {/* ── Hero ── */}
       <section className="relative bg-[#36170E] overflow-hidden">
-        {/* Decorative blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#642714]/30 blur-3xl" />
           <div className="absolute -bottom-60 -left-40 w-[500px] h-[500px] rounded-full bg-[#642714]/20 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#C1A9A1]/5 blur-3xl" />
         </div>
-
         <div className="relative max-w-7xl mx-auto px-6 lg:px-12 pt-16 pb-20 lg:pt-24 lg:pb-32">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Title + Metadata */}
             <div>
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-              >
+              <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
                 <h1 className="text-case-hero font-bold font-[family-name:var(--font-poppins)]">
                   <span className="text-white">WAVE</span>
                   <br />
-                  <span className="text-[#C1A9A1]">EATS</span>
+                  <span style={{ color: ORANGE }}>EATZ</span>
                 </h1>
               </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="mt-8 flex flex-wrap gap-3"
-              >
-                {[
-                  { label: "Category", value: "UI/UX Design" },
-                  { label: "Role", value: "Product Designer" },
-                  { label: "Duration", value: "8 Weeks" },
-                  { label: "Platform", value: "iOS / Android" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="px-4 py-2 rounded-full border border-white/15 bg-white/5"
-                  >
-                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#C1A9A1]">
-                      {item.label}:{" "}
-                    </span>
-                    <span className="text-sm font-medium text-white/90">
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
-              </motion.div>
-
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5 }}
-                className="mt-8 text-white/60 text-base lg:text-lg leading-relaxed max-w-lg"
+                transition={{ duration: 0.7, delay: 0.35 }}
+                className="mt-6 text-white/80 text-lg lg:text-xl max-w-lg leading-relaxed"
               >
-                A group food delivery platform designed for university students
-                in Nairobi, enabling collaborative ordering to slash delivery
-                fees by up to 70% through shared &ldquo;Waves&rdquo;&mdash;synchronized
-                group-ordering windows.
+                Making group food ordering easier and more affordable for university students.
               </motion.p>
-
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.6 }}
-                className="mt-8"
+                transition={{ duration: 0.7, delay: 0.45 }}
+                className="mt-8 flex flex-wrap gap-3"
               >
-                <MagneticHover>
-                  <a
-                    href="#overview"
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#36170E] rounded-full font-semibold text-sm hover:bg-white/90 transition-colors duration-300"
-                  >
-                    Read Full Case Study
-                    <ChevronRight className="w-4 h-4" />
-                  </a>
-                </MagneticHover>
-              </motion.div>
-
-              {/* Scroll indicator */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1.2 }}
-                className="mt-16 hidden lg:flex items-center gap-3 text-white/30"
-              >
-                <div className="w-px h-12 bg-white/20" />
-                <span className="text-xs tracking-[0.2em] uppercase">
-                  Scroll
-                </span>
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <ArrowRight className="w-4 h-4 rotate-90" />
-                </motion.div>
+                {meta.map((m) => (
+                  <div key={m.label} className="px-4 py-2 rounded-full border border-white/15 bg-white/5">
+                    <span className="text-caption font-bold tracking-[0.2em] uppercase" style={{ color: SAND }}>
+                      {m.label}:{" "}
+                    </span>
+                    <span className="text-sm font-medium text-white/90">{m.value}</span>
+                  </div>
+                ))}
               </motion.div>
             </div>
-
-            {/* Right: Phone Mockup */}
             <motion.div
-              initial={{ opacity: 0, x: 60, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
-              className="flex justify-center lg:justify-end"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center gap-4"
             >
-              <Parallax speed={-0.08}>
-                <PhoneFrame
-                  src="/waveeatz/screen-onboarding.png"
-                  alt="Wave Eats onboarding screen"
-                  className="w-[260px] lg:w-[300px]"
-                />
-              </Parallax>
+              <PhoneFrame src={`${S}/08-home.png`} alt="Wave Eatz home screen" className="w-[46%]" />
+              <PhoneFrame src={`${S}/13-wave-settings.png`} alt="Wave Eatz Wave settings screen" className="w-[46%] mt-12" />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── 3. Project Overview ── */}
+      {/* ── Overview ── */}
       <section id="overview" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <CaseStudySectionHeading
-            label="Overview"
-            title="What is Wave Eats?"
-            accentColor="#C1A9A1"
-          />
-
+          <CaseStudySectionHeading label="Overview" title="What is Wave Eatz?" accentColor={ORANGE} />
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <ScrollReveal>
               <div className="space-y-6">
                 <p className="text-foreground/80 text-base lg:text-lg leading-[1.8]">
-                  <span className="font-bold font-[family-name:var(--font-poppins)] text-foreground">
-                    Wave Eats
-                  </span>{" "}
-                  is a mobile-first group food delivery application designed
-                  specifically for university students living in campus hostels
-                  and nearby apartments. The platform introduces an innovative
-                  concept called{" "}
-                  <span className="font-semibold text-accent">&ldquo;Waves&rdquo;</span>
-                  &mdash;time-limited group ordering windows where students can
-                  pool their food orders together from the same restaurant.
+                  <span className="font-bold font-[family-name:var(--font-poppins)] text-foreground">Wave Eatz</span> is a
+                  university food-ordering app concept that lets students join group orders, called{" "}
+                  <span className="font-semibold" style={{ color: ORANGE }}>Waves</span>, so they share delivery costs
+                  instead of each paying separately.
                 </p>
-                <p className="text-foreground/70 text-base leading-[1.8]">
-                  By consolidating individual orders into shared deliveries, Wave
-                  Eats dramatically reduces per-person delivery fees, making food
-                  delivery affordable for students who previously couldn&apos;t
-                  justify the cost. The app was designed during an 8-week product
-                  design sprint focused on solving real logistics challenges
-                  faced by students at Kenyatta University in Nairobi, Kenya.
+                <p className="text-foreground/70 text-base lg:text-lg leading-[1.8]">
+                  It was a team project at Moringa School. I contributed to the UX research, user flows and UI design,
+                  helping turn a campus problem into a proposed digital experience, from first idea to a Figma prototype.
                 </p>
-                <p className="text-foreground/70 text-base leading-[1.8]">
-                  The core insight was simple yet powerful: students in the same
-                  dormitory buildings were already ordering from the same
-                  restaurants, at similar times, but paying full delivery fees
-                  individually. Wave Eats transforms this fragmented behavior
-                  into a coordinated, cost-saving experience.
+                <p className="text-foreground/70 text-base lg:text-lg leading-[1.8] italic">
+                  Brand motto: &ldquo;Because hunger is a group assignment.&rdquo;
                 </p>
               </div>
             </ScrollReveal>
-
             <ScrollRevealRight>
-              <div className="rounded-3xl overflow-hidden shadow-xl border border-foreground/5">
-                <img
-                  src="/waveeatz/screen-home.png"
-                  alt="Wave Eats home screen with Kenyatta University location"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
+              <PhoneFrame src={`${S}/02-onboarding.png`} alt="Wave Eatz onboarding screen with the brand motto" />
             </ScrollRevealRight>
           </div>
         </div>
       </section>
 
-      {/* ── 4. Problem Statement ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
+      {/* ── Problem ── */}
+      <section id="problem" className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
-            <div>
-              <CaseStudySectionHeading
-                label="The Problem"
-                title="Delivery fees are too expensive for students"
-                accentColor="#C1A9A1"
-              />
-              <ScrollReveal delay={0.2}>
-                <div className="space-y-5">
-                  <p className="text-foreground/80 text-base leading-[1.8]">
-                    University students in Nairobi face a frustrating dilemma:
-                    they crave the convenience of food delivery, but the cost of
-                    individual delivery makes it prohibitive. A typical delivery
-                    fee ranges from Ksh 300 to Ksh 500, which often exceeds the
-                    cost of the meal itself when ordering a single item.
-                  </p>
-                  <p className="text-foreground/70 text-base leading-[1.8]">
-                    The problem is compounded by the fact that multiple students
-                    in the same hostel are ordering from the same restaurants at
-                    similar times&mdash;yet each pays the full delivery fee
-                    independently. This represents not just a financial burden on
-                    students, but also a logistical inefficiency for delivery
-                    services making multiple trips to the same location.
-                  </p>
-                  <p className="text-foreground/70 text-base leading-[1.8]">
-                    There is no existing platform that enables students to
-                    coordinate their orders, share delivery costs, or discover
-                    that others nearby are ordering from the same place. The lack
-                    of a coordination mechanism means money is wasted on both
-                    sides of the transaction.
-                  </p>
-                </div>
+          <CaseStudySectionHeading label="The Problem" title="The delivery fee ruins it" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/80 text-base lg:text-lg leading-[1.8] mb-12">
+              A student starts with &ldquo;just fries and wings&rdquo; and somehow the app says KES 870. Meanwhile other
+              students in the same hostel are ordering the exact same thing, and everyone pays a separate delivery fee.
+              Eating out ends up more expensive than it needs to be.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {painPoints.map((p) => (
+              <ScrollReveal key={p.title}>
+                <CaseStudyFeatureCard icon={p.icon} title={p.title} description={p.text} accentColor={ORANGE} />
               </ScrollReveal>
-            </div>
-
-            <div>
-              <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
-                <CaseStudyStatCard
-                  icon={DollarSign}
-                  value="Ksh 300–500"
-                  label="Average delivery fee per individual order"
-                />
-                <CaseStudyStatCard
-                  icon={TrendingDown}
-                  value="70%"
-                  label="Of students cite delivery cost as the main barrier"
-                />
-                <CaseStudyStatCard
-                  icon={Users}
-                  value="3–5×"
-                  label="Redundant deliveries to the same building daily"
-                />
-                <CaseStudyStatCard
-                  icon={Clock}
-                  value="45 min"
-                  label="Average wait between placing and receiving an order"
-                />
-              </StaggerReveal>
-            </div>
+            ))}
           </div>
+          <ScrollReveal>
+            <blockquote className="max-w-3xl border-l-4 pl-6 py-2" style={{ borderColor: ORANGE }}>
+              <p className="text-lg lg:text-xl text-foreground leading-relaxed">
+                &ldquo;I just wanted wings. But once delivery was added, it didn&apos;t feel worth it anymore. Then my
+                roommate ordered the same thing separately and also paid delivery.&rdquo;
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground">From our informal student interviews</p>
+            </blockquote>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 5. Design Challenge ── */}
-      <section className="py-20 lg:py-32 bg-background">
+      {/* ── Ideation ── */}
+      <section id="ideation" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C1A9A1] mb-3">
-                The Challenge
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="Balancing group dynamics with individual preferences"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-foreground max-w-4xl mx-auto"
-            />
-          </div>
-
-          <StaggerReveal
-            className="grid md:grid-cols-3 gap-6 lg:gap-8"
-            stagger={0.15}
-          >
-            <div className="p-8 lg:p-10 rounded-2xl bg-[#36170E] text-white">
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Users className="w-6 h-6 text-[#C1A9A1]" />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                UX Challenges
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Designing a group ordering experience that feels personal while
-                maintaining the social dynamics of shared decision-making.
-                Students needed to feel in control of their own orders while
-                benefiting from the group. The interface had to clearly
-                communicate time-sensitive Wave windows, participant counts, and
-                savings&mdash;all without overwhelming users with information.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl bg-[#36170E] text-white">
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Package className="w-6 h-6 text-[#C1A9A1]" />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                Business Constraints
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Restaurant partnerships required careful negotiation of delivery
-                zones, fee structures, and order minimums. Real-time
-                coordination between multiple users placing orders within the
-                same Wave window demanded robust backend logic. The platform
-                needed to handle variable group sizes, time-window management,
-                and split-payment reconciliation.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl bg-[#36170E] text-white">
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <CheckCircle2 className="w-6 h-6 text-[#C1A9A1]" />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                User Needs
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Simplicity in joining and creating Waves, transparency in
-                seeing exactly how much they save, and visibility into who else
-                is participating. Students wanted a frictionless experience from
-                discovery to delivery tracking, with clear savings breakdowns
-                shown at every step of the journey to reinforce the value
-                proposition.
-              </p>
-            </div>
-          </StaggerReveal>
-        </div>
-      </section>
-
-      {/* ── 6. Research & Insights ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <CaseStudySectionHeading
-            label="Research"
-            title="Insights that shaped the design"
-            accentColor="#C1A9A1"
-          />
-
-          <StaggerReveal
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            stagger={0.1}
-          >
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                01
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Cost is King
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                78% of surveyed students reported that delivery fees were the
-                primary reason they abandoned food delivery apps. The perceived
-                value of convenience diminishes sharply when fees exceed 40% of
-                the meal price, creating a hard ceiling on adoption.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                02
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Familiar Restaurants Win
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Students overwhelmingly prefer ordering from brands they already
-                know&mdash;KFC, McDonald&apos;s, Pizza Hut&mdash;reducing
-                decision fatigue. This insight informed the decision to
-                prominently feature popular chains and to build Waves around
-                well-known restaurant brands.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                03
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Spontaneous Ordering Culture
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Food ordering decisions among students are often spontaneous and
-                socially driven. A roommate ordering food frequently triggers
-                others to join in. This organic behavior became the foundation
-                for the Wave concept&mdash;formalizing an existing social
-                pattern.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                04
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Trust Through Transparency
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Students need to see exactly how fees are split and what they
-                save before committing. Hidden costs or unclear pricing would
-                erode trust instantly. Every screen was designed to prominently
-                display savings and fee breakdowns.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                05
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Time-Sensitive Behavior
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Peak ordering times cluster around lunch (12–2 PM) and dinner
-                (6–9 PM). Waves needed to align with these natural peaks while
-                creating urgency through countdown timers and participant limits
-                to drive faster decision-making.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] text-accent mb-3">
-                06
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Pickup Point Clarity
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Unlike residential delivery, campus environments have ambiguous
-                drop-off points. Students emphasized the need for clearly defined
-                collection spots&mdash;specific hostel entrances, common areas,
-                or landmark-based pickup zones they already use daily.
-              </p>
-            </div>
-          </StaggerReveal>
-        </div>
-      </section>
-
-      {/* ── 7. The Solution ── */}
-      <section className="py-20 lg:py-32 bg-[#36170E] relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#642714]/30 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#C1A9A1]/5 blur-3xl" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C1A9A1] mb-3">
-                The Solution
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="Introducing Waves — shared ordering, split costs"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white max-w-4xl mx-auto"
-            />
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <ScrollRevealLeft>
-              <div className="space-y-6">
-                <p className="text-white/80 text-base lg:text-lg leading-[1.8]">
-                  The Wave is the core innovation of the app. A Wave is a
-                  time-limited group ordering window for a specific restaurant,
-                  open to students in the same delivery zone. When a student
-                  creates or joins a Wave, they browse the restaurant&apos;s menu
-                  independently, selecting exactly what they want.
-                </p>
-                <p className="text-white/60 text-base leading-[1.8]">
-                  The magic happens at checkout: the delivery fee is
-                  automatically split among all Wave participants. The more
-                  people who join, the lower the fee per person. A Ksh 300
-                  delivery split between 5 students becomes just Ksh 60
-                  each&mdash;transforming an expensive indulgence into an
-                  everyday convenience.
-                </p>
-                <p className="text-white/60 text-base leading-[1.8]">
-                  Waves have a countdown timer creating natural urgency, and a
-                  participant cap to keep logistics manageable. Once the timer
-                  expires or the cap is reached, the combined order is sent to
-                  the restaurant and a single delivery is dispatched to a shared
-                  pickup point.
-                </p>
-
-                <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">
-                      70%
-                    </p>
-                    <p className="text-xs text-white/50 mt-1">
-                      Max savings on delivery fees
-                    </p>
-                  </div>
-                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">
-                      10 max
-                    </p>
-                    <p className="text-xs text-white/50 mt-1">
-                      Participants per Wave
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollRevealLeft>
-
-            <ScrollRevealRight>
-              <ClipReveal>
-                <PhoneFrame
-                  src="/waveeatz/screen-home-wave.png"
-                  alt="Wave Eats personalized home screen with Start A Wave feature"
-                  className="w-[280px] lg:w-[320px]"
-                />
-              </ClipReveal>
-            </ScrollRevealRight>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 8. User Flow ── */}
-      <section className="py-20 lg:py-32 bg-background">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16 lg:mb-20">
-            <CaseStudySectionHeading label="User Flow" title="From discovery to delivery" accentColor="#C1A9A1" />
-          </div>
-
-          {/* Desktop: Horizontal Timeline */}
-          <div className="hidden lg:block">
-            <ScrollReveal>
-              <div className="relative">
-                {/* Connecting line */}
-                <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
-
-                <div className="grid grid-cols-6 gap-4 relative">
-                  <CaseStudyFlowStep
-                    number={1}
-                    icon={Search}
-                    title="Discover Wave"
-                    description="Browse active Waves nearby and find group orders from your favorite restaurants"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                  <CaseStudyFlowStep
-                    number={2}
-                    icon={Users}
-                    title="Join Wave"
-                    description="One-tap join to an existing Wave or create your own for others to discover"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                  <CaseStudyFlowStep
-                    number={3}
-                    icon={Package}
-                    title="Order Food"
-                    description="Browse the restaurant menu and add items to your personal order within the Wave"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                  <CaseStudyFlowStep
-                    number={4}
-                    icon={DollarSign}
-                    title="Split Delivery"
-                    description="Delivery fee is automatically divided among all Wave participants equally"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                  <CaseStudyFlowStep
-                    number={5}
-                    icon={Clock}
-                    title="Track Delivery"
-                    description="Real-time tracking of the combined order from restaurant to pickup point"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                  <CaseStudyFlowStep
-                    number={6}
-                    icon={MapPin}
-                    title="Pickup Food"
-                    description="Collect your order at the designated campus pickup spot with your group"
-                    stepBgColor="#36170E"
-                    stepBorderColor="rgba(193,169,161,0.3)"
-                    accentColor="#C1A9A1"
-                  />
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-
-          {/* Mobile: Vertical Timeline */}
-          <div className="lg:hidden">
-            <StaggerReveal className="space-y-6" stagger={0.1}>
-              {[
-                {
-                  number: 1,
-                  icon: Search,
-                  title: "Discover Wave",
-                  description:
-                    "Browse active Waves nearby and find group orders from your favorite restaurants",
-                },
-                {
-                  number: 2,
-                  icon: Users,
-                  title: "Join Wave",
-                  description:
-                    "One-tap join to an existing Wave or create your own for others to discover",
-                },
-                {
-                  number: 3,
-                  icon: Package,
-                  title: "Order Food",
-                  description:
-                    "Browse the restaurant menu and add items to your personal order within the Wave",
-                },
-                {
-                  number: 4,
-                  icon: DollarSign,
-                  title: "Split Delivery",
-                  description:
-                    "Delivery fee is automatically divided among all Wave participants equally",
-                },
-                {
-                  number: 5,
-                  icon: Clock,
-                  title: "Track Delivery",
-                  description:
-                    "Real-time tracking of the combined order from restaurant to pickup point",
-                },
-                {
-                  number: 6,
-                  icon: MapPin,
-                  title: "Pickup Food",
-                  description:
-                    "Collect your order at the designated campus pickup spot with your group",
-                },
-              ].map((step) => (
-                <div key={step.number} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-[#36170E] flex items-center justify-center border-2 border-[#C1A9A1]/30 flex-shrink-0">
-                      <step.icon className="w-5 h-5 text-[#C1A9A1]" />
-                    </div>
-                    {step.number < 6 && (
-                      <div className="w-0.5 flex-1 bg-foreground/10 mt-2" />
+          <CaseStudySectionHeading label="Ideation" title="Three ideas, one direction" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/70 text-base lg:text-lg leading-[1.8] mb-12">
+              Each team member brought a concept to the table. The team chose Wave Eats as the final idea.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {ideas.map((idea) => (
+              <ScrollReveal key={idea.name}>
+                <div
+                  className={`h-full p-6 lg:p-8 rounded-2xl border ${idea.chosen ? "bg-[#36170E] text-white border-transparent" : "bg-secondary/50 border-foreground/5"}`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <Lightbulb className="w-6 h-6" style={{ color: idea.chosen ? ORANGE : undefined }} />
+                    {idea.chosen && (
+                      <span className="text-xs font-bold tracking-[0.15em] uppercase" style={{ color: ORANGE }}>
+                        Chosen
+                      </span>
                     )}
                   </div>
-                  <div className="pb-6">
-                    <h4 className="font-bold font-[family-name:var(--font-poppins)] text-foreground text-sm">
-                      {step.title}
-                    </h4>
-                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
+                  <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-1">{idea.name}</h3>
+                  <p className={`text-xs mb-3 ${idea.chosen ? "text-white/50" : "text-muted-foreground"}`}>Idea by {idea.by}</p>
+                  <p className={`text-sm leading-relaxed ${idea.chosen ? "text-white/75" : "text-muted-foreground"}`}>{idea.text}</p>
                 </div>
-              ))}
-            </StaggerReveal>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 9. Screens Showcase ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
+      {/* ── Research ── */}
+      <section id="research" className="py-20 lg:py-32 bg-[#36170E]">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16 lg:mb-24">
-            <CaseStudySectionHeading
-              label="App Screens"
-              title="Designed for clarity and delight"
-              accentColor="#C1A9A1"
-            />
-          </div>
-
-          <div className="space-y-20 lg:space-y-32">
-            {/* Screen 1: Onboarding */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-onboarding.png"
-              alt="Wave Eats onboarding screen"
-              title="Onboarding"
-              purpose="The onboarding screen establishes the brand identity from the first interaction. A vibrant food photography backdrop with the tagline 'Delight in every bite' immediately communicates the app's purpose and tone."
-              rationale="Research showed that students respond to warm, appetizing imagery over abstract illustrations. The onboarding was kept to a single impactful screen to minimize friction, with a prominent call-to-action that gets users into the app within seconds."
-            />
-
-            <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
-
-            {/* Screen 2: Personalized Home */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-home-wave.png"
-              alt="Wave Eats personalized home screen"
-              title="Personalized Home"
-              purpose="The home screen is personalized with the user's name and campus location. It surfaces the 'Start A Wave' feature prominently, alongside food categories and active Waves nearby, creating immediate engagement opportunities."
-              rationale="Personalization creates an immediate sense of ownership. Placing the 'Start A Wave' action at the top reduces the cognitive path to the core feature. Categories are displayed as horizontal scroll chips to save vertical space while maintaining scannability."
-              reversed
-            />
-
-            <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
-
-            {/* Screen 3: Waves Hub */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-waves.png"
-              alt="Wave Eats Waves listing screen"
-              title="Waves Hub"
-              purpose="The Waves Hub displays all active group orders in the user's area. Each Wave card shows the restaurant, remaining time, participant count, and potential savings—giving users enough context to make a quick joining decision."
-              rationale="Card-based layout was chosen for quick scanning. The participant avatars create social proof—the more people visible, the more trustworthy the Wave feels. Time remaining is displayed prominently to create urgency without being aggressive."
-            />
-
-            <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
-
-            {/* Screen 4: Restaurant Menu */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-kfc-menu.png"
-              alt="Wave Eats KFC menu screen"
-              title="Restaurant Menu"
-              purpose="The menu screen displays restaurant items with clear pricing and descriptions. The dual-action buttons—'Add Wave Order' and 'Solo Order'—let users choose how they want to order without leaving the context."
-              rationale="Maintaining both ordering modes on the same screen prevents confusion about whether the user is in a Wave flow or solo flow. The item cards use generous whitespace and high-contrast pricing to minimize reading effort during the decision-making process."
-              reversed
-            />
-
-            <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
-
-            {/* Screen 5: Place Order */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-place-order.png"
-              alt="Wave Eats order placement screen"
-              title="Place Order"
-              purpose="The order placement screen shows delivery location, time options, and crucially, the delivery fee tiers based on group size. This is where the savings become tangible and concrete for the user."
-              rationale="Transparency is maximized at this critical decision point. Showing the delivery fee decrease as more participants join reinforces the value of the Wave concept. Time slot selection gives users control over when they receive their food, accommodating class schedules."
-            />
-
-            <DrawLine direction="horizontal" color="#C1A9A1" className="mx-auto max-w-md" />
-
-            {/* Screen 6: Confirm & Pay */}
-            <CaseStudyScreenShowcase
-              src="/waveeatz/screen-confirm-order.png"
-              alt="Wave Eats confirm order screen"
-              title="Confirm & Pay"
-              purpose="The confirmation screen provides a complete order summary showing the meal cost, shared delivery fee, and total. The Cash on Delivery option accommodates students who prefer paying on receipt."
-              rationale="Breaking down the costs into meal price and shared delivery fee makes the savings visible. Showing the original delivery fee alongside the split amount creates a powerful 'you saved X' moment. Cash on Delivery was included as it remains the preferred payment method for many Kenyan students."
-              reversed
-            />
+          <CaseStudySectionHeading label="Research & Discovery" title="Listening to students" light accentColor={ORANGE} lightAccentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-white/75 text-base lg:text-lg leading-[1.8] mb-4">
+              The team ran informal interviews with about 4–6 students and observed how they order food on campus, to
+              understand where delivery costs and coordination get in the way.
+            </p>
+            <p className="max-w-3xl text-white/50 text-sm leading-relaxed mb-12">
+              This was a small, informal sample, so the findings point to opportunities rather than prove how all
+              students behave.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {insights.map((t, i) => (
+              <ScrollReveal key={t}>
+                <div className="h-full p-6 lg:p-8 rounded-2xl bg-white/[0.04] border border-white/10">
+                  <p className="text-4xl font-bold font-[family-name:var(--font-poppins)] mb-4" style={{ color: ORANGE }}>
+                    0{i + 1}
+                  </p>
+                  <p className="text-white/80 text-sm leading-relaxed">{t}</p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 10. Features Section ── */}
-      <section className="py-20 lg:py-32 bg-background">
+      {/* ── Personas ── */}
+      <section id="personas" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <CaseStudySectionHeading
-              label="Features"
-              title="Built for students, powered by community"
-              accentColor="#C1A9A1"
-            />
-          </div>
-
-          <StaggerReveal
-            className="grid sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-3 gap-6"
-            stagger={0.08}
-          >
-            <CaseStudyFeatureCard
-              icon={Search}
-              title="Wave Discovery"
-              description="Students can browse all active Waves in their delivery zone, filtered by restaurant, time remaining, and number of participants. The discovery feed updates in real-time as new Waves are created."
-            />
-            <CaseStudyFeatureCard
-              icon={Users}
-              title="Join Wave"
-              description="One-tap joining with a clear participant counter showing available spots. Users can see who else is in the Wave and how much they'll save before committing, removing any hesitation."
-            />
-            <CaseStudyFeatureCard
-              icon={Package}
-              title="Create Wave"
-              description="Start your own group order by selecting a restaurant, setting a time window, and inviting classmates. The Wave automatically becomes discoverable to nearby students looking to join."
-            />
-            <CaseStudyFeatureCard
-              icon={DollarSign}
-              title="Shared Delivery Fee"
-              description="Automatic cost splitting calculated in real-time as participants join. The delivery fee tier system visibly decreases per person with each new member, reinforcing the collaborative benefit."
-            />
-            <CaseStudyFeatureCard
-              icon={Clock}
-              title="Real-Time Tracking"
-              description="Live order status updates from restaurant preparation through dispatch to arrival. The shared tracking view shows all participants exactly where their combined delivery is at any moment."
-            />
-            <CaseStudyFeatureCard
-              icon={MapPin}
-              title="Group Pickup"
-              description="Designated campus collection points that students already use and recognize. Clear directions and notifications ensure everyone knows exactly where and when to collect their food."
-            />
-            <CaseStudyFeatureCard
-              icon={TrendingDown}
-              title="Savings Summary"
-              description="A post-order breakdown showing exactly how much was saved compared to solo delivery. Gamified savings milestones encourage repeat usage and sharing the app with friends."
-            />
-            {/* Empty slot for visual balance */}
-            <div className="hidden lg:block" />
-            <div className="hidden lg:block" />
-          </StaggerReveal>
-        </div>
-      </section>
-
-      {/* ── 11. Design System ── */}
-      <section className="py-20 lg:py-32 bg-[#0a0a0a] relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#36170E]/20 blur-3xl" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C1A9A1] mb-3">
-                Design System
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="Visual language & components"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white"
-            />
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            {/* Left: Color Palette + Typography */}
-            <div>
-              <ScrollReveal>
-                <div className="mb-10">
-                  <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">
-                    Color Palette
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <ColorSwatch
-                      color="#36170E"
-                      name="Deep Coffee Brown"
-                      hex="#36170E"
-                    />
-                    <ColorSwatch
-                      color="#642714"
-                      name="Arrowwood"
-                      hex="#642714"
-                    />
-                    <ColorSwatch
-                      color="#C1A9A1"
-                      name="Silver Pink"
-                      hex="#C1A9A1"
-                    />
-                    <ColorSwatch
-                      color="#FFFFFF"
-                      name="White"
-                      hex="#FFFFFF"
-                    />
-                  </div>
+          <CaseStudySectionHeading label="Personas" title="Who we designed for" accentColor={ORANGE} />
+          <div className="grid lg:grid-cols-2 gap-8">
+            {personas.map((p) => (
+              <ScrollReveal key={p.name}>
+                <div className="h-full p-6 lg:p-8 rounded-2xl bg-secondary/40 border border-foreground/5">
+                  <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: ORANGE }}>Persona</p>
+                  <h3 className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">{p.name}</h3>
+                  <p className="text-foreground/70 mb-1">{p.title}</p>
+                  <p className="text-xs text-muted-foreground mb-5">{p.profile}</p>
+                  <p className="italic text-foreground/80 mb-6">&ldquo;{p.quote}&rdquo;</p>
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-foreground mb-2">Goals</p>
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground mb-5">
+                    {p.goals.map((g) => <li key={g}>{g}</li>)}
+                  </ul>
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-foreground mb-2">Frustrations</p>
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                    {p.pains.map((g) => <li key={g}>{g}</li>)}
+                  </ul>
                 </div>
               </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <div className="mb-10">
-                  <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">
-                    Typography
-                  </h4>
-                  <div className="space-y-4">
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                      <p className="text-xs text-[#C1A9A1] mb-2 tracking-[0.2em] uppercase">
-                        Headings
-                      </p>
-                      <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">
-                        Poppins Bold
-                      </p>
-                    </div>
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                      <p className="text-xs text-[#C1A9A1] mb-2 tracking-[0.2em] uppercase">
-                        Body Text
-                      </p>
-                      <p className="text-lg text-white/80">
-                        System Sans-Serif Regular
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div>
-                  <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">
-                    Design Principles
-                  </h4>
-                  <div className="space-y-3">
-                    {[
-                      "Warm, appetizing color palette reflecting food culture",
-                      "Generous whitespace for content breathing room",
-                      "Rounded corners and soft shadows for friendliness",
-                      "High-contrast CTAs for clear action paths",
-                      "Consistent 8px spacing grid system",
-                    ].map((principle) => (
-                      <div
-                        key={principle}
-                        className="flex items-start gap-3 p-3 rounded-lg bg-white/5"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-[#C1A9A1] mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-white/60">{principle}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
-            </div>
-
-            {/* Right: Figma Screens Overview */}
-            <ScrollRevealRight>
-              <div>
-                <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-6">
-                  Component Library
-                </h4>
-                <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                  <img
-                    src="/waveeatz/figma-screens-overview.png"
-                    alt="Figma screens overview showing all Wave Eats app components and screens"
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-                <p className="mt-4 text-sm text-white/40 leading-relaxed">
-                  The complete Figma design system includes 20+ screens covering
-                  onboarding, authentication, home, Waves discovery and
-                  management, restaurant browsing, order flow, delivery tracking,
-                  user profile, and savings history.
-                </p>
-              </div>
-            </ScrollRevealRight>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 12. Outcomes ── */}
-      <section className="py-20 lg:py-32 bg-[#36170E] relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-1/4 w-72 h-72 rounded-full bg-[#C1A9A1]/5 blur-3xl" />
-          <div className="absolute bottom-20 right-1/4 w-96 h-96 rounded-full bg-[#642714]/20 blur-3xl" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C1A9A1] mb-3">
-                Outcomes
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="Impact & expected results"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white max-w-3xl mx-auto"
-            />
-          </div>
-
-          {/* User Benefits */}
-          <ScrollReveal className="mb-16">
-            <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-8 text-center">
-              User Benefits
-            </h4>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <CaseStudyStatCard
-                icon={TrendingDown}
-                value="70%"
-                label="Maximum savings on delivery fees through group ordering"
-                light
-                accentColor="#C1A9A1"
-              />
-              <CaseStudyStatCard
-                icon={Clock}
-                value="3 min"
-                label="Average time to discover and join an active Wave"
-                light
-                accentColor="#C1A9A1"
-              />
-              <CaseStudyStatCard
-                icon={Users}
-                value="5 avg"
-                label="Participants per Wave for optimal fee splitting"
-                light
-                accentColor="#C1A9A1"
-              />
-              <CaseStudyStatCard
-                icon={CheckCircle2}
-                value="92%"
-                label="User satisfaction score in prototype testing"
-                light
-                accentColor="#C1A9A1"
-              />
-            </div>
+      {/* ── Solution + flows ── */}
+      <section id="flows" className="py-20 lg:py-32 bg-secondary/30">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="User Flows" title="Join a Wave or start one" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/70 text-base lg:text-lg leading-[1.8] mb-14">
+              Everything in the app branches from two paths: joining a Wave someone already started, or starting your
+              own. I mapped both, plus what happens when someone tries to order alone or something goes wrong.
+            </p>
           </ScrollReveal>
 
-          {/* Business Value */}
-          <ScrollReveal delay={0.2}>
-            <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-white mb-8 text-center">
-              Business Value
-            </h4>
-            <div className="grid sm:grid-cols-3 gap-6">
-              <div className="p-8 rounded-2xl bg-white/10 border border-white/10 text-center">
-                <p className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-white mb-2">
-                  3×
-                </p>
-                <p className="text-sm text-white/60">
-                  Increase in average order volume per restaurant through Wave
-                  consolidation
-                </p>
-              </div>
-              <div className="p-8 rounded-2xl bg-white/10 border border-white/10 text-center">
-                <p className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-white mb-2">
-                  60%
-                </p>
-                <p className="text-sm text-white/60">
-                  Reduction in redundant delivery trips to the same campus
-                  location
-                </p>
-              </div>
-              <div className="p-8 rounded-2xl bg-white/10 border border-white/10 text-center">
-                <p className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-white mb-2">
-                  85%
-                </p>
-                <p className="text-sm text-white/60">
-                  Expected retention rate driven by visible savings and social
-                  ordering habit
-                </p>
+          {[
+            { heading: "Flow 1: Discover and join a Wave", steps: joinFlow },
+            { heading: "Flow 2: Start a Wave", steps: startFlow },
+          ].map((flow) => (
+            <div key={flow.heading} className="mb-16">
+              <h3 className="text-xl font-bold font-[family-name:var(--font-poppins)] text-foreground mb-8">{flow.heading}</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+                {flow.steps.map((s, i) => (
+                  <ScrollReveal key={s.title}>
+                    <CaseStudyFlowStep
+                      number={i + 1}
+                      icon={s.icon}
+                      title={s.title}
+                      description={s.description}
+                      accentColor="#fff"
+                      stepBgColor="#36170E"
+                      stepBorderColor={ORANGE}
+                    />
+                  </ScrollReveal>
+                ))}
               </div>
             </div>
+          ))}
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <ScrollReveal>
+              <CaseStudyFeatureCard
+                icon={Repeat}
+                title="Flow 3: Ordering alone"
+                description="If a Wave from the same restaurant is already running in your block, the app suggests joining it and shows how much you would save. If not, you can start your own Wave or continue solo."
+                accentColor={ORANGE}
+              />
+            </ScrollReveal>
+            <ScrollReveal>
+              <CaseStudyFeatureCard
+                icon={AlertCircle}
+                title="Flow 4: When things go wrong"
+                description="If payment fails, students can retry, pick another method or save the order for later. If a Wave becomes full, the app suggests starting a new one."
+                accentColor={ORANGE}
+              />
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Scope ── */}
+      <section id="scope" className="py-20 lg:py-32 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="Structure" title="Mapping the app" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/70 text-base lg:text-lg leading-[1.8] mb-12">
+              Before designing, the team listed the full planned app across six areas and split the wireframes: I took
+              Start a Wave, Esther took Wave Interaction, and Collins took Home and Profile.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {screenAreas.map((a) => (
+              <ScrollReveal key={a.name}>
+                <div className="h-full p-6 rounded-2xl bg-secondary/40 border border-foreground/5">
+                  <p className="text-3xl font-bold font-[family-name:var(--font-poppins)]" style={{ color: ORANGE }}>{a.count}</p>
+                  <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mt-1 mb-2">{a.name}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{a.items}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Key screens ── */}
+      <section id="screens" className="py-20 lg:py-32 bg-secondary/30">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="UI Design" title="Key screens" accentColor={ORANGE} />
+          <div className="space-y-24 lg:space-y-32">
+            <CaseStudyScreenShowcase
+              src={`${S}/08-home.png`}
+              alt="Wave Eatz home screen"
+              title="Home"
+              purpose="Show the student where they are delivering to and which Waves are open right now."
+              rationale="A featured Wave card shows participants, place and time left up front, so the group-ordering idea is visible the moment the app opens. Top of the Week sits below for regular browsing."
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/10-waves-feed.png`}
+              alt="Wave feed screen"
+              title="Wave Feed"
+              purpose="Let students browse open Waves and join one, or start their own."
+              rationale="Each card carries only what a decision needs: the food, how many people joined, the hostel or place, and the minutes left. A single Start a Wave button covers the case where nothing suits."
+              reversed
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/11-start-a-wave.png`}
+              alt="Start a Wave screen"
+              title="Start a Wave"
+              purpose="Pick a restaurant or meal to begin a new Wave."
+              rationale="Popular restaurants, popular meals and a student's favourites keep the first choice quick, with the delivery location shown above so the drop-off is never in doubt."
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/12-wave-order.png`}
+              alt="Meal order screen with Add Wave Order and Solo Order"
+              title="Add to a Wave"
+              purpose="Review a meal bundle and choose how to order it."
+              rationale="Add Wave Order is the filled primary button and Solo Order is the outlined secondary one. That nudges students toward group ordering while still respecting the choice to order alone."
+              reversed
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/13-wave-settings.png`}
+              alt="Wave settings screen with timer and delivery fee tiers"
+              title="Set the Wave"
+              purpose="Let the Wave starter choose how long the Wave stays open and see how the fee changes."
+              rationale="The fee tiers (Ksh 180 for 5 people, Ksh 120 for 10, Ksh 90 for 20) make the saving concrete, which gives the starter a reason to invite neighbours."
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/15-confirm-order.png`}
+              alt="Confirm order screen"
+              title="Confirm Order"
+              purpose="Show exactly what the student will pay before they commit."
+              rationale="Price, delivery fee and total are separated, and the small Wave icon marks the amounts that depend on the group. Payment defaults to Cash on Delivery."
+              reversed
+              accentColor={ORANGE}
+            />
+            <CaseStudyScreenShowcase
+              src={`${S}/18-order-received.png`}
+              alt="Order received screen"
+              title="Order Received"
+              purpose="Confirm the order and set expectations for delivery."
+              rationale="The order number, expected delivery window and a Cancel Order link are all on one screen, so students know the status without hunting for it."
+              accentColor={ORANGE}
+            />
+          </div>
+
+          <ScrollReveal>
+            <h3 className="text-xl font-bold font-[family-name:var(--font-poppins)] text-foreground mt-24 mb-8">More screens</h3>
+          </ScrollReveal>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {gallery.map((g) => (
+              <ScrollReveal key={g.label}>
+                <PhoneFrame src={g.src} alt={g.alt} />
+                <p className="text-center text-sm text-muted-foreground mt-3">{g.label}</p>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section id="features" className="py-20 lg:py-32 bg-[#36170E]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="Features" title="What the design includes" light accentColor={ORANGE} lightAccentColor={ORANGE} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <ScrollReveal key={f.title}>
+                <CaseStudyFeatureCard icon={f.icon} title={f.title} description={f.description} accentColor={ORANGE} variant="dark" />
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Visual identity ── */}
+      <section id="design-system" className="py-20 lg:py-32 bg-[#36170E] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="Visual Identity" title="Warm, appetising, energetic" light accentColor={ORANGE} lightAccentColor={ORANGE} />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <CaseStudyColorSwatch color="#36170E" name="Deep Coffee" hex="#36170E" />
+            <CaseStudyColorSwatch color="#642714" name="Burnt Sienna (cards)" hex="#642714" />
+            <CaseStudyColorSwatch color="#FF4F00" name="Wave Orange (accent)" hex="#FF4F00" />
+            <CaseStudyColorSwatch color="#86746E" name="Muted Taupe (secondary text)" hex="#86746E" />
+          </div>
+          <ScrollReveal>
+            <p className="max-w-3xl text-white/70 text-base leading-[1.8]">
+              A dark coffee-brown base with a single bright orange accent keeps food photography and the orange calls to
+              action in focus. Rounded cards, black pill buttons and the wave icon repeat across screens so the app
+              feels consistent.
+            </p>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 13. Project Navigation ── */}
-      <section className="py-16 lg:py-24 bg-background border-t border-foreground/5">
+      {/* ── Reflection ── */}
+      <section id="reflection" className="py-20 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid sm:grid-cols-2 gap-6">
-            {/* Previous Project */}
-            <ScrollRevealLeft>
-              <Link
-                href="/projects/shamba-rahisi"
-                className="group flex items-center justify-between p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-accent/20 transition-all duration-500"
-              >
-                <div>
-                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-2">
-                    Previous Project
-                  </p>
-                  <h3 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    Shamba Rahisi
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-accent/10 transition-colors duration-300">
-                  <ArrowLeft className="w-5 h-5 text-foreground group-hover:text-accent transition-colors duration-300" />
-                </div>
-              </Link>
-            </ScrollRevealLeft>
-
-            {/* Next Project */}
-            <ScrollRevealRight>
-              <Link
-                href="/projects/schoolpata"
-                className="group flex items-center justify-between p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-accent/20 transition-all duration-500"
-              >
-                <div>
-                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-2">
-                    Next Project
-                  </p>
-                  <h3 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground group-hover:text-accent transition-colors duration-300">
-                    Schoolpata
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-accent/10 transition-colors duration-300">
-                  <ArrowRight className="w-5 h-5 text-foreground group-hover:text-accent transition-colors duration-300" />
-                </div>
-              </Link>
-            </ScrollRevealRight>
+          <CaseStudySectionHeading label="Outcome & Reflection" title="What I took from it" accentColor={ORANGE} />
+          <div className="grid lg:grid-cols-2 gap-12">
+            <ScrollReveal>
+              <div className="space-y-5 text-foreground/75 text-base lg:text-lg leading-[1.8]">
+                <p>
+                  Wave Eatz let me apply UX research, user-flow mapping, wireframing and UI design in a collaborative
+                  product-design project, taking one student problem from research through to a Figma prototype.
+                </p>
+                <p>
+                  It reinforced that understanding users comes before designing an interface, and that the key action
+                  (joining a Wave) has to be obvious and easy to find.
+                </p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal>
+              <div className="p-6 lg:p-8 rounded-2xl bg-secondary/40 border border-foreground/5">
+                <p className="text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ color: ORANGE }}>Next steps</p>
+                <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <li>Test the prototype with students to check whether the Wave flow is clear.</li>
+                  <li>Design the live drop-off tracking and rider view from the original flows.</li>
+                  <li>Complete the Profile, order history and saved places screens.</li>
+                  <li>Check the delivery fee tiers against what real vendors and riders could offer.</li>
+                </ul>
+              </div>
+            </ScrollReveal>
           </div>
+          <ScrollReveal>
+            <p className="mt-12 text-sm text-muted-foreground">
+              Credits: developed with teammates Esther and Collins as part of the Moringa School Product Design program.
+              This is a design concept; it has not been launched.
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
-      <ProjectNavCue nextProjectName="TrendZ" nextProjectHref="/projects/trendz" />
+      <ProjectNavCue currentSlug="waveeatz" />
     </div>
   );
 }
