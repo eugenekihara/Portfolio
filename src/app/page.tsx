@@ -1144,8 +1144,8 @@ function ProjectsSection() {
       id="projects"
       className="bg-[#0a0a0a] text-white overflow-x-clip"
     >
-      {/* Section header */}
-      <div className="pt-24 lg:pt-28 pb-8 lg:pb-10">
+      {/* Section Header — above the pinned area */}
+      <div className="pt-20 lg:pt-28 pb-8 lg:pb-10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <ScrollReveal>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
@@ -1155,7 +1155,7 @@ function ProjectsSection() {
                 </span>
                 <SplitTextReveal
                   text="Projects"
-                  className="mt-3 text-[52px] sm:text-[64px] lg:text-[84px] xl:text-[112px] font-bold font-[family-name:var(--font-poppins)] leading-[0.9] tracking-tighter"
+                  className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
                 />
               </div>
 

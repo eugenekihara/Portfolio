@@ -440,12 +440,18 @@ export function HorizontalScroll({
         style={{ top: pinOffset }}
         className={`overflow-x-auto overflow-y-hidden overscroll-x-contain lg:sticky max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
       >
-        <div ref={trackRef} className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch">
+        <div
+          ref={trackRef}
+          className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch"
+        >
           {children}
         </div>
       </div>
     </div>
   );
+      </div>
+    </div>
+
 }
 
 /* ─── Draw Line: Animates a line width/height on scroll ─── */
