@@ -125,11 +125,11 @@ const roleItems = [
   },
   {
     title: "Problem identification",
-    text: "Identified pain points around interpreting agricultural data and defined the core problem areas.",
+    text: "Identified pain points farmers face when interpreting agricultural data, and mapped challenges around accessibility and language.",
   },
   {
     title: "Research to strategy",
-    text: "Contributed research findings that informed feature prioritization and product direction.",
+    text: "Contributed research findings that informed feature prioritization and product strategy.",
   },
 ];
 
@@ -180,7 +180,7 @@ const layers = [
     key: "Doctor",
     verb: "Understand",
     icon: Stethoscope,
-    what: "Interprets soil sensor data into simple, actionable recommendations.",
+    what: "Interprets soil data into simple, actionable recommendations.",
     responds: ["Understanding soil data", "Language and digital access"],
     status: "design" as const,
     statusLabel: "In the prototype",
@@ -190,7 +190,7 @@ const layers = [
     key: "Pharmacist",
     verb: "Access",
     icon: Pill,
-    what: "Helps farmers discover nearby agro-dealers and locate the recommended inputs.",
+    what: "Helps farmers discover suppliers and find the recommended inputs.",
     responds: ["Input access and quality", "Trust and advice"],
     status: "proposed" as const,
     statusLabel: "Proposed",
@@ -200,7 +200,7 @@ const layers = [
     key: "Insurance",
     verb: "Afford",
     icon: ShieldCheck,
-    what: "Supports financial planning through options such as savings and group purchasing.",
+    what: "Explores affordability through financial planning, savings or group purchasing.",
     responds: ["Affordability", "Implementation"],
     status: "design" as const,
     statusLabel: "Early signs in the prototype",
@@ -239,7 +239,7 @@ const screens = [
     src: `${S}/screen-onboarding-connect-synnefa.png`,
     alt: "Connect sensor account screen",
     title: "Connect sensors",
-    shows: "Links a sensor account so readings can sync. This is the “data is uploaded” step of the flow.",
+    shows: "Lets the farmer log in to a sensor account so readings can sync into the app. It relates to the “data is uploaded” step of the flow.",
     reflects: null,
   },
   {
@@ -525,6 +525,42 @@ export default function ShambaRahisiPage() {
                 </div>
               </div>
             </div>
+          </ScrollReveal>
+
+          {/* Three main barriers */}
+          <ScrollReveal>
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground">Three main barriers</h3>
+              <Tag kind="design" label="How I grouped the themes" />
+            </div>
+            <p className="max-w-3xl text-sm text-muted-foreground mb-6">
+              The themes below point to three barriers between a soil reading and a farming decision.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-4 lg:gap-5 mb-4">
+            {[
+              { n: "01", title: "Understanding soil data", text: "Readings are hard to turn into decisions, and farmers tend to trust familiar advisers over raw data.", themes: ["Understanding soil data", "Trust and advice", "Language and digital access"] },
+              { n: "02", title: "Accessing recommended inputs", text: "The recommended input may not be nearby, may be poor quality, or may be slow and costly to get.", themes: ["Input access and quality"] },
+              { n: "03", title: "Affordability", text: "Limited cash can mean delayed, smaller or substitute purchases.", themes: ["Affordability"] },
+            ].map((x) => (
+              <ScrollReveal key={x.n}>
+                <div className="h-full p-5 lg:p-6 rounded-2xl border-2" style={{ borderColor: `${GREEN}33`, backgroundColor: `${GREEN}08` }}>
+                  <span className="text-xs font-bold tracking-[0.2em]" style={{ color: ORANGE }}>{x.n}</span>
+                  <h4 className="mt-2 font-bold font-[family-name:var(--font-poppins)] text-foreground">{x.title}</h4>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{x.text}</p>
+                  <ul className="mt-4 flex flex-wrap gap-2">
+                    {x.themes.map((t) => (
+                      <li key={t} className="text-xs px-2.5 py-1 rounded-full border border-foreground/10 text-muted-foreground">{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+          <ScrollReveal>
+            <p className="mb-14 text-xs text-muted-foreground max-w-3xl">
+              Implementation challenges and gender and decision-making cut across all three.
+            </p>
           </ScrollReveal>
 
           {/* Broader research themes */}
@@ -815,7 +851,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <CaseStudySectionHeading label="Tools & Technology" title="The stack behind the solution" accentColor="#ED6C02" />
+            <CaseStudySectionHeading label="Tools" title="Tools used on this project" accentColor="#ED6C02" />
           </div>
 
           <StaggerReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" stagger={0.08}>
