@@ -360,60 +360,95 @@ export function HorizontalScroll({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** Distance in px from the top of the viewport where the section pins (e.g. to clear a fixed nav). */
+  /** Distance in px from the top of the viewport where the cards stick (e.g. to clear a fixed nav). */
   pinOffset?: number;
 }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
+    const outer = outerRef.current;
+    const sticky = stickyRef.current;
     const track = trackRef.current;
-    if (!section || !track) return;
+    if (!outer || !sticky || !track) return;
 
-    // On mobile (and with reduced motion) skip the pinned animation. The wrapper is
-    // natively scrollable sideways (overflow-x-auto) so every card stays reachable.
-    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-    if (isMobile) return;
+    // Desktop only, and only when the visitor has not asked for reduced motion.
+    // Otherwise the cards stay in normal flow and scroll sideways natively (swipe / trackpad).
+    const mq = window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)");
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
+    let trigger: ScrollTrigger | undefined;
+    let setX: ((value: number) => void) | undefined;
+    let raf = 0;
 
-    // The GSAP animation drives the horizontal movement, so hide native overflow while it runs.
-    section.style.overflowX = "hidden";
+    const teardown = () => {
+      trigger?.kill();
+      trigger = undefined;
+      setX = undefined;
+      gsap.set(track, { clearProps: "transform" });
+      outer.style.height = "";
+      sticky.style.overflowX = "";
+    };
 
-    const totalScroll = track.scrollWidth - window.innerWidth;
+    // Sticky, not GSAP pin: nothing is moved or wrapped in the DOM, so the cards always keep
+    // their natural height. The outer element is only made taller to create scroll distance.
+    const setup = () => {
+      teardown();
+      if (!mq.matches) return;
 
-    const tween = gsap.to(track, {
-      x: -totalScroll,
-      ease: "none",
-      scrollTrigger: {
-        trigger: section,
-        start: pinOffset ? `top ${pinOffset}px` : "top top",
-        end: () => `+=${totalScroll}`,
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
-    });
+      const distance = Math.max(0, track.scrollWidth - sticky.clientWidth);
+      if (distance < 1) return; // everything fits: nothing to scroll
+
+      sticky.style.overflowX = "hidden";
+      outer.style.height = `${sticky.offsetHeight + distance}px`;
+
+      setX = gsap.quickTo(track, "x", { duration: 0.6, ease: "power3.out" }) as (value: number) => void;
+      trigger = ScrollTrigger.create({
+        trigger: outer,
+        start: `top ${pinOffset}px`,
+        end: `+=${distance}`,
+        onUpdate: (self) => setX?.(-distance * self.progress),
+        onRefresh: (self) => gsap.set(track, { x: -distance * self.progress }),
+      });
+    };
+
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(setup);
+    };
+
+    setup();
+    mq.addEventListener("change", schedule);
+    window.addEventListener("resize", schedule);
+    const ro = new ResizeObserver(schedule);
+    ro.observe(track);
+    document.fonts?.ready.then(schedule).catch(() => {});
 
     return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-      section.style.overflowX = "";
+      cancelAnimationFrame(raf);
+      mq.removeEventListener("change", schedule);
+      window.removeEventListener("resize", schedule);
+      ro.disconnect();
+      teardown();
     };
   }, [pinOffset]);
 
-    <div
-      ref={sectionRef}
-      className={`overflow-x-auto overflow-y-hidden overscroll-x-contain max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
-    >
+  return (
+    <div ref={outerRef}>
       <div
-        ref={trackRef}
-        className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch"
+        ref={stickyRef}
+        style={{ top: pinOffset }}
+        className={`overflow-x-auto overflow-y-hidden overscroll-x-contain lg:sticky max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
       >
-        {children}
+        <div
+          ref={trackRef}
+          className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch"
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
       </div>
     </div>
 

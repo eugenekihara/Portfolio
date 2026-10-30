@@ -99,6 +99,8 @@
     @apply border-border outline-ring/50;
   }
   body {
+    /* Safety net: no section may ever widen the page. clip (not hidden) keeps sticky and pinned scrolling working. */
+    overflow-x: clip;
     @apply bg-background text-foreground;
   }
 

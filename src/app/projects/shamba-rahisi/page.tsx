@@ -4,22 +4,28 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
-  Search,
-  Users,
-  Mic,
-  Globe,
-  Bell,
-  Sprout,
-  BarChart3,
-  MapPin,
-  CheckCircle2,
   ChevronRight,
-  Clock,
-  BookOpen,
-  Target,
-  Lightbulb,
-  Leaf,
+  Stethoscope,
+  Pill,
+  ShieldCheck,
+  Wallet,
+  Radio,
+  Truck,
+  Wheat,
+  Volume2,
+  UploadCloud,
   Languages,
+  Users,
+  Sprout,
+  Repeat,
+  Quote,
+  Database,
+  Eye,
+  Handshake,
+  ClipboardList,
+  CheckCircle2,
+  PiggyBank,
+  Leaf,
 } from "lucide-react";
 import {
   ScrollReveal,
@@ -28,18 +34,12 @@ import {
   Parallax,
   SplitTextReveal,
   StaggerReveal,
-  DrawLine,
-  ClipReveal,
   MagneticHover,
 } from "@/components/scroll-animations";
 import { SiteNav } from "@/components/site-nav";
 import {
   CaseStudySectionHeading,
-  CaseStudyStatCard,
-  CaseStudyFlowStep,
   PhoneFrame,
-  CaseStudyScreenText,
-  CaseStudyScreenShowcase,
   CaseStudyColorSwatch,
 } from "@/components/case-study";
 import { ProjectNavCue } from "@/components/project-nav-cue";
@@ -48,10 +48,236 @@ import { ProjectNavCue } from "@/components/project-nav-cue";
 const GREEN = "#2E5C3E";
 const GREEN_DARK = "#1A3A26";
 const ORANGE = "#ED6C02";
-const ORANGE_LIGHT = "#F5923A";
 const ACCENT_GREEN = "#4A8B5E";
+const S = "/shamba-rahisi";
 
+/* ─── Evidence labels: keep research, design decisions and proposals apart ─── */
+const TAGS = {
+  evidence: { label: "Research evidence", color: GREEN, style: "solid" },
+  design: { label: "Design decision", color: ORANGE, style: "solid" },
+  proposed: { label: "Proposed", color: "#6b7280", style: "dashed" },
+} as const;
 
+function Tag({ kind, label }: { kind: keyof typeof TAGS; label?: string }) {
+  const t = TAGS[kind];
+  return (
+    <span
+      className="inline-flex items-center text-caption font-bold tracking-[0.15em] uppercase px-2.5 py-1 rounded-full border"
+      style={{
+        color: t.color,
+        borderColor: `${t.color}55`,
+        borderStyle: t.style,
+        backgroundColor: t.style === "solid" ? `${t.color}10` : "transparent",
+      }}
+    >
+      {label ?? t.label}
+    </span>
+  );
+}
+
+/* ─── Content ─── */
+const researchThemes = [
+  {
+    icon: Handshake,
+    title: "Trust and advice",
+    text: "Farmers commonly rely on agro-dealers, agricultural extension officers, cooperatives, neighbors, radio and community training rather than interpreting soil data on their own. Digital guidance may be more accessible when it reflects these familiar, trusted sources.",
+  },
+  {
+    icon: Database,
+    title: "Understanding soil data",
+    text: "Raw sensor readings are difficult to translate into specific farming decisions. Farmers need clear, practical recommendations rather than data alone.",
+  },
+  {
+    icon: Wallet,
+    title: "Affordability",
+    text: "Limited cash can lead farmers to delay purchases, buy smaller quantities or choose cheaper substitutes, which may affect crop performance.",
+  },
+  {
+    icon: Truck,
+    title: "Input access and quality",
+    text: "Recommended fertilizers or other specialized inputs may not be available nearby. Transport costs, counterfeit products and supply delays add further barriers.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Implementation",
+    text: "Even when farmers receive a recommendation, cost, unclear instructions, or farm workers not applying it correctly can stop it from being acted on.",
+  },
+  {
+    icon: Languages,
+    title: "Language and digital access",
+    text: "Some farmers have limited digital literacy and may prefer local-language voice guidance or simpler, phone-based experiences.",
+  },
+  {
+    icon: Users,
+    title: "Gender and decision-making",
+    text: "Women often carry out much of the farm work, while men may control financial and input-purchasing decisions. Women also take part in cooperatives and group farming.",
+  },
+];
+
+const roleItems = [
+  {
+    title: "Stakeholder interviews",
+    text: "Organized and coordinated stakeholder interviews with Synnefa and documented the outcomes.",
+  },
+  {
+    title: "Market and user research",
+    text: "Researched agricultural technology trends and farmer challenges, and reviewed existing solutions to spot gaps.",
+  },
+  {
+    title: "Problem identification",
+    text: "Identified pain points farmers face when interpreting agricultural data, and mapped challenges around accessibility and language.",
+  },
+  {
+    title: "Research to strategy",
+    text: "Contributed research findings that informed feature prioritization and product strategy.",
+  },
+];
+
+const personas = [
+  {
+    name: "Joseph",
+    age: 45,
+    role: "Smallholder farmer",
+    place: "Nakuru",
+    farm: "2 acres of maize and beans",
+    context: "Limited digital experience. Relies on agro-dealers and neighbors.",
+    needs: [
+      "Simple explanations of soil conditions",
+      "Practical recommendations",
+      "Nearby input suppliers",
+    ],
+  },
+  {
+    name: "Mary",
+    age: 38,
+    role: "Cooperative vegetable farmer",
+    place: "Kirinyaga",
+    farm: "1.5 acres",
+    context: "Uses a smartphone but prefers voice guidance.",
+    needs: [
+      "Understandable recommendations",
+      "Information on input availability",
+      "Flexible ways to manage costs",
+    ],
+  },
+  {
+    name: "Daniel",
+    age: 29,
+    role: "Technology-curious farmer",
+    place: "Eldoret",
+    farm: "3 acres",
+    context: "Comfortable using apps but lacks reliable, actionable advice.",
+    needs: [
+      "Soil-data interpretation",
+      "Timely alerts",
+      "Trusted input suppliers",
+    ],
+  },
+];
+
+const layers = [
+  {
+    key: "Doctor",
+    verb: "Understand",
+    icon: Stethoscope,
+    what: "Interprets soil data into simple, actionable recommendations.",
+    responds: ["Understanding soil data", "Language and digital access"],
+    status: "design" as const,
+    statusLabel: "In the prototype",
+    statusNote: "Recommendation, task and voice-settings screens.",
+  },
+  {
+    key: "Pharmacist",
+    verb: "Access",
+    icon: Pill,
+    what: "Helps farmers discover suppliers and find the recommended inputs.",
+    responds: ["Input access and quality", "Trust and advice"],
+    status: "proposed" as const,
+    statusLabel: "Proposed",
+    statusNote: "No screen for this layer yet.",
+  },
+  {
+    key: "Insurance",
+    verb: "Afford",
+    icon: ShieldCheck,
+    what: "Explores affordability through financial planning, savings or group purchasing.",
+    responds: ["Affordability", "Implementation"],
+    status: "design" as const,
+    statusLabel: "Early signs in the prototype",
+    statusNote: "Cost estimates and a savings-goal action. No insurance product was designed.",
+  },
+];
+
+const journey = [
+  { icon: Radio, title: "Sensors collect data", layer: "Sensors" },
+  { icon: UploadCloud, title: "Data is uploaded", layer: "Sensors" },
+  { icon: Stethoscope, title: "Doctor interprets the readings", layer: "Doctor" },
+  { icon: Volume2, title: "Farmer gets a local-language voice alert", layer: "Doctor" },
+  { icon: Pill, title: "Pharmacist helps locate a nearby supplier", layer: "Pharmacist" },
+  { icon: PiggyBank, title: "Insurance supports cost planning", layer: "Insurance" },
+  { icon: Wheat, title: "Farmer buys and applies the input", layer: "Farmer" },
+  { icon: Eye, title: "Sensors help monitor soil conditions", layer: "Sensors" },
+];
+
+const layerColor: Record<string, string> = {
+  Sensors: "#6b7280",
+  Doctor: GREEN,
+  Pharmacist: ORANGE,
+  Insurance: "#8A5A00",
+  Farmer: ACCENT_GREEN,
+};
+
+const screens = [
+  {
+    src: `${S}/screen-onboarding-data-source.png`,
+    alt: "Data source selection screen",
+    title: "Data source",
+    shows: "Asks how the farmer wants to provide soil and farm information: soil test results, an extension officer, or manual entry. Shown in English and Swahili.",
+    reflects: "Trust and advice: an extension officer is one of three ways in.",
+  },
+  {
+    src: `${S}/screen-onboarding-connect-synnefa.png`,
+    alt: "Connect sensor account screen",
+    title: "Connect sensors",
+    shows: "Lets the farmer log in to a sensor account so readings can sync into the app. It relates to the “data is uploaded” step of the flow.",
+    reflects: null,
+  },
+  {
+    src: `${S}/screen-home.png`,
+    alt: "Home screen with priority task",
+    title: "Home",
+    shows: "A farm summary (size, soil pH, crop), today’s weather, a priority recommendation and quick actions such as Map a Field and Join a Chama.",
+    reflects: "Action over data: the highest-priority task leads the screen.",
+  },
+  {
+    src: `${S}/screen-recommendation.png`,
+    alt: "Recommendation screen for low nitrogen",
+    title: "Recommendation",
+    shows: "Soil status per reading, a plain-language explanation, the recommended input, quantity, estimated cost, deadline and instructions, with Add to Tasks and Set Savings Goal.",
+    reflects: "Understanding soil data and affordability sit on the same screen.",
+  },
+  {
+    src: `${S}/screen-task-details.png`,
+    alt: "Task details screen with numbered instructions",
+    title: "Task details",
+    shows: "Numbered instructions for applying the input, plus a check that the farmer is at the correct location.",
+    reflects: "Implementation: clear steps support correct application.",
+  },
+  {
+    src: `${S}/screen-voice-settings.png`,
+    alt: "Voice settings screen with language choice",
+    title: "Voice settings",
+    shows: "Choice of Kiswahili, English, Kalenjin or Kikuyu, a voice gender option, and a sample preview.",
+    reflects: "Language and digital access: voice guidance in a language the farmer chooses.",
+  },
+];
+
+const nextSteps = [
+  "Test the concept with farmers who resemble the three profiles.",
+  "Check the agro-dealer and savings ideas with suppliers and cooperatives.",
+  "Try voice guidance in local languages with farmers who prefer it.",
+  "Look at who does the farm work and who decides on purchases, so recommendations reach both.",
+];
 
 /* ────────────────────────────────────────────
    SHAMBA RAHISI Case Study Page
@@ -59,7 +285,6 @@ const ACCENT_GREEN = "#4A8B5E";
 export default function ShambaRahisiPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* ── 1. Sticky Navigation ── */}
       <SiteNav variant="case-study" />
 
       {/* ── 2. Hero Section ── */}
@@ -96,8 +321,8 @@ export default function ShambaRahisiPage() {
                 {[
                   { label: "Category", value: "AgriTech UX" },
                   { label: "Role", value: "UX Research Lead" },
-                  { label: "Timeline", value: "2025" },
-                  { label: "Platform", value: "Mobile App" },
+                  { label: "Status", value: "Design concept" },
+                  { label: "Platform", value: "Mobile app" },
                 ].map((item) => (
                   <div
                     key={item.label}
@@ -119,9 +344,9 @@ export default function ShambaRahisiPage() {
                 transition={{ duration: 0.7, delay: 0.5 }}
                 className="mt-8 text-white/60 text-base lg:text-lg leading-relaxed max-w-lg"
               >
-                An agricultural technology solution that transforms complex farm
-                data into simple, actionable insights&mdash;delivered in
-                farmers&apos; own languages through voice and smart reminders.
+                Exploring how farmers can turn soil sensor data into practical
+                farming decisions, from stakeholder research to a mobile app
+                concept.
               </motion.p>
 
               <motion.div
@@ -179,665 +404,371 @@ export default function ShambaRahisiPage() {
         </div>
       </section>
 
-      {/* ── 3. Project Overview ── */}
-      <section id="overview" className="py-20 lg:py-32 bg-background">
+      {/* ── Overview ── */}
+      <section id="overview" className="py-20 lg:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <CaseStudySectionHeading label="Overview" title="The voice of your soil" accentColor="#ED6C02" />
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <ScrollReveal>
-              <div className="space-y-6">
-                <p className="text-foreground/80 text-base lg:text-lg leading-[1.8]">
-                  <span className="font-bold font-[family-name:var(--font-poppins)] text-foreground">
-                    Shamba Rahisi
-                  </span>{" "}
-                  is an agricultural technology solution designed to help
-                  farmers better understand and utilize farm data. The platform
-                  transforms complex agricultural and environmental data into
-                  simple, actionable insights presented in language that farmers
-                  can easily understand.
+          <CaseStudySectionHeading label="Project Overview" title="From soil data to farming decisions" accentColor={ORANGE} />
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
+            <ScrollReveal className="lg:col-span-7">
+              <div className="space-y-5 text-foreground/80 text-base lg:text-lg leading-[1.8]">
+                <p>
+                  Shamba Rahisi explores how farmers can turn soil sensor data into practical farming decisions.
+                  A sensor can show what is happening in the ground, but a reading only helps if the farmer
+                  understands it, can get what it recommends, and can afford to act on it.
                 </p>
-                <p className="text-foreground/70 text-base leading-[1.8]">
-                  Recognizing the diversity of farmers across Kenya, the
-                  solution supports multiple languages including local and native
-                  languages such as Kiswahili, Kalenjin, and Kikuyu. This makes
-                  critical farming information more accessible regardless of
-                  literacy level or language preference. The platform also
-                  provides timely reminders for important farming activities and
-                  environmental conditions, helping farmers make informed
-                  decisions and improve productivity.
+                <p>
+                  I worked as <span className="font-semibold text-foreground">UX Research Lead</span>. This case
+                  study follows the path from research to product direction, and shows where each part comes from.
                 </p>
-                <p className="text-foreground/70 text-base leading-[1.8]">
-                  Developed through primary research with AgTech leaders like
-                  Synnefa, the platform integrates real-time IoT sensor data
-                  from FarmShield devices, translating raw soil readings into
-                  localized, voice-based task recommendations and pre-season
-                  cost blueprints that ensure technical recommendations become
-                  affordable, reliable action at the farm level.
-                </p>
+              </div>
+              <div className="mt-8 rounded-2xl border border-foreground/10 bg-secondary/40 p-5 lg:p-6">
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-foreground mb-4">How to read this case study</p>
+                <ul className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-3"><Tag kind="evidence" /><span>What the research indicates.</span></li>
+                  <li className="flex items-start gap-3"><Tag kind="design" /><span>A choice I made in response to it.</span></li>
+                  <li className="flex items-start gap-3"><Tag kind="proposed" /><span>An idea that is not yet designed or tested.</span></li>
+                </ul>
               </div>
             </ScrollReveal>
-
-            <ScrollRevealRight>
-              <div className="rounded-3xl overflow-hidden shadow-xl border border-foreground/5">
-                <img
-                  src="/shamba-rahisi/screen-home-dashboard.png"
-                  alt="Shamba Rahisi home dashboard with farm overview"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </ScrollRevealRight>
+            <ScrollReveal className="lg:col-span-5">
+              <dl className="rounded-2xl bg-background border border-foreground/10 divide-y divide-foreground/10">
+                {[
+                  ["Role", "UX Research Lead"],
+                  ["Focus", "Stakeholder research, synthesis and product direction"],
+                  ["Output", "Research themes, personas, a product concept and Figma screens"],
+                  ["Status", "Design concept"],
+                ].map(([k, v]) => (
+                  <div key={k} className="p-5 lg:p-6">
+                    <dt className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: ORANGE }}>{k}</dt>
+                    <dd className="mt-1 text-foreground font-medium">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
-      {/* ── 4. Problem Statement ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
+      {/* ── Problem ── */}
+      <section id="problem" className="py-20 lg:py-28 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
-            <div>
-              <CaseStudySectionHeading
-                label="The Problem"
-                title="Data-rich, insight-poor"
-                accentColor="#ED6C02"
-              />
-              <ScrollReveal delay={0.2}>
-                <div className="space-y-5">
-                  <p className="text-foreground/80 text-base leading-[1.8]">
-                    Many farmers in Kenya now have access to agricultural
-                    data&mdash;from soil sensors, weather stations, and extension
-                    services&mdash;but they struggle to interpret the technical
-                    information and complex reports this data generates. Critical
-                    insights about soil health, nutrient deficiencies, and
-                    planting conditions are presented using scientific terminology
-                    that creates barriers rather than enabling informed
-                    decision-making.
-                  </p>
-                  <p className="text-foreground/70 text-base leading-[1.8]">
-                    Language barriers compound the problem. Most agricultural
-                    data platforms present information exclusively in English,
-                    yet many farmers are more comfortable in Kiswahili or their
-                    local native languages. This linguistic gap effectively
-                    locks out the very people who need the information most,
-                    turning potentially transformative data into inaccessible
-                    noise.
-                  </p>
-                  <p className="text-foreground/70 text-base leading-[1.8]">
-                    Additionally, farmers struggle to track important farming
-                    activities and deadlines. Without timely reminders for
-                    crucial actions like fertilizer application or planting
-                    windows, even the best data-driven recommendations fail to
-                    translate into on-the-ground action.
-                  </p>
+          <CaseStudySectionHeading label="The Problem" title="Having data does not guarantee action" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/80 text-base lg:text-lg leading-[1.8]">
+              Synnefa&rsquo;s dashboards provide soil sensor data. The research synthesis suggests that farmers may
+              still need agronomist support to interpret it and decide what to do. The distance between a reading
+              and a decision is the problem this project explores.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal>
+            <ol className="mt-10 flex flex-col sm:flex-row sm:items-stretch gap-3 sm:gap-0" aria-label="From reading to action">
+              {["Sensor reading", "Understand it", "Get the input", "Afford it", "Act"].map((step, i, arr) => (
+                <li key={step} className="flex items-center sm:flex-1">
+                  <span
+                    className="flex-1 text-center text-sm font-semibold px-4 py-3 rounded-xl border"
+                    style={
+                      i === 0 || i === arr.length - 1
+                        ? { backgroundColor: GREEN, color: "#fff", borderColor: GREEN }
+                        : { backgroundColor: "transparent", color: GREEN, borderColor: `${GREEN}55`, borderStyle: "dashed" }
+                    }
+                  >
+                    {step}
+                  </span>
+                  {i < arr.length - 1 && <ChevronRight className="hidden sm:block w-5 h-5 shrink-0 text-muted-foreground" aria-hidden="true" />}
+                </li>
+              ))}
+            </ol>
+            <p className="mt-3 text-xs text-muted-foreground">Dashed steps are where the research suggests farmers can get stuck.</p>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── Research ── */}
+      <section id="research" className="py-20 lg:py-28 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="Research" title="What the research indicates" accentColor={ORANGE} />
+
+          {/* My role */}
+          <ScrollReveal>
+            <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-5">My role as UX Research Lead</h3>
+          </ScrollReveal>
+          <div className="grid sm:grid-cols-2 gap-4 lg:gap-5 mb-16">
+            {roleItems.map((r) => (
+              <ScrollReveal key={r.title}>
+                <div className="h-full p-5 lg:p-6 rounded-2xl bg-secondary/40 border border-foreground/5">
+                  <h4 className="font-bold text-foreground">{r.title}</h4>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.text}</p>
                 </div>
               </ScrollReveal>
-            </div>
-
-            <div>
-              <StaggerReveal className="grid grid-cols-2 gap-4 lg:gap-6" stagger={0.15}>
-                <CaseStudyStatCard
-                  icon={BarChart3}
-                  value="Raw Data"
-                  label="Complex sensor data that farmers cannot interpret without technical knowledge"
-                  accentColor="#ED6C02"
-                />
-                <CaseStudyStatCard
-                  icon={Languages}
-                  value="English Only"
-                  label="Most AgTech platforms ignore local and native languages"
-                  accentColor="#ED6C02"
-                />
-                <CaseStudyStatCard
-                  icon={Clock}
-                  value="Missed Deadlines"
-                  label="No timely reminders for critical farming activities like planting windows"
-                  accentColor="#ED6C02"
-                />
-                <CaseStudyStatCard
-                  icon={Sprout}
-                  value="Yield Gap"
-                  label="The disconnect between available data and farmer action reduces productivity"
-                  accentColor="#ED6C02"
-                />
-              </StaggerReveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 5. My Role / Contributions ── */}
-      <section className="py-20 lg:py-32 bg-background">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase mb-3" style={{ color: ORANGE }}>
-                My Role
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="UX Research Lead — from stakeholder interviews to product strategy"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-foreground max-w-4xl mx-auto"
-            />
+            ))}
           </div>
 
-          <StaggerReveal className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" stagger={0.12}>
-            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Users className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
+          {/* Stakeholder observation */}
+          <ScrollReveal>
+            <div className="rounded-2xl border-2 p-6 lg:p-10 mb-16" style={{ borderColor: `${ORANGE}55`, backgroundColor: `${ORANGE}08` }}>
+              <div className="flex flex-wrap items-center gap-3 mb-5">
+                <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: ORANGE }}>Stakeholder interview</span>
+                <Tag kind="evidence" label="Stakeholder observation" />
               </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                Stakeholder Interviews
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Organized and coordinated interviews with representatives from
-                Synnefa. Facilitated discussions to understand industry
-                challenges, user needs, and business objectives. Documented
-                meeting outcomes and maintained detailed research notes.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Search className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                User & Market Research
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Conducted extensive online research to understand agricultural
-                technology trends and farmer challenges. Analyzed existing
-                solutions within the market to identify gaps and opportunities.
-                Gathered insights on how farmers interact with information.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Target className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                Problem Identification
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Identified key pain points affecting farmers when interpreting
-                agricultural data. Mapped challenges related to accessibility,
-                language barriers, and information comprehension. Defined core
-                problem areas that shaped the product direction.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl text-white" style={{ backgroundColor: GREEN }}>
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                <Lightbulb className="w-6 h-6" style={{ color: ACCENT_GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] mb-4">
-                Opportunity Discovery
-              </h4>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Investigated potential market opportunities where technology
-                could simplify data interpretation for farmers. Contributed
-                research findings that informed feature prioritization and
-                product strategy, ensuring the solution addressed real needs.
-              </p>
-            </div>
-          </StaggerReveal>
-        </div>
-      </section>
-
-      {/* ── 6. Research Insights ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <CaseStudySectionHeading
-            label="Research Insights"
-            title="What farmers told us"
-            accentColor="#ED6C02"
-          />
-
-          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.1}>
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                01
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Technical Data is Inaccessible
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers found technical agricultural data extremely difficult to
-                understand. Soil pH readings, nitrogen levels, and sensor
-                metrics meant nothing without translation into practical
-                language. The gap between raw data and actionable knowledge was
-                the single biggest barrier to adoption.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                02
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Conversational Language Preferred
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers overwhelmingly preferred information presented in
-                simple, conversational language rather than scientific reports.
-                Metaphors and analogies (e.g., &ldquo;Your soil is hungry for
-                nitrogen&rdquo;) resonated far more than charts and graphs.
-                This insight directly shaped the recommendation engine&apos;s
-                communication style.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                03
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Reminders Drive Action
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers benefited significantly from receiving reminders for
-                critical farming activities. Without nudges, important tasks
-                like fertilizer application were often delayed past optimal
-                windows, reducing their effectiveness. Timely notifications
-                emerged as a key feature request across all user segments.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                04
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Local Language is Non-Negotiable
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Solutions that only supported English effectively excluded a
-                large portion of the target user base. Farmers required
-                interfaces and audio in their native languages&mdash;including
-                Kiswahili, Kalenjin, and Kikuyu. Voice-based delivery in local
-                dialects was identified as essential for low-literacy contexts.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                05
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Recommendations, Not Raw Data
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers didn&apos;t want to see raw sensor readings&mdash;they
-                wanted to know what to do. Actionable recommendations (e.g.,
-                &ldquo;Apply 50kg of DAP fertilizer within 7 days&rdquo;) were
-                far more valuable than being told &ldquo;Nitrogen level: Low.&rdquo;
-                The platform needed to move from data display to decision
-                support.
-              </p>
-            </div>
-
-            <div className="p-6 lg:p-8 rounded-2xl bg-background border border-foreground/5">
-              <div className="text-3xl font-bold font-[family-name:var(--font-poppins)] mb-3" style={{ color: GREEN }}>
-                06
-              </div>
-              <h4 className="text-base font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">
-                Cost Awareness Matters
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers needed to understand the financial implications of
-                recommendations before acting. Including estimated costs (e.g.,
-                &ldquo;2,800 KES for DAP&rdquo;) and potential savings (e.g.,
-                &ldquo;Potential savings: Ksh 15,000&rdquo;) alongside
-                agricultural advice built trust and enabled financial planning
-                around farming activities.
-              </p>
-            </div>
-          </StaggerReveal>
-        </div>
-      </section>
-
-      {/* ── 7. The Solution ── */}
-      <section className="py-20 lg:py-32 relative overflow-hidden" style={{ backgroundColor: GREEN }}>
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: GREEN_DARK }} />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-3xl" style={{ backgroundColor: `${ORANGE}08` }} />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <ScrollReveal>
-              <p className="text-xs font-bold tracking-[0.3em] uppercase mb-3" style={{ color: ORANGE }}>
-                The Solution
-              </p>
-            </ScrollReveal>
-            <SplitTextReveal
-              text="Complex data, simple voice — your farm speaks your language"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-poppins)] leading-tight text-white max-w-4xl mx-auto"
-            />
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <ScrollRevealLeft>
-              <div className="space-y-6">
-                <p className="text-white/80 text-base lg:text-lg leading-[1.8]">
-                  Shamba Rahisi converts complex farm and environmental data
-                  into simplified, easy-to-understand insights that support
-                  better decision-making. By connecting to Synnefa&apos;s
-                  FarmShield IoT sensors, the app pulls real-time soil data and
-                  transforms it into practical recommendations delivered in the
-                  farmer&apos;s preferred language.
-                </p>
-                <p className="text-white/60 text-base leading-[1.8]">
-                  The platform&apos;s standout innovation is its multi-language
-                  voice system. Farmers can receive audio recommendations in
-                  Kiswahili, Kalenjin, Kikuyu, or English&mdash;choosing both
-                  their preferred language and voice gender. This ensures that
-                  even farmers with limited literacy can benefit from
-                  data-driven insights through accessible audio delivery.
-                </p>
-                <p className="text-white/60 text-base leading-[1.8]">
-                  Smart reminders ensure that critical farming activities are
-                  never missed. The app sends timely notifications tied to
-                  real-time environmental conditions&mdash;alerting farmers
-                  when to apply fertilizer before rain, or when soil moisture
-                  levels indicate optimal planting conditions.
-                </p>
-
-                <div className="grid grid-cols-3 gap-4 mt-8">
-                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">4+</p>
-                    <p className="text-xs text-white/50 mt-1">Languages supported</p>
-                  </div>
-                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)]" style={{ color: ORANGE }}>IoT</p>
-                    <p className="text-xs text-white/50 mt-1">Real-time sensor data</p>
-                  </div>
-                  <div className="p-5 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-white">Voice</p>
-                    <p className="text-xs text-white/50 mt-1">Audio recommendations</p>
-                  </div>
+              <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+                <dl className="lg:col-span-4 grid grid-cols-3 lg:grid-cols-1 gap-4 text-sm">
+                  <div><dt className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Interviewee</dt><dd className="mt-1 font-semibold text-foreground">Stacy Oyalo, Synnefa</dd></div>
+                  <div><dt className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Date</dt><dd className="mt-1 font-semibold text-foreground">March 12, 2026</dd></div>
+                  <div><dt className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Length</dt><dd className="mt-1 font-semibold text-foreground">About 33 minutes</dd></div>
+                </dl>
+                <div className="lg:col-span-8">
+                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-foreground mb-3">What the research notes indicate</p>
+                  <p className="text-foreground/85 text-base lg:text-lg leading-[1.8]">
+                    Synnefa&rsquo;s dashboards provide soil sensor data, but farmers may still need agronomist support
+                    to interpret it and determine what to do. Having data alone does not guarantee action.
+                  </p>
                 </div>
               </div>
-            </ScrollRevealLeft>
+            </div>
+          </ScrollReveal>
 
-            <ScrollRevealRight>
-              <ClipReveal>
-                <PhoneFrame
-                  src="/shamba-rahisi/screen-recommendation.png"
-                  alt="Shamba Rahisi recommendation screen with actionable insights"
-                  className="w-[280px] lg:w-[320px]"
-                />
-              </ClipReveal>
-            </ScrollRevealRight>
+          {/* Three main barriers */}
+          <ScrollReveal>
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground">Three main barriers</h3>
+              <Tag kind="design" label="How I grouped the themes" />
+            </div>
+            <p className="max-w-3xl text-sm text-muted-foreground mb-6">
+              The themes below point to three barriers between a soil reading and a farming decision.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-4 lg:gap-5 mb-4">
+            {[
+              { n: "01", title: "Understanding soil data", text: "Readings are hard to turn into decisions, and farmers tend to trust familiar advisers over raw data.", themes: ["Understanding soil data", "Trust and advice", "Language and digital access"] },
+              { n: "02", title: "Accessing recommended inputs", text: "The recommended input may not be nearby, may be poor quality, or may be slow and costly to get.", themes: ["Input access and quality"] },
+              { n: "03", title: "Affordability", text: "Limited cash can mean delayed, smaller or substitute purchases.", themes: ["Affordability"] },
+            ].map((x) => (
+              <ScrollReveal key={x.n}>
+                <div className="h-full p-5 lg:p-6 rounded-2xl border-2" style={{ borderColor: `${GREEN}33`, backgroundColor: `${GREEN}08` }}>
+                  <span className="text-xs font-bold tracking-[0.2em]" style={{ color: ORANGE }}>{x.n}</span>
+                  <h4 className="mt-2 font-bold font-[family-name:var(--font-poppins)] text-foreground">{x.title}</h4>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{x.text}</p>
+                  <ul className="mt-4 flex flex-wrap gap-2">
+                    {x.themes.map((t) => (
+                      <li key={t} className="text-xs px-2.5 py-1 rounded-full border border-foreground/10 text-muted-foreground">{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+          <ScrollReveal>
+            <p className="mb-14 text-xs text-muted-foreground max-w-3xl">
+              Implementation challenges and gender and decision-making cut across all three.
+            </p>
+          </ScrollReveal>
+
+          {/* Broader research themes */}
+          <ScrollReveal>
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground">Seven themes from the research synthesis</h3>
+              <Tag kind="evidence" label="Broader research findings" />
+            </div>
+            <p className="max-w-3xl text-sm text-muted-foreground mb-8">
+              These are patterns from the wider research, separate from the interview above. They do not describe every farmer.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {researchThemes.map((t, i) => (
+              <ScrollReveal key={t.title} className={i === researchThemes.length - 1 ? "lg:col-start-2" : ""}>
+                <div className="h-full p-6 rounded-2xl bg-background border border-foreground/10 hover:border-[#4A8B5E]/40 transition-colors duration-300">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${GREEN}12` }}>
+                    <t.icon className="w-5 h-5" style={{ color: GREEN }} aria-hidden="true" />
+                  </div>
+                  <h4 className="font-bold font-[family-name:var(--font-poppins)] text-foreground">{t.title}</h4>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{t.text}</p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 8. User Flow ── */}
-      <section className="py-20 lg:py-32 bg-background">
+      {/* ── Personas ── */}
+      <section id="personas" className="py-20 lg:py-28 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16 lg:mb-20">
-            <CaseStudySectionHeading label="User Flow" title="From data to action" accentColor="#ED6C02" />
+          <CaseStudySectionHeading label="Personas" title="Three profiles, three sets of needs" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-sm text-muted-foreground mb-10">
+              These are research-informed profiles that represent different needs. They are not verified individual participants.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {personas.map((p) => (
+              <ScrollReveal key={p.name}>
+                <article className="h-full p-6 lg:p-7 rounded-2xl bg-background border border-foreground/10">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-2xl font-bold font-[family-name:var(--font-poppins)] text-foreground">{p.name}, {p.age}</h3>
+                    <Tag kind="proposed" label="Representative" />
+                  </div>
+                  <p className="mt-1 text-sm font-medium" style={{ color: GREEN }}>{p.role}, {p.place}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{p.farm}</p>
+                  <p className="mt-4 text-sm text-foreground/80 leading-relaxed">{p.context}</p>
+                  <p className="mt-5 text-xs font-bold tracking-[0.2em] uppercase text-foreground">Needs</p>
+                  <ul className="mt-3 space-y-2">
+                    {p.needs.map((n) => (
+                      <li key={n} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: ACCENT_GREEN }} aria-hidden="true" />
+                        <span>{n}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </ScrollReveal>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {/* Desktop: Horizontal Timeline */}
-          <div className="hidden lg:block">
-            <ScrollReveal>
-              <div className="relative">
-                <div className="absolute top-10 left-[8%] right-[8%] h-0.5 bg-foreground/10" />
-                <div className="grid grid-cols-5 gap-4 relative">
-                  <CaseStudyFlowStep number={1} icon={Sprout} title="Welcome" description="Splash screen introduces the brand and gets farmers started with the app" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
-                  <CaseStudyFlowStep number={2} icon={BarChart3} title="Provide Data" description="Choose how to share soil data — soil test results, extension officer, or manual entry" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
-                  <CaseStudyFlowStep number={3} icon={MapPin} title="Map Farm" description="Trace field boundaries on satellite maps and connect Synnefa sensor accounts" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
-                  <CaseStudyFlowStep number={4} icon={Lightbulb} title="Get Insights" description="Receive personalized recommendations in your language with cost estimates and deadlines" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
-                  <CaseStudyFlowStep number={5} icon={CheckCircle2} title="Take Action" description="Follow step-by-step task instructions with location verification and smart reminders" stepBgColor="#2E5C3E" stepBorderColor="rgba(74,139,94,0.3)" accentColor="#4A8B5E" />
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
+      {/* ── Core insight ── */}
+      <section id="insight" className="relative overflow-hidden py-20 lg:py-28" style={{ backgroundColor: GREEN }}>
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: GREEN_DARK }} />
+        </div>
+        <div className="relative max-w-5xl mx-auto px-6 lg:px-12 text-center">
+          <ScrollReveal>
+            <p className="text-xs font-bold tracking-[0.3em] uppercase mb-6" style={{ color: ORANGE }}>Core insight</p>
+            <Quote className="w-8 h-8 mx-auto mb-6 text-white/30" aria-hidden="true" />
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold font-[family-name:var(--font-poppins)] text-white leading-snug">
+              Information alone is not enough. Farmers need help understanding recommendations, finding the inputs they
+              require, and deciding how to afford them.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
 
-          {/* Mobile: Vertical Timeline */}
-          <div className="lg:hidden">
-            <StaggerReveal className="space-y-6" stagger={0.1}>
-              {[
-                { number: 1, icon: Sprout, title: "Welcome", description: "Splash screen introduces the brand and gets farmers started with the app" },
-                { number: 2, icon: BarChart3, title: "Provide Data", description: "Choose how to share soil data — soil test results, extension officer, or manual entry" },
-                { number: 3, icon: MapPin, title: "Map Farm", description: "Trace field boundaries on satellite maps and connect Synnefa sensor accounts" },
-                { number: 4, icon: Lightbulb, title: "Get Insights", description: "Receive personalized recommendations in your language with cost estimates and deadlines" },
-                { number: 5, icon: CheckCircle2, title: "Take Action", description: "Follow step-by-step task instructions with location verification and smart reminders" },
-              ].map((step) => (
-                <div key={step.number} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 flex-shrink-0" style={{ backgroundColor: GREEN, borderColor: `${ACCENT_GREEN}50` }}>
-                      <step.icon className="w-5 h-5" style={{ color: ACCENT_GREEN }} />
+      {/* ── Product direction ── */}
+      <section id="solution" className="py-20 lg:py-28 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <CaseStudySectionHeading label="Product Direction" title="A three-layer support system" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-foreground/80 text-base lg:text-lg leading-[1.8] mb-12">
+              The concept answers the insight with three layers, named after everyday roles: a doctor who diagnoses,
+              a pharmacist who supplies, and insurance that helps manage cost.
+            </p>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {layers.map((l, i) => (
+              <ScrollReveal key={l.key}>
+                <article className="h-full flex flex-col p-6 lg:p-7 rounded-2xl border border-foreground/10 bg-secondary/30">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: GREEN }}>
+                      <l.icon className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
-                    {step.number < 5 && <div className="w-0.5 flex-1 bg-foreground/10 mt-2" />}
+                    <span className="text-5xl font-bold font-[family-name:var(--font-poppins)] text-foreground/10 leading-none">0{i + 1}</span>
                   </div>
-                  <div className="pb-6">
-                    <h4 className="font-bold font-[family-name:var(--font-poppins)] text-foreground text-sm">{step.title}</h4>
-                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{step.description}</p>
+                  <h3 className="mt-5 text-xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
+                    {l.key} <span className="font-normal text-muted-foreground">· {l.verb}</span>
+                  </h3>
+                  <p className="mt-3 text-sm text-foreground/80 leading-relaxed">{l.what}</p>
+                  <p className="mt-5 text-xs font-bold tracking-[0.2em] uppercase text-foreground">Responds to</p>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {l.responds.map((r) => (
+                      <li key={r} className="text-xs px-2.5 py-1 rounded-full border border-foreground/10 text-muted-foreground">{r}</li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-5">
+                    <Tag kind={l.status} label={l.statusLabel} />
+                    <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{l.statusNote}</p>
                   </div>
-                </div>
-              ))}
-            </StaggerReveal>
+                </article>
+              </ScrollReveal>
+            ))}
           </div>
+          <ScrollReveal>
+            <p className="mt-6 text-xs text-muted-foreground max-w-3xl">
+              &ldquo;Insurance&rdquo; is a metaphor for the affordability layer. This project did not develop an insurance product.
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 9. Screens Showcase ── */}
-      <section className="py-20 lg:py-32 bg-secondary/30">
+      {/* ── User flow ── */}
+      <section id="flow" className="py-20 lg:py-28 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16 lg:mb-24">
-            <CaseStudySectionHeading label="App Screens" title="From soil data to farmer action" accentColor="#ED6C02" />
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <Tag kind="proposed" label="Proposed flow" />
           </div>
-
-          <div className="space-y-20 lg:space-y-32">
-            {/* Screen 1: Splash */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-splash.png"
-              alt="Shamba Rahisi splash welcome screen"
-              title="Welcome Screen"
-              purpose="The splash screen establishes the brand identity with authentic agricultural imagery — a real farmer working in a field. The bold 'Shamba Rahisi' branding in orange alongside the tagline 'The Voice of Your Soil' immediately communicates the app's mission to give farmers a voice through their soil data."
-              rationale="Research showed that farmers respond to authentic, relatable imagery rather than abstract tech visuals. The dual-path entry (Get Started for new users, Log In for returning) reduces friction. The orange brand text against the natural photography creates visual warmth that resonates with the agricultural community."
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 2: Onboarding Data Source */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-onboarding-data-source.png"
-              alt="Shamba Rahisi onboarding data source selection"
-              title="Data Source Selection"
-              purpose="The first onboarding step asks farmers how they'd like to provide soil and farm information. Three clear options — Soil Test Results, Extension Officer, or Manual Entry — accommodate different farmer profiles and data access levels."
-              rationale="Bilingual presentation (English + Swahili) from the very first interaction reinforces the app's commitment to accessibility. The three-card layout was designed to be scannable without reading long paragraphs. Offering multiple data input methods ensures the app is useful even for farmers without recent lab results or sensor access."
-              reversed
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 3: Home Dashboard */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-home-dashboard.png"
-              alt="Shamba Rahisi home dashboard with farm overview and priority task"
-              title="Home Dashboard"
-              purpose="The home dashboard serves as the farmer's central hub, displaying a personalized greeting, real-time farm summary (Farm Size, Soil pH, Crop), weather conditions, priority tasks, quick actions, and recent activity — all above the fold."
-              rationale="The priority task card uses Swahili for the recommendation title ('Tumia Mbolea yenye Naitrojeni Nyingi') to demonstrate the multilingual approach. Including potential savings (Ksh 15,000) alongside the task provides financial motivation. Weather integration helps farmers contextualize recommendations against current conditions."
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 4: Recommendation */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-recommendation.png"
-              alt="Shamba Rahisi recommendation with actionable insights"
-              title="Smart Recommendations"
-              purpose="The recommendation screen is where complex data becomes simple action. It shows the sensor source, soil status cards (Nitrogen, pH, Moisture), a conversational explanation using metaphors, recommended action with cost estimates, step-by-step instructions, and CTAs to add to tasks or set savings goals."
-              rationale="The metaphor-based explanation ('Your soil is hungry for nitrogen') was a direct result of research finding that farmers prefer conversational language over scientific terminology. Including estimated cost (2,800 KES) and deadline context ('before rain') transforms an abstract recommendation into a concrete, plannable action. The 'Watch Demo Video' option caters to visual learners."
-              reversed
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 5: Voice Settings */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-voice-settings.png"
-              alt="Shamba Rahisi voice settings with language selection"
-              title="Voice & Language Settings"
-              purpose="The voice settings screen allows farmers to choose their preferred language (Kiswahili, English, Kalenjin, or Kikuyu) and voice gender for audio recommendations. A preview feature lets users sample the voice before committing."
-              rationale="This screen directly addresses the research insight that local language is non-negotiable. Including native languages like Kalenjin and Kikuyu (with their native script: 'Gikuyu') demonstrates genuine localization rather than token translation. The voice gender option adds personalization, and the preview function builds confidence before committing to settings."
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 6: Connect Synnefa */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-onboarding-connect-synnefa.png"
-              alt="Shamba Rahisi Synnefa FarmShield sensor connection screen"
-              title="Connect Synnefa Sensors"
-              purpose="Step 2 of onboarding integrates the farmer's Synnefa FarmShield account to sync real-time IoT sensor data. A simple login form with phone number and password fields bridges the gap between sensor hardware and the recommendation engine."
-              rationale="Placing sensor integration early in onboarding ensures the app can deliver data-driven recommendations from the very first session. The phone number field with Kenyan format hint (+254) reduces input errors. By separating this step from data source selection, farmers who choose manual entry aren't forced through a sensor login they don't need — the flow adapts to their earlier choice."
-              reversed
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 7: Map Farm */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-onboarding-map-farm.png"
-              alt="Shamba Rahisi farm mapping with satellite view"
-              title="Farm Mapping"
-              purpose="The final onboarding step enables farmers to trace their field boundaries on a satellite map. The satellite imagery provides a realistic aerial view, while simple drawing tools let users outline their plots with precision. Undo and Save Field controls ensure confidence before committing."
-              rationale="Satellite imagery was chosen over map views because farmers can visually identify their own land — landmarks, buildings, and field shapes act as natural verification. The three-action button system (Undo, Save Field, Finish Setup) breaks the complex task of boundary tracing into manageable steps. Completing this step enables location-specific sensor data correlation."
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 8: Tasks */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-tasks.png"
-              alt="Shamba Rahisi task management with priority levels"
-              title="Task Management"
-              purpose="The tasks screen organizes all farming activities by urgency. Today's high-priority task sits at the top with a bold orange border and immediate 'Start Task' CTA, while this week's medium-priority items appear below. Completed tasks are accessible via a separate link."
-              rationale="Priority-based visual hierarchy (orange border for HIGH, lighter for MEDIUM) ensures farmers see the most urgent action first. The 'Start Task' button on high-priority items reduces the friction between seeing a task and beginning it. Separating completed tasks prevents clutter while maintaining a sense of progress and accomplishment."
-              reversed
-            accentColor="#2E5C3E"
-            />
-
-            <DrawLine direction="horizontal" color="#ED6C02" className="mx-auto max-w-md" />
-
-            {/* Screen 9: Task Details */}
-            <CaseStudyScreenShowcase
-              src="/shamba-rahisi/screen-task-details.png"
-              alt="Shamba Rahisi task detail with step-by-step instructions and location check"
-              title="Task Execution"
-              purpose="The task detail screen guides farmers through execution with numbered step-by-step instructions, resource verification (confirming available fertilizer in storage), and GPS-based location confirmation. An aerial map view confirms the farmer is at the correct field before starting."
-              rationale="Location verification addresses a real-world problem — farmers with multiple fields applying the wrong treatment to the wrong plot. The resource check ('You have 50kg DAP in storage') removes the guesswork around material availability. Numbered instructions with precise measurements (e.g., '10g per planting hole') translate recommendations into unambiguous actions that leave no room for misinterpretation."
-            accentColor="#2E5C3E"
-            />
-          </div>
+          <CaseStudySectionHeading label="User Flow" title="From sensor reading to action" accentColor={ORANGE} />
+          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+            {journey.map((s, i) => (
+              <li key={s.title} className="flex">
+                <ScrollReveal className="w-full">
+                  <div className="h-full relative p-5 rounded-2xl bg-background border border-foreground/10">
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: `${layerColor[s.layer]}18` }}
+                      >
+                        <s.icon className="w-5 h-5" style={{ color: layerColor[s.layer] }} aria-hidden="true" />
+                      </span>
+                      <span className="text-sm font-bold font-[family-name:var(--font-poppins)] text-muted-foreground">{i + 1}</span>
+                    </div>
+                    <p className="mt-4 font-semibold text-foreground leading-snug">{s.title}</p>
+                    <p className="mt-2 text-xs font-bold tracking-[0.15em] uppercase" style={{ color: layerColor[s.layer] }}>{s.layer}</p>
+                  </div>
+                </ScrollReveal>
+              </li>
+            ))}
+          </ol>
+          <ScrollReveal>
+            <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
+              <Repeat className="w-4 h-4 shrink-0" aria-hidden="true" />
+              Monitoring in step 8 produces new readings, so the loop starts again.
+            </p>
+            <div className="mt-8 rounded-2xl border border-dashed border-foreground/20 p-5 lg:p-6 max-w-3xl">
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-foreground mb-2">Illustrative scenario, not live functionality</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                A reading suggests the soil needs a fertilizer. The Doctor turns that into a plain recommendation, the
+                Pharmacist points to nearby agro-dealers that might stock it, and Insurance helps the farmer plan how to pay.
+              </p>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 10. Features Section ── */}
-      <section className="py-20 lg:py-32 bg-background">
+      {/* ── Prototype screens ── */}
+      <section id="screens" className="py-20 lg:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <CaseStudySectionHeading label="Features" title="Built for the field, not the lab" accentColor="#ED6C02" />
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <Tag kind="design" />
           </div>
-
-          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <BarChart3 className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Data Interpretation</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Transforms raw agricultural sensor data into clear, understandable recommendations using conversational language and relatable metaphors that farmers can immediately act on.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <Globe className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Multi-Language Support</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Supports Kiswahili, English, Kalenjin, and Kikuyu with native script display. Farmers select their preferred language and voice gender for audio recommendations delivered in their mother tongue.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <Bell className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Smart Reminders</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Provides timely notifications for important farming activities and environmental conditions, tied to real-time weather and sensor data so farmers never miss critical planting or fertilization windows.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <Mic className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Voice Delivery</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Audio recommendations in local dialects ensure accessibility for farmers with limited literacy. Voice gender selection and preview functionality allow farmers to choose a voice they trust.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <MapPin className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Farm Mapping</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Satellite-based field boundary mapping enables precise, location-specific recommendations. Farmers trace their plots on aerial imagery for accurate sensor data correlation and task location verification.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <CheckCircle2 className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Step-by-Step Tasks</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Each recommendation converts into actionable tasks with numbered instructions, resource verification (e.g., confirming available fertilizer), and location check-in to ensure correct execution.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <Leaf className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Synnefa Integration</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Direct connection to FarmShield IoT sensors via Synnefa accounts provides real-time soil data — pH, nitrogen, moisture — that powers personalized recommendations without manual data entry.
-              </p>
-            </div>
-
-            <div className="group p-6 lg:p-8 rounded-2xl bg-secondary/30 border border-foreground/5 hover:border-[#4A8B5E]/30 transition-all duration-500 hover:bg-secondary/60">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${GREEN}15` }}>
-                <BookOpen className="w-5 h-5" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Cost Transparency</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Every recommendation includes estimated costs, potential savings, and savings goal tracking. Farmers see the financial impact before committing, building trust and enabling budget-conscious farming decisions.
-              </p>
-            </div>
-          </StaggerReveal>
+          <CaseStudySectionHeading label="Prototype Screens" title="Design explorations from the Figma file" accentColor={ORANGE} />
+          <ScrollReveal>
+            <p className="max-w-3xl text-sm text-muted-foreground mb-12">
+              The screens cover onboarding and the Doctor layer most fully. Names, numbers and amounts are sample data.
+              This case study does not report usability test results.
+            </p>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+            {screens.map((sc) => (
+              <ScrollReveal key={sc.title}>
+                <figure className="flex flex-col items-center">
+                  <PhoneFrame src={sc.src} alt={sc.alt} className="w-[200px] sm:w-[220px]" />
+                  <figcaption className="mt-6 max-w-xs text-center">
+                    <p className="font-bold font-[family-name:var(--font-poppins)] text-foreground">{sc.title}</p>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{sc.shows}</p>
+                    {sc.reflects && (
+                      <p className="mt-3 text-xs leading-relaxed" style={{ color: ORANGE }}>
+                        <span className="font-bold uppercase tracking-[0.12em]">Reflects · </span>
+                        {sc.reflects}
+                      </p>
+                    )}
+                  </figcaption>
+                </figure>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── 11. Design System ── */}
-      <section className="py-20 lg:py-32 relative overflow-hidden" style={{ backgroundColor: GREEN }}>
+      <section id="design-system" className="py-20 lg:py-32 relative overflow-hidden" style={{ backgroundColor: GREEN }}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: GREEN_DARK }} />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-3xl" style={{ backgroundColor: `${ORANGE}08` }} />
@@ -881,7 +812,7 @@ export default function ShambaRahisiPage() {
                     </div>
                     <div className="p-4 rounded-xl bg-white/5">
                       <p className="text-white/50 text-xs tracking-[0.2em] uppercase mb-2">Body</p>
-                      <p className="text-white text-base">Inter Regular — for readable body text in both English and Swahili</p>
+                      <p className="text-white text-base">Inter Regular — for readable body text, with English and Swahili shown in the prototype</p>
                     </div>
                   </div>
                 </div>
@@ -892,15 +823,15 @@ export default function ShambaRahisiPage() {
                     {[
                       {
                         title: "Accessibility First",
-                        desc: "Voice delivery and multi-language support ensure every farmer can use the platform regardless of literacy level",
+                        desc: "Voice guidance and local-language options aim to make the app usable for farmers with limited literacy or digital experience",
                       },
                       {
                         title: "Conversational Data",
-                        desc: "Complex sensor readings translated into metaphors and plain language that farmers relate to naturally",
+                        desc: "Sensor readings explained in plain language, with everyday comparisons, instead of raw values",
                       },
                       {
                         title: "Action-Oriented",
-                        desc: "Every data point leads to a clear recommendation with cost, deadline, and step-by-step instructions",
+                        desc: "Each recommendation comes with an estimated cost, a deadline and step-by-step instructions",
                       },
                     ].map((principle) => (
                       <div key={principle.title} className="p-4 rounded-xl bg-white/5">
@@ -920,7 +851,7 @@ export default function ShambaRahisiPage() {
       <section className="py-20 lg:py-32 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <CaseStudySectionHeading label="Tools & Technology" title="The stack behind the solution" accentColor="#ED6C02" />
+            <CaseStudySectionHeading label="Tools" title="Tools used on this project" accentColor="#ED6C02" />
           </div>
 
           <StaggerReveal className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" stagger={0.08}>
@@ -999,94 +930,76 @@ export default function ShambaRahisiPage() {
         </div>
       </section>
 
-      {/* ── 13. Outcomes ── */}
-      <section className="py-20 lg:py-32 bg-background">
+      {/* ── Reflection ── */}
+      <section id="reflection" className="py-20 lg:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <CaseStudySectionHeading label="Outcomes" title="Empowering farmers through understanding" accentColor="#ED6C02" />
+          <CaseStudySectionHeading label="Reflection" title="What this project shows" accentColor={ORANGE} />
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
+            <ScrollReveal className="lg:col-span-7">
+              <ul className="space-y-6">
+                {[
+                  ["Data is not a decision.", "The research suggests that even with sensor data available, farmers may still lean on trusted advisers to know what to do. A good dashboard is not the same as a good decision."],
+                  ["The last mile matters.", "Access to inputs, cost and clear instructions can stop a recommendation from being acted on. The concept treats those as part of the product, not as someone else’s problem."],
+                  ["Research shaped the structure.", "The three layers come from the gap the research pointed to: understanding, access and affordability."],
+                ].map(([t, d]) => (
+                  <li key={t} className="border-l-4 pl-5" style={{ borderColor: ORANGE }}>
+                    <p className="font-bold font-[family-name:var(--font-poppins)] text-foreground">{t}</p>
+                    <p className="mt-1 text-foreground/75 leading-relaxed">{d}</p>
+                  </li>
+                ))}
+              </ul>
+            </ScrollReveal>
+
+            <ScrollReveal className="lg:col-span-5">
+              <div className="rounded-2xl border border-dashed border-foreground/20 p-6">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <Leaf className="w-5 h-5" style={{ color: GREEN }} aria-hidden="true" />
+                  <p className="text-xs font-bold tracking-[0.2em] uppercase text-foreground">Intended benefits</p>
+                  <Tag kind="proposed" label="Not measured" />
+                </div>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li className="flex gap-2.5"><Sprout className="w-4 h-4 mt-0.5 shrink-0" style={{ color: ACCENT_GREEN }} aria-hidden="true" />Improved yields</li>
+                  <li className="flex gap-2.5"><Sprout className="w-4 h-4 mt-0.5 shrink-0" style={{ color: ACCENT_GREEN }} aria-hidden="true" />Reduced fertilizer waste</li>
+                  <li className="flex gap-2.5"><Sprout className="w-4 h-4 mt-0.5 shrink-0" style={{ color: ACCENT_GREEN }} aria-hidden="true" />Better food security</li>
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+                  These are goals the concept aims for. This project has no measured outcomes.
+                </p>
+              </div>
+
+              <div className="mt-6 rounded-2xl bg-secondary/40 border border-foreground/5 p-6">
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-foreground mb-3">Next steps</p>
+                <ul className="space-y-2.5">
+                  {nextSteps.map((n) => (
+                    <li key={n} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
+                      <ArrowRight className="w-4 h-4 mt-0.5 shrink-0" style={{ color: ORANGE }} aria-hidden="true" />
+                      <span>{n}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ScrollReveal>
           </div>
 
-          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" stagger={0.12}>
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <Lightbulb className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Informed Decisions</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers can make better-informed decisions based on real-time sensor data translated into actionable recommendations. The gap between data availability and farmer understanding was eliminated through conversational design and voice delivery.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <Sprout className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Improved Farm Management</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Smart reminders and step-by-step task instructions improved on-time execution of critical farming activities. Farmers no longer miss optimal planting windows or fertilizer application deadlines because of timely, contextual notifications.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <BarChart3 className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Reduced Data Complexity</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Farmers reduced reliance on complex technical reports by receiving pre-interpreted insights. The platform eliminated the need for agricultural officers to manually translate soil data for each farmer, scaling knowledge delivery.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <Globe className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Language Accessibility</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Multi-language support including Kiswahili, Kalenjin, and Kikuyu ensured that critical farming insights reached farmers in their mother tongue. Voice delivery made the platform accessible to users regardless of literacy level.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <Bell className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Timely Alerts</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Weather-linked reminders and environmental alerts kept farmers informed through timely notifications. The system connected real-time conditions to actionable guidance, ensuring recommendations were relevant to current farm realities.
-              </p>
-            </div>
-
-            <div className="p-8 lg:p-10 rounded-2xl border border-foreground/5 bg-secondary/30 text-center">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${GREEN}15` }}>
-                <Users className="w-7 h-7" style={{ color: GREEN }} />
-              </div>
-              <h4 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground mb-3">Research-Driven Design</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                The project demonstrated the power of UX research in agricultural technology. Stakeholder interviews, market analysis, and user insights directly shaped feature prioritization, proving that user-centered design principles apply universally.
-              </p>
-            </div>
-          </StaggerReveal>
-
-          {/* Figma CTA */}
-          <ScrollReveal delay={0.3}>
-            <div className="mt-16 text-center">
-              <a
-                href="https://www.figma.com/deck/lZy1RpGIHIaL2WsBdfbuDT"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm transition-colors duration-300 text-white"
-                style={{ backgroundColor: GREEN }}
-              >
-                View Full Figma File
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
+          <ScrollReveal>
+            <div className="mt-14 text-center">
+              <MagneticHover>
+                <a
+                  href="https://www.figma.com/deck/lZy1RpGIHIaL2WsBdfbuDT"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-sm text-white transition-opacity duration-300 hover:opacity-90"
+                  style={{ backgroundColor: GREEN }}
+                >
+                  View the Figma deck
+                  <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                </a>
+              </MagneticHover>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ── Next Project ── */}
       <ProjectNavCue currentSlug="shamba-rahisi" />
     </div>
   );
