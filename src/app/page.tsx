@@ -1142,7 +1142,7 @@ function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="bg-[#0a0a0a] text-white overflow-hidden"
+      className="bg-[#0a0a0a] text-white overflow-x-clip"
     >
       {/* Section header */}
       <div className="pt-24 lg:pt-28 pb-8 lg:pb-10">
