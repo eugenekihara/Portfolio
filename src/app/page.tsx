@@ -1053,6 +1053,112 @@ interface ProjectData {
   order: number;
 }
 
+/* ─── Projects gallery: minimal editorial cards with hover reveal and a staggered entrance ─── */
+type RevealPhase = "visible" | "armed" | "revealed";
+
+function ProjectGallery({ projects }: { projects: ProjectData[] }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // Cards are visible by default. They are only hidden ("armed") when an entrance animation can
+  // actually run, so reduced-motion visitors and browsers without IntersectionObserver see them at once.
+  const [phase, setPhase] = useState<RevealPhase>(() => {
+    if (typeof window === "undefined") return "visible";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return reduce || !("IntersectionObserver" in window) ? "visible" : "armed";
+  });
+
+  useEffect(() => {
+    if (phase !== "armed") return;
+    const row = rowRef.current;
+    if (!row) return;
+
+    const reveal = () => setPhase("revealed");
+    // Failsafe: if the row is on screen by any measure, reveal it.
+    const check = () => {
+      const r = row.getBoundingClientRect();
+      if (r.top < window.innerHeight - 40 && r.bottom > 0) reveal();
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) reveal();
+      },
+      { rootMargin: "0px 0px -60px 0px" }
+    );
+    io.observe(row);
+    window.addEventListener("scroll", check, { passive: true });
+    const t1 = window.setTimeout(check, 1200);
+    const t2 = window.setTimeout(check, 3500);
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", check);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [phase]);
+
+  return (
+    <div ref={rowRef}>
+      <HorizontalScroll className="pb-10 lg:pb-14" pinOffset={96} indicator>
+        {projects.map((project, i) => {
+          // The heading animates first, then the cards follow with a small stagger.
+          const delay = 250 + Math.min(i, 5) * 110;
+          return (
+            <Link
+              key={project.id}
+              href={`/projects/${project.slug}`}
+              style={{ transitionDelay: phase === "revealed" ? `${delay}ms` : "0ms" }}
+              className={`group/card block flex-shrink-0 snap-start w-[78vw] sm:w-[56vw] md:w-[44vw] lg:w-[34vw] xl:w-[30vw] outline-none transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none ${
+                phase === "armed" ? "opacity-0 translate-y-6" : "opacity-100 translate-y-0"
+              }`}
+            >
+              <article className="relative aspect-[5/4] overflow-hidden border border-neutral-800 bg-neutral-900 transition-colors duration-500 group-hover/card:border-[#8b4049] group-focus-visible/card:border-[#8b4049] group-focus-visible/card:ring-2 group-focus-visible/card:ring-[#8b4049] group-focus-visible/card:ring-offset-2 group-focus-visible/card:ring-offset-[#0a0a0a]">
+                {/* Image is the focus; it eases in slowly on hover */}
+                <img
+                  src={project.thumbnail}
+                  alt=""
+                  loading={i < 2 ? "eager" : "lazy"}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover/card:scale-[1.06] group-focus-visible/card:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
+                />
+
+                {/* Faint top scrim so the number and category stay legible */}
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-transparent" />
+
+                {/* Hover scrim: fades in; on touch devices a bottom gradient is always present */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-[#0a0a0a]/0 transition-colors duration-500 group-hover/card:bg-[#0a0a0a]/80 group-focus-visible/card:bg-[#0a0a0a]/80 no-hover:bg-gradient-to-t no-hover:from-[#0a0a0a]/95 no-hover:via-[#0a0a0a]/45 no-hover:to-transparent"
+                />
+
+                {/* Default state: only a number and the category */}
+                <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 p-4 sm:p-5 text-caption font-bold tracking-[0.2em] uppercase">
+                  <span className="text-white/90">0{i + 1}</span>
+                  <span className="text-white/70 text-right">{project.category}</span>
+                </div>
+
+                {/* Revealed on hover / keyboard focus; always shown on touch devices */}
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:p-6">
+                  <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[1.1] translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-75 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-neutral-300 line-clamp-2 sm:line-clamp-3 translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-150 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
+                    {project.shortDescription}
+                  </p>
+                  <span className="mt-1 inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-white translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-200 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
+                    View Project
+                    <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5">↗</span>
+                  </span>
+                </div>
+              </article>
+            </Link>
+          );
+        })}
+      </HorizontalScroll>
+    </div>
+  );
+}
+
 function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1171,83 +1277,8 @@ function ProjectsSection() {
         </div>
       </div>
 
-      {/* Horizontal scrolling project cards */}
-      <HorizontalScroll className="pb-16 lg:pb-20" pinOffset={96}>
-        {projects.map((project, i) => {
-          const tag =
-            project.categoryTag && project.categoryTag !== project.category
-              ? project.categoryTag
-              : null;
-          const techs = project.technologies.split(",").map((t) => t.trim()).filter(Boolean);
-          return (
-            <Link
-              key={project.id}
-              href={`/projects/${project.slug}`}
-              aria-label={`${project.title}: view case study`}
-              className="group flex flex-shrink-0 snap-start w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[42vw] xl:w-[36vw] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b4049]"
-            >
-              <article className="flex w-full flex-col border-2 border-neutral-700 group-hover:border-[#8b4049] group-focus-visible:border-[#8b4049] transition-colors duration-300">
-                {/* Image */}
-                <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
-                  <img
-                    src={project.thumbnail}
-                    alt=""
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute top-4 left-4 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#8b4049]">
-                      {project.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-300">
-                  <p className="flex items-center gap-2 text-caption font-bold tracking-[0.2em] uppercase">
-                    <span className="text-[#8b4049]">0{i + 1}</span>
-                    {tag && (
-                      <>
-                        <span className="h-px w-4 bg-neutral-700" aria-hidden="true" />
-                        <span className="text-neutral-500">{tag}</span>
-                      </>
-                    )}
-                  </p>
-
-                  <h3 className="mt-3 text-2xl sm:text-3xl lg:text-[2.25rem] font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[1.05]">
-                    {project.title}
-                  </h3>
-
-                  <p className="mt-3 text-neutral-400 text-sm leading-relaxed line-clamp-3 flex-1">
-                    {project.shortDescription}
-                  </p>
-
-                  {techs.length > 0 && (
-                    <ul className="flex flex-wrap gap-2 mt-5" aria-label="Tools and skills">
-                      {techs.slice(0, 3).map((tech) => (
-                        <li
-                          key={tech}
-                          className="text-caption font-medium tracking-wider uppercase text-neutral-500 border border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                        >
-                          {tech}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <div className="mt-5 pt-4 border-t-2 border-neutral-800 flex items-center justify-between">
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-white transition-colors duration-300">
-                      View Case Study
-                    </span>
-                    <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                      <ArrowUpRight size={14} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-px group-hover:-translate-y-px" />
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </Link>
-          );
-        })}
-      </HorizontalScroll>
+      {/* Horizontal project gallery */}
+      <ProjectGallery projects={projects} />
     </section>
   );
 }
