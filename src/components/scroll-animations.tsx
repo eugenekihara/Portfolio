@@ -449,9 +449,6 @@ export function HorizontalScroll({
       </div>
     </div>
   );
-      </div>
-    </div>
-
 }
 
 /* ─── Draw Line: Animates a line width/height on scroll ─── */
