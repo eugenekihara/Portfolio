@@ -515,7 +515,7 @@ export function HorizontalScroll({
           >
             <div
               ref={trackRef}
-              className="flex gap-5 lg:gap-8 py-2 pl-6 lg:pl-12 pr-6 lg:pr-[22vw] will-change-transform items-stretch"
+              className="flex gap-7 lg:gap-14 py-2 pl-6 lg:pl-[max(3rem,calc((100%_-_80rem)/2_+_3rem))] pr-6 lg:pr-[22vw] will-change-transform items-start"
             >
               {children}
             </div>
@@ -532,7 +532,7 @@ export function HorizontalScroll({
           <div
             ref={indicatorRef}
             aria-hidden="true"
-            className="mt-5 lg:mt-7 px-6 lg:px-12 flex items-center gap-5 text-neutral-500"
+            className="mt-5 lg:mt-7 px-6 lg:px-[max(3rem,calc((100%_-_80rem)/2_+_3rem))] flex items-center gap-5 text-neutral-500"
           >
             <div className="relative h-px flex-1 bg-neutral-800">
               <div

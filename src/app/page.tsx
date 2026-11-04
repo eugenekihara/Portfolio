@@ -1053,102 +1053,195 @@ interface ProjectData {
   order: number;
 }
 
-/* ─── Projects gallery: minimal editorial cards with hover reveal and a staggered entrance ─── */
+/* ─── Reveal cycle: hidden until the element scrolls into view, replays after it has been left ───
+ * Content is visible by default. It is only hidden ("armed") when a transition can actually run
+ * (motion allowed + IntersectionObserver available), and several independent checks reveal it
+ * again, so it can never stay hidden if one mechanism fails. */
 type RevealPhase = "visible" | "armed" | "revealed";
 
-function ProjectGallery({ projects }: { projects: ProjectData[] }) {
-  const rowRef = useRef<HTMLDivElement>(null);
-
-  // Cards are visible by default. They are only hidden ("armed") when an entrance animation can
-  // actually run, so reduced-motion visitors and browsers without IntersectionObserver see them at once.
+function useRevealCycle<T extends HTMLElement>(ref: React.RefObject<T | null>, enterOffset = 60, leaveMargin = 100) {
   const [phase, setPhase] = useState<RevealPhase>(() => {
     if (typeof window === "undefined") return "visible";
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     return reduce || !("IntersectionObserver" in window) ? "visible" : "armed";
   });
+  const animated = phase !== "visible";
 
   useEffect(() => {
-    if (phase !== "armed") return;
-    const row = rowRef.current;
-    if (!row) return;
+    const el = ref.current;
+    if (!animated || !el) return;
 
-    const reveal = () => setPhase("revealed");
-    // Failsafe: if the row is on screen by any measure, reveal it.
-    const check = () => {
-      const r = row.getBoundingClientRect();
-      if (r.top < window.innerHeight - 40 && r.bottom > 0) reveal();
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Reveal once a meaningful part is on screen; re-arm (so it can replay) once it has left.
+      // leaveMargin clears the fixed nav (about 80px); the gap between the two thresholds stops flicker.
+      const inView = r.top < vh - enterOffset && r.bottom > leaveMargin + 60;
+      const gone = r.top > vh - 10 || r.bottom < leaveMargin;
+      setPhase((p) => (p === "armed" && inView ? "revealed" : p === "revealed" && gone ? "armed" : p));
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
     };
 
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) reveal();
+        if (entries.some((e) => e.isIntersecting)) queue();
       },
-      { rootMargin: "0px 0px -60px 0px" }
+      { rootMargin: `0px 0px -${enterOffset}px 0px` }
     );
-    io.observe(row);
-    window.addEventListener("scroll", check, { passive: true });
-    const t1 = window.setTimeout(check, 1200);
-    const t2 = window.setTimeout(check, 3500);
+    io.observe(el);
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    // Failsafes for arrivals that produce no scroll event (hash links, restored scroll positions).
+    const timers = [0, 400, 1200, 3500].map((ms) => window.setTimeout(queue, ms));
 
     return () => {
       io.disconnect();
-      window.removeEventListener("scroll", check);
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      window.removeEventListener("scroll", queue);
+      window.removeEventListener("resize", queue);
+      timers.forEach(window.clearTimeout);
+      if (raf) cancelAnimationFrame(raf);
     };
-  }, [phase]);
+  }, [animated, ref, enterOffset, leaveMargin]);
+
+  return phase;
+}
+
+/* Transition helper: hidden while armed; each piece waits for its own delay once revealed. */
+function reveal(phase: RevealPhase, delayMs: number, hiddenClass = "opacity-0 translate-y-4") {
+  return {
+    className: `transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+      phase === "armed" ? hiddenClass : "opacity-100 translate-y-0 translate-x-0"
+    }`,
+    style: { transitionDelay: phase === "revealed" ? `${delayMs}ms` : "0ms" },
+  };
+}
+
+/* ─── Projects heading: leads the entrance, replays when the section is revisited ─── */
+function ProjectsHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const phase = useRevealCycle(ref);
+  const eyebrow = reveal(phase, 0);
+  const tagline = reveal(phase, 380, "opacity-0 translate-y-4 sm:translate-x-6 sm:translate-y-0");
+  const rule = reveal(phase, 480, "opacity-100 scale-x-0");
+
+  return (
+    <div ref={ref} className="pt-20 lg:pt-28 pb-8 lg:pb-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+          <div>
+            <span
+              style={eyebrow.style}
+              className={`block text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049] ${eyebrow.className}`}
+            >
+              Selected Work
+            </span>
+            <h2 className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter">
+              {/* Masked slide-up, like the other headings on the site */}
+              <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
+                <span
+                  style={{ transitionDelay: phase === "revealed" ? "120ms" : "0ms" }}
+                  className={`block transition-transform duration-[1100ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+                    phase === "armed" ? "translate-y-[110%]" : "translate-y-0"
+                  }`}
+                >
+                  Projects
+                </span>
+              </span>
+            </h2>
+          </div>
+
+          <p
+            style={tagline.style}
+            className={`max-w-md text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2 ${tagline.className}`}
+          >
+            From the first user insight to the final interface, every project shows how I turn problems into practical digital experiences.
+          </p>
+        </div>
+
+        <div
+          aria-hidden="true"
+          style={rule.style}
+          className={`mt-6 lg:mt-8 h-px origin-left bg-[#8b4049] transition-transform duration-[1300ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+            phase === "armed" ? "scale-x-0" : "scale-x-100"
+          }`}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Projects gallery: editorial cards (hairline, large numeral, image first) ─── */
+function ProjectGallery({ projects }: { projects: ProjectData[] }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const phase = useRevealCycle(rowRef);
+  const total = String(projects.length).padStart(2, "0");
 
   return (
     <div ref={rowRef}>
-      <HorizontalScroll className="pb-10 lg:pb-14" pinOffset={96} indicator>
+      <HorizontalScroll className="pb-10 lg:pb-14" pinOffset={104} indicator>
         {projects.map((project, i) => {
-          // The heading animates first, then the cards follow with a small stagger.
-          const delay = 250 + Math.min(i, 5) * 110;
+          const n = String(i + 1).padStart(2, "0");
+          // The heading goes first (about 0.4s), then the cards follow one after another.
+          const cardReveal = reveal(phase, 420 + Math.min(i, 5) * 140, "opacity-0 translate-y-10");
+          const lift =
+            "translate-y-4 opacity-0 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] " +
+            "group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 " +
+            "no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity";
           return (
             <Link
               key={project.id}
               href={`/projects/${project.slug}`}
-              style={{ transitionDelay: phase === "revealed" ? `${delay}ms` : "0ms" }}
-              className={`group/card block flex-shrink-0 snap-start w-[78vw] sm:w-[56vw] md:w-[44vw] lg:w-[34vw] xl:w-[30vw] outline-none transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none ${
-                phase === "armed" ? "opacity-0 translate-y-6" : "opacity-100 translate-y-0"
-              }`}
+              style={cardReveal.style}
+              className={`group/card block flex-shrink-0 snap-start w-[78vw] sm:w-[52vw] md:w-[40vw] lg:w-[clamp(300px,31vw,560px)] outline-none ${cardReveal.className}`}
             >
-              <article className="relative aspect-[5/4] overflow-hidden border border-neutral-800 bg-neutral-900 transition-colors duration-500 group-hover/card:border-[#8b4049] group-focus-visible/card:border-[#8b4049] group-focus-visible/card:ring-2 group-focus-visible/card:ring-[#8b4049] group-focus-visible/card:ring-offset-2 group-focus-visible/card:ring-offset-[#0a0a0a]">
-                {/* Image is the focus; it eases in slowly on hover */}
-                <img
-                  src={project.thumbnail}
-                  alt=""
-                  loading={i < 2 ? "eager" : "lazy"}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover/card:scale-[1.06] group-focus-visible/card:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
-                />
-
-                {/* Faint top scrim so the number and category stay legible */}
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-transparent" />
-
-                {/* Hover scrim: fades in; on touch devices a bottom gradient is always present */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 bg-[#0a0a0a]/0 transition-colors duration-500 group-hover/card:bg-[#0a0a0a]/80 group-focus-visible/card:bg-[#0a0a0a]/80 no-hover:bg-gradient-to-t no-hover:from-[#0a0a0a]/95 no-hover:via-[#0a0a0a]/45 no-hover:to-transparent"
-                />
-
-                {/* Default state: only a number and the category */}
-                <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 p-4 sm:p-5 text-caption font-bold tracking-[0.2em] uppercase">
-                  <span className="text-white/90">0{i + 1}</span>
-                  <span className="text-white/70 text-right">{project.category}</span>
+              <article>
+                {/* Hairline index row: numeral left, understated category right */}
+                <div className="relative flex items-end justify-between gap-4 pb-3.5 border-b border-white/10">
+                  <span className="font-[family-name:var(--font-poppins)] text-[2rem] lg:text-[2.6rem] leading-[0.9] font-light tracking-tight tabular-nums text-white/90">
+                    {n}
+                    <span className="ml-2 align-top text-[0.65rem] font-normal tracking-[0.2em] text-neutral-600">/ {total}</span>
+                  </span>
+                  <span className="pb-0.5 text-[0.65rem] tracking-[0.24em] uppercase text-neutral-500 text-right">
+                    {project.category}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute -bottom-px left-0 h-px w-full origin-left scale-x-0 bg-[#8b4049] transition-transform duration-700 ease-out group-hover/card:scale-x-100 group-focus-visible/card:scale-x-100 no-hover:scale-x-100"
+                  />
                 </div>
 
-                {/* Revealed on hover / keyboard focus; always shown on touch devices */}
-                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:p-6">
-                  <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[1.1] translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-75 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-neutral-300 line-clamp-2 sm:line-clamp-3 translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-150 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
-                    {project.shortDescription}
-                  </p>
-                  <span className="mt-1 inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-white translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover/card:translate-y-0 group-hover/card:opacity-100 group-hover/card:delay-200 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity">
-                    View Project
-                    <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5">↗</span>
-                  </span>
+                {/* Image: the focus of the card, no heavy frame */}
+                <div className="relative mt-4 overflow-hidden bg-neutral-900 aspect-[4/5] lg:aspect-auto lg:h-[clamp(260px,54vh,600px)] ring-1 ring-inset ring-white/[0.06] group-focus-visible/card:ring-[#8b4049]">
+                  <img
+                    src={project.thumbnail}
+                    alt=""
+                    loading={i < 2 ? "eager" : "lazy"}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover/card:scale-[1.05] group-focus-visible/card:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
+                  />
+
+                  {/* Cinematic gradient: fades in on hover/focus, always present on touch devices */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/95 via-[#0a0a0a]/55 to-transparent opacity-0 transition-opacity duration-700 ease-out group-hover/card:opacity-100 group-focus-visible/card:opacity-100 no-hover:opacity-100 motion-reduce:transition-none"
+                  />
+
+                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 lg:p-7">
+                    <h3 className={`font-[family-name:var(--font-poppins)] text-[1.6rem] sm:text-3xl lg:text-[2.1rem] font-semibold tracking-tight leading-[1.05] text-white group-hover/card:delay-75 ${lift}`}>
+                      {project.title}
+                    </h3>
+                    <p className={`mt-3 max-w-[34ch] text-[0.9rem] leading-relaxed text-neutral-300 line-clamp-2 sm:line-clamp-3 group-hover/card:delay-150 ${lift}`}>
+                      {project.shortDescription}
+                    </p>
+                    <span className={`mt-5 inline-flex items-center gap-3 text-[0.7rem] font-semibold tracking-[0.24em] uppercase text-white group-hover/card:delay-200 ${lift}`}>
+                      <span aria-hidden="true" className="h-px w-8 bg-white/60 transition-[width] duration-500 group-hover/card:w-12" />
+                      View Project
+                      <span aria-hidden="true" className="inline-block text-sm leading-none transition-transform duration-300 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5">↗</span>
+                    </span>
+                  </div>
                 </div>
               </article>
             </Link>
@@ -1250,32 +1343,7 @@ function ProjectsSection() {
       id="projects"
       className="bg-[#0a0a0a] text-white overflow-x-clip"
     >
-      {/* Section Header — above the pinned area */}
-      <div className="pt-20 lg:pt-28 pb-8 lg:pb-10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <ScrollReveal>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
-              <div>
-                <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
-                  Selected Work
-                </span>
-                <SplitTextReveal
-                  text="Projects"
-                  className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
-                />
-              </div>
-
-              <ScrollRevealRight className="max-w-md" delay={0.3}>
-                <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
-                  From the first user insight to the final interface, every project shows how I turn problems into practical digital experiences.
-                </p>
-              </ScrollRevealRight>
-            </div>
-          </ScrollReveal>
-
-          <DrawLine className="mt-6 lg:mt-8" color="#8b4049" />
-        </div>
-      </div>
+      <ProjectsHeader />
 
       {/* Horizontal project gallery */}
       <ProjectGallery projects={projects} />
