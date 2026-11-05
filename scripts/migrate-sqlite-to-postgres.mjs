@@ -3,30 +3,50 @@
  * One-time data migration: SQLite (prisma/db/custom.db) → PostgreSQL.
  *
  * Guarantees:
- *   - Exact row copies: IDs, password hashes, timestamps and flags preserved.
- *   - Upsert-only: never deletes anything, never touches rows that exist only
- *     in PostgreSQL. Re-running converges instead of duplicating.
- *   - The SQLite file is opened read-only (PRAGMA query_only) — never modified.
- *   - Credentials are never printed (connection string is shown redacted).
+ *   - Exact row copies: IDs, password hashes, timestamps, nullable fields and
+ *     Boolean values are preserved for AdminUser, Project and ContactMessage.
+ *   - Upsert-only: never deletes anything and never touches rows that exist
+ *     only in PostgreSQL. Re-running converges instead of duplicating.
+ *   - The SQLite file is opened STRICTLY read-only (readOnly open option +
+ *     PRAGMA query_only). The source database is never modified.
+ *   - --dry-run touches nothing but the SQLite file (read-only): the Prisma
+ *     Client / PostgreSQL code paths are never even imported.
+ *   - Credentials are never printed (connection strings are shown redacted,
+ *     password hashes are compared but never displayed).
  *
- * Usage (from the project root, after DATABASE_URL/DIRECT_URL are set):
- *   node scripts/migrate-sqlite-to-postgres.mjs                 # migrate + verify
- *   node scripts/migrate-sqlite-to-postgres.mjs --dry-run       # inspect only, no DB writes
- *   node scripts/migrate-sqlite-to-postgres.mjs --verify-only   # counts comparison, no writes
+ * Usage (from the project root):
+ *   node scripts/migrate-sqlite-to-postgres.mjs                  # migrate + verify
+ *   node scripts/migrate-sqlite-to-postgres.mjs --dry-run        # inspect only, zero PostgreSQL access
+ *   node scripts/migrate-sqlite-to-postgres.mjs --verify-only    # read-only comparison, no writes
  *   node scripts/migrate-sqlite-to-postgres.mjs --sqlite path/to/custom.db
+ *   node scripts/migrate-sqlite-to-postgres.mjs --help
  *
- * Requires Node >= 22.5 (built-in node:sqlite).
+ * Requires Node.js >= 22.13 (node:sqlite enabled by default; works on 23.4+ too).
+ * Tested on Node 22.20.0 and 24.x with Prisma 6.19.x.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { loadEnvFile } from "./lib/load-env.mjs";
 
-// ────────────────────────────── args & env ──────────────────────────────
+// ────────────────────────────── args ────────────────────────────────────
 
 const argv = process.argv.slice(2);
 const DRY_RUN = argv.includes("--dry-run");
 const VERIFY_ONLY = argv.includes("--verify-only");
+
+if (argv.includes("--help")) {
+  console.log(`Usage: node scripts/migrate-sqlite-to-postgres.mjs [options]
+
+Options:
+  --dry-run        Read the SQLite source, print counts and a redacted sample,
+                   then exit. PostgreSQL is never contacted and nothing is written.
+  --verify-only    Connect to PostgreSQL read-only and compare every source row
+                   (counts, missing IDs, extra IDs, field-level content). No writes.
+  --sqlite <path>  Path to the SQLite file (default: prisma/db/custom.db)
+  --help           Show this help.`);
+  process.exit(0);
+}
 
 function argValue(name, fallback) {
   const i = argv.indexOf(name);
@@ -35,21 +55,10 @@ function argValue(name, fallback) {
 const sqlitePath = argValue("--sqlite", resolve(process.cwd(), "prisma/db/custom.db"));
 
 const projectRoot = resolve(import.meta.dirname, "..");
-const envFile = join(projectRoot, ".env");
-if (existsSync(envFile)) {
-  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
-    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-    if (!m) continue;
-    let value = m[2].trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (process.env[m[1]] === undefined) process.env[m[1]] = value;
-  }
-}
+
+// ────────────────────────────── env (.env, read-only, non-overriding) ───
+
+loadEnvFile(join(projectRoot, ".env")); // real env vars always win
 
 const dbUrl = process.env.DATABASE_URL || "";
 
@@ -68,7 +77,21 @@ function redact(url) {
   }
 }
 
+// ────────────────────────────── node:sqlite (dynamic, friendly error) ───
+
+let DatabaseSync;
+try {
+  ({ DatabaseSync } = await import("node:sqlite"));
+} catch {
+  console.error("[Migrate] ❌ node:sqlite is not available in this Node.js runtime.");
+  console.error("[Migrate]    Node.js >= 22.13 (LTS) or >= 23.4 ships it enabled by default.");
+  console.error("[Migrate]    On Node 22.5–22.12 you can retry with: node --experimental-sqlite <script>");
+  process.exit(1);
+}
+
 // ────────────────────────────── value coercion ──────────────────────────
+// Prisma writes SQLite DateTime values as epoch milliseconds (INTEGER) and
+// Booleans as 0/1. Text timestamps are also accepted for robustness.
 
 function toDate(v) {
   if (v === null || v === undefined || v === "") return null;
@@ -76,7 +99,7 @@ function toDate(v) {
   const s = String(v).trim();
   let d = new Date(s);
   if (!Number.isNaN(d.getTime())) return d;
-  // Normalize Prisma/SQLite-style timestamps: "2025-01-15 09:30:00.123 +00:00"
+  // Normalize "2025-01-15 09:30:00.123 +00:00"-style timestamps
   const m = s.match(
     /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2})?(?:\.\d{1,6})?)(?:\s*(Z|[+-]\d{2}:?\d{2}))?$/
   );
@@ -109,38 +132,77 @@ function toStr(v) {
   return v === null || v === undefined ? null : String(v);
 }
 
+const COERCE = { string: toStr, bool: toBool, int: toInt, date: toDate };
+
 // ────────────────────────────── table specs ─────────────────────────────
-// Field lists mirror prisma/schema.prisma exactly (SQLite stores field names
-// as-is; PostgreSQL will too — no column mapping needed).
+// Every field of every model, mirroring prisma/schema.prisma exactly —
+// including nullable strings, Booleans, the `order` integer and all dates.
+// SQLite stores field names as-is; PostgreSQL does the same, so no column
+// mapping is needed. Only these fields are read and written; anything else
+// found in the SQLite file is reported and skipped.
 
 const TABLES = [
   {
     table: "AdminUser",
-    bools: [],
-    ints: [],
-    dates: ["createdAt", "updatedAt"],
+    model: "adminUser",
+    fields: [
+      ["id", "string"],
+      ["email", "string"],
+      ["passwordHash", "string"],
+      ["name", "string"],
+      ["createdAt", "date"],
+      ["updatedAt", "date"],
+    ],
     redact: ["passwordHash"],
   },
   {
     table: "Project",
-    bools: ["featured", "published"],
-    ints: ["order"],
-    dates: ["completionDate", "createdAt", "updatedAt"],
+    model: "project",
+    fields: [
+      ["id", "string"],
+      ["title", "string"],
+      ["slug", "string"],
+      ["shortDescription", "string"],
+      ["detailedDescription", "string"],
+      ["category", "string"],
+      ["categoryTag", "string"],
+      ["technologies", "string"],
+      ["thumbnail", "string"],
+      ["additionalImages", "string"],
+      ["githubUrl", "string"],
+      ["liveDemoUrl", "string"],
+      ["completionDate", "date"],
+      ["featured", "bool"],
+      ["published", "bool"],
+      ["order", "int"],
+      ["impact", "string"],
+      ["caseStudyHref", "string"],
+      ["createdAt", "date"],
+      ["updatedAt", "date"],
+    ],
     redact: [],
   },
   {
     table: "ContactMessage",
-    bools: ["isRead", "isArchived", "isReplied"],
-    ints: [],
-    dates: ["createdAt", "updatedAt"],
+    model: "contactMessage",
+    fields: [
+      ["id", "string"],
+      ["fullName", "string"],
+      ["email", "string"],
+      ["message", "string"],
+      ["isRead", "bool"],
+      ["isArchived", "bool"],
+      ["isReplied", "bool"],
+      ["createdAt", "date"],
+      ["updatedAt", "date"],
+    ],
     redact: [],
   },
 ];
 
-const MODEL = { AdminUser: "adminUser", Project: "project", ContactMessage: "contactMessage" };
 const CHUNK = 100;
 
-// ────────────────────────────── SQLite read ─────────────────────────────
+// ────────────────────────────── SQLite read (strictly read-only) ────────
 
 if (!existsSync(sqlitePath)) {
   console.error(`[Migrate] ❌ SQLite database not found at: ${sqlitePath}`);
@@ -148,73 +210,102 @@ if (!existsSync(sqlitePath)) {
   process.exit(1);
 }
 
-const sqlite = new DatabaseSync(sqlitePath);
-sqlite.exec("PRAGMA query_only = 1"); // hard read-only, even by accident
+function openSqliteReadOnly(path) {
+  try {
+    // Preferred: SQLite-level read-only open (Node >= 22.x supports the option).
+    // The file is never locked for writing, journals are never created, and the
+    // open itself fails rather than creating anything.
+    const db = new DatabaseSync(path, { readOnly: true });
+    db.exec("PRAGMA query_only = 1"); // belt and braces
+    return { db, mode: "readOnly" };
+  } catch (err) {
+    const msg = String(err?.message || err);
+    // Older runtimes without the readOnly option: fall back to a normal open
+    // locked down with PRAGMA query_only (still blocks every write).
+    if (/readOnly|unknown option|invalid option|ENOVAL|ERR_INVALID_ARG_VALUE/i.test(msg)) {
+      const db = new DatabaseSync(path);
+      db.exec("PRAGMA query_only = 1");
+      console.warn("[Migrate] ⚠️  readOnly open option unavailable — using PRAGMA query_only instead.");
+      return { db, mode: "query_only" };
+    }
+    // A genuinely read-only open failure (missing file, hot journal, lock, …)
+    // must NOT fall back to a read-write open: the source file must never be
+    // touched, not even for journal recovery.
+    throw err;
+  }
+}
 
-const sqliteData = new Map();
+const sqliteFileInfo = statSync(sqlitePath);
+const { db: sqlite, mode: sqliteMode } = openSqliteReadOnly(sqlitePath);
+
+const sqliteData = new Map(); // table -> { rows, mapped }
 
 function readTable(spec) {
   const cols = sqlite
     .prepare(`PRAGMA table_info("${spec.table}")`)
     .all()
     .map((c) => c.name);
-  const needed = [...new Set([...spec.dates, ...spec.bools, ...spec.ints, "id"])];
-  const missing = needed.filter((c) => !cols.includes(c));
+
+  const fieldNames = spec.fields.map(([name]) => name);
+  const missing = fieldNames.filter((c) => !cols.includes(c));
   if (missing.length) {
     console.error(`[Migrate] ❌ Table ${spec.table} is missing expected columns: ${missing.join(", ")}`);
     console.error(`[Migrate]    Actual columns: ${cols.join(", ")}`);
     process.exit(1);
   }
-  const select = cols.map((c) => `"${c}"`).join(", ");
-  return sqlite.prepare(`SELECT ${select} FROM "${spec.table}"`).all();
-}
-
-function mapRow(spec, row) {
-  const data = {};
-  for (const col of Object.keys(row)) {
-    const v = row[col];
-    if (spec.bools.includes(col)) data[col] = toBool(v);
-    else if (spec.ints.includes(col)) data[col] = toInt(v);
-    else if (spec.dates.includes(col)) data[col] = toDate(v);
-    else data[col] = toStr(v);
+  const extra = cols.filter((c) => !fieldNames.includes(c));
+  if (extra.length) {
+    console.warn(
+      `[Migrate] ⚠️  Table ${spec.table} has extra column(s) not in the Prisma schema — skipped: ${extra.join(", ")}`
+    );
   }
-  return data;
+
+  const select = fieldNames.map((c) => `"${c}"`).join(", ");
+  const rows = sqlite.prepare(`SELECT ${select} FROM "${spec.table}"`).all();
+  const mapped = rows.map((row) => {
+    const data = {};
+    for (const [name, type] of spec.fields) data[name] = COERCE[type](row[name]);
+    return data;
+  });
+  return { rows, mapped };
 }
 
 for (const spec of TABLES) {
-  const rows = readTable(spec);
-  sqliteData.set(spec.table, rows);
+  sqliteData.set(spec.table, readTable(spec));
 }
 
-console.log("[Migrate] SQLite source (read-only):");
+console.log(`[Migrate] SQLite source (read-only, mode: ${sqliteMode}):`);
 for (const spec of TABLES) {
-  console.log(`  ${spec.table.padEnd(16)} ${sqliteData.get(spec.table).length} rows`);
+  console.log(`  ${spec.table.padEnd(16)} ${sqliteData.get(spec.table).rows.length} rows`);
 }
 
-// ────────────────────────────── dry run ─────────────────────────────────
+// ────────────────────────────── dry run (zero PostgreSQL access) ────────
+// This block exits BEFORE the Prisma Client is imported, so --dry-run is
+// structurally incapable of touching PostgreSQL: no connection, no writes.
 
 if (DRY_RUN) {
-  console.log("\n[Migrate] --dry-run: sample of first row per table (sensitive values redacted):");
+  console.log("\n[Migrate] --dry-run: PostgreSQL is never contacted. Sample of the first row per table");
+  console.log("[Migrate] (sensitive values redacted):");
   for (const spec of TABLES) {
-    const rows = sqliteData.get(spec.table);
+    const { mapped } = sqliteData.get(spec.table);
     console.log(`\n  ${spec.table}:`);
-    if (!rows.length) {
+    if (!mapped.length) {
       console.log("    (empty)");
       continue;
     }
-    const sample = mapRow(spec, rows[0]);
-    for (const [k, v] of Object.entries(sample)) {
+    for (const [k, v] of Object.entries(mapped[0])) {
       const value = spec.redact.includes(k) ? "***redacted***" : v;
       const shown =
         typeof value === "string" && value.length > 60 ? `${value.slice(0, 57)}…` : value;
       console.log(`    ${k.padEnd(20)} ${shown}`);
     }
   }
-  console.log("\n[Migrate] ✅ Dry run complete — nothing was written. Remove --dry-run to migrate.");
+  console.log("\n[Migrate] ✅ Dry run complete — nothing was written anywhere.");
+  console.log("[Migrate]    Remove --dry-run to perform the migration.");
   process.exit(0);
 }
 
-// ────────────────────────────── PostgreSQL write ────────────────────────
+// ────────────────────────────── PostgreSQL (write or verify) ────────────
 
 const { PrismaClient } = await import("@prisma/client");
 const prisma = new PrismaClient();
@@ -226,18 +317,16 @@ function chunk(arr, size) {
 }
 
 async function migrateTable(spec) {
-  const rows = sqliteData.get(spec.table);
-  const model = MODEL[spec.table];
+  const { rows, mapped } = sqliteData.get(spec.table);
   let done = 0;
   const t0 = Date.now();
-  for (const group of chunk(rows, CHUNK)) {
-    const ops = group.map((row) => {
-      const data = mapRow(spec, row);
+  for (const group of chunk(mapped, CHUNK)) {
+    const ops = group.map((data) => {
       const { id, ...rest } = data;
       // Upsert by id: insert if missing, otherwise refresh the row to match
       // SQLite exactly. Never deletes; rows that exist only in PostgreSQL are
-      // left untouched.
-      return prisma[model].upsert({ where: { id }, update: rest, create: data });
+      // left untouched. Explicit id/timestamps preserve source values.
+      return prisma[spec.model].upsert({ where: { id }, update: rest, create: data });
     });
     await prisma.$transaction(ops);
     done += group.length;
@@ -246,46 +335,110 @@ async function migrateTable(spec) {
   console.log(`  ${spec.table} done in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }
 
-async function verify() {
-  let ok = true;
-  console.log("\n[Migrate] ── Verification (SQLite → PostgreSQL) ──");
-  console.log("  Table              SQLite   PostgreSQL   Missing-in-PG");
-  for (const spec of TABLES) {
-    const model = MODEL[spec.table];
-    const src = sqliteData.get(spec.table);
-    const pgRows = await prisma[model].findMany({ select: { id: true } });
-    const pgIds = new Set(pgRows.map((r) => r.id));
-    const missing = src.filter((r) => !pgIds.has(r.id)).map((r) => r.id);
-    console.log(
-      `  ${spec.table.padEnd(18)} ${String(src.length).padStart(6)} ${String(pgRows.length).padStart(12)} ${String(missing.length).padStart(13)}`
-    );
-    for (const id of missing) console.log(`    ↳ missing in PostgreSQL: ${id}`);
-    if (missing.length) ok = false;
+// Compare one field of one row. Dates are compared by epoch milliseconds,
+// everything else with strict equality. `null` matches only `null`.
+function fieldEquals(type, a, b) {
+  if (type === "date") {
+    const ta = a instanceof Date ? a.getTime() : a == null ? null : new Date(a).getTime();
+    const tb = b instanceof Date ? b.getTime() : b == null ? null : new Date(b).getTime();
+    return Object.is(ta, tb);
   }
-  console.log(ok ? "\n[Migrate] ✅ Verification passed — all SQLite rows are present in PostgreSQL." : "\n[Migrate] ❌ Verification FAILED.");
-  return ok;
+  return Object.is(a, b);
+}
+
+async function verify() {
+  const problems = { missing: 0, mismatched: 0 };
+
+  console.log("\n[Migrate] ── Verification (SQLite source → PostgreSQL destination) ──");
+  console.log(
+    "  Table              SQLite   PostgreSQL   Missing-in-PG   PG-only(extra)   Content-mismatch"
+  );
+
+  for (const spec of TABLES) {
+    const { mapped } = sqliteData.get(spec.table);
+    const srcById = new Map(mapped.map((r) => [r.id, r]));
+    const pgRows = await prisma[spec.model].findMany();
+    const pgById = new Map(pgRows.map((r) => [r.id, r]));
+
+    const missing = mapped.filter((r) => !pgById.has(r.id)).map((r) => r.id);
+    const extra = [...pgById.keys()].filter((id) => !srcById.has(id));
+
+    const mismatchDetails = [];
+    let mismatched = 0;
+    for (const [id, src] of srcById) {
+      const dest = pgById.get(id);
+      if (!dest) continue;
+      const differing = [];
+      for (const [name, type] of spec.fields) {
+        if (!fieldEquals(type, src[name], dest[name])) differing.push(name);
+      }
+      if (differing.length) {
+        mismatched += 1;
+        if (mismatchDetails.length < 5) mismatchDetails.push({ id, differing, src, dest });
+      }
+    }
+
+    problems.missing += missing.length;
+    problems.mismatched += mismatched;
+
+    console.log(
+      `  ${spec.table.padEnd(18)} ${String(mapped.length).padStart(6)} ${String(pgRows.length).padStart(12)} ` +
+        `${String(missing.length).padStart(15)} ${String(extra.length).padStart(16)} ${String(mismatched).padStart(17)}`
+    );
+    for (const id of missing) console.log(`    ↳ MISSING in PostgreSQL: ${id}`);
+    const fmtValue = (field, v) => {
+      if (spec.redact.includes(field)) return "<redacted>";
+      if (v instanceof Date) return v.toISOString();
+      return JSON.stringify(v);
+    };
+    for (const d of mismatchDetails) {
+      const fields = d.differing
+        .map((f) => `${f} (source=${fmtValue(f, d.src[f])}, dest=${fmtValue(f, d.dest[f])})`)
+        .join(", ");
+      console.log(`    ↳ DIFFERS in PostgreSQL: ${d.id} → ${fields}`);
+    }
+    if (extra.length > 0) {
+      console.log(
+        `    ℹ️  ${extra.length} PostgreSQL-only row(s) kept as-is (never deleted): ${extra.slice(0, 5).join(", ")}${extra.length > 5 ? " …" : ""}`
+      );
+    }
+  }
+
+  console.log("");
+  if (problems.missing === 0 && problems.mismatched === 0) {
+    const total = TABLES.reduce((n, s) => n + sqliteData.get(s.table).mapped.length, 0);
+    console.log(`[Migrate] ✅ Verification passed — all ${total} source rows exist in PostgreSQL with`);
+    console.log("[Migrate]    identical field values (compared field-by-field, not just counts).");
+    console.log("[Migrate]    PostgreSQL-only rows, if any, are reported above and were kept.");
+    return true;
+  }
+  console.log("[Migrate] ❌ Verification FAILED:");
+  if (problems.missing) console.log(`[Migrate]    - ${problems.missing} row(s) missing in PostgreSQL`);
+  if (problems.mismatched) console.log(`[Migrate]    - ${problems.mismatched} row(s) with differing field values`);
+  return false;
 }
 
 try {
   if (VERIFY_ONLY) {
+    console.log(`[Migrate] --verify-only: read-only comparison against ${redact(dbUrl)}`);
     const ok = await verify();
-    process.exit(ok ? 0 : 1);
-  }
+    process.exitCode = ok ? 0 : 1;
+  } else {
+    console.log(`\n[Migrate] Writing to PostgreSQL: ${redact(dbUrl)}`);
+    console.log("[Migrate] Upsert-only — nothing will be deleted.\n");
+    const t0 = Date.now();
+    for (const spec of TABLES) {
+      await migrateTable(spec);
+    }
+    console.log(`\n[Migrate] Copy finished in ${((Date.now() - t0) / 1000).toFixed(1)}s.`);
 
-  console.log(`\n[Migrate] Writing to PostgreSQL: ${redact(dbUrl)}`);
-  console.log("[Migrate] Upsert-only — nothing will be deleted.\n");
-  const t0 = Date.now();
-  for (const spec of TABLES) {
-    await migrateTable(spec);
+    const ok = await verify();
+    process.exitCode = ok ? 0 : 1;
   }
-  console.log(`\n[Migrate] Copy finished in ${((Date.now() - t0) / 1000).toFixed(1)}s.`);
-
-  const ok = await verify();
-  process.exit(ok ? 0 : 1);
 } catch (err) {
-  console.error("\n[Migrate] ❌ Migration failed:", err.message);
+  console.error("\n[Migrate] ❌ Migration failed:", err?.message || err);
   console.error("[Migrate]    Nothing was deleted; already-migrated rows are kept (re-run to resume).");
-  process.exit(1);
+  process.exitCode = 1;
 } finally {
   await prisma.$disconnect().catch(() => {});
 }
