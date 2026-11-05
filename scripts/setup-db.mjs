@@ -1,74 +1,106 @@
-import { mkdirSync, existsSync, writeFileSync } from "node:fs";
-import { resolve, join } from "node:path";
+#!/usr/bin/env node
+/**
+ * Safe database bootstrap (run manually: `npm run db:setup`).
+ *
+ * What it does:
+ *   1. Reads DATABASE_URL / DIRECT_URL from the environment or .env — it NEVER
+ *      writes or overwrites .env, and never contains or prints credentials.
+ *   2. Applies pending Prisma migrations with `prisma migrate deploy`
+ *      (additive, non-destructive — it never resets, drops, or "db push"-es).
+ *   3. Prints a read-only row-count summary.
+ *
+ * What it deliberately does NOT do:
+ *   - No `.env` writing, no hardcoded secrets (the old version overwrote .env
+ *     with a hardcoded NEXTAUTH_SECRET — that is gone; secrets live in your
+ *     environment only).
+ *   - No `db push --accept-data-loss`, no `migrate reset`, no automatic
+ *     seeding (seeding is explicit: `npm run db:seed`).
+ */
+
+import { existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { execSync } from "node:child_process";
 
-// Compute the absolute path to the database file
-// This ensures prisma CLI and Prisma Client use the SAME file
-// IMPORTANT: The database must be at prisma/db/custom.db because:
-//   - Prisma CLI resolves "file:./db/custom.db" relative to prisma/schema.prisma → prisma/db/custom.db
-//   - db.ts also resolves relative to the prisma/ directory → prisma/db/custom.db
-// Both must agree on the same location!
 const projectRoot = resolve(import.meta.dirname, "..");
-const dbDir = join(projectRoot, "prisma", "db");
-const dbFile = join(dbDir, "custom.db");
-const dbUrl = `file:${dbFile}`;
 
-console.log(`[Setup DB] Project root: ${projectRoot}`);
-console.log(`[Setup DB] Database path: ${dbFile}`);
-console.log(`[Setup DB] DATABASE_URL: ${dbUrl}`);
-
-// Ensure .env file has the correct absolute DATABASE_URL
-// Always write/update the .env to ensure DATABASE_URL points to the canonical location.
-// Using absolute path prevents resolution discrepancies between Prisma CLI, db.ts, and Next.js.
+// ── Load .env if present (read-only, never overrides real env vars) ──
 const envFile = join(projectRoot, ".env");
-writeFileSync(envFile, `DATABASE_URL=${dbUrl}\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n`);
-console.log(`[Setup DB] Updated .env with DATABASE_URL=${dbUrl}`);
-
-// Ensure db/ directory exists
-if (!existsSync(dbDir)) {
-  mkdirSync(dbDir, { recursive: true });
-  console.log(`[Setup DB] Created directory: ${dbDir}`);
+if (existsSync(envFile)) {
+  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (!m) continue;
+    let value = m[2].trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[m[1]] === undefined) process.env[m[1]] = value;
+  }
 }
 
-// Run prisma db push with absolute DATABASE_URL
-// This ensures the DB is created at the exact path we expect
-console.log(`[Setup DB] Running prisma db push...`);
-try {
-  execSync("npx prisma db push --accept-data-loss", {
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      DATABASE_URL: dbUrl,
-    },
-    cwd: projectRoot,
-  });
-  console.log(`[Setup DB] ✅ Database schema synced successfully`);
-} catch (err) {
-  console.error(`[Setup DB] ❌ prisma db push failed`);
+const dbUrl = process.env.DATABASE_URL || "";
+
+// ── Validate the target database ──
+if (!/^postgres(ql)?:\/\//.test(dbUrl)) {
+  console.error("[Setup DB] ❌ DATABASE_URL is missing or does not point to PostgreSQL.");
+  console.error("[Setup DB]    Add the following to .env (local) or your hosting env vars:");
+  console.error('[Setup DB]      DATABASE_URL="postgresql://…?sslmode=require"');
+  console.error('[Setup DB]      DIRECT_URL="postgresql://…?sslmode=require"  # unpooled URL for migrations');
   process.exit(1);
 }
 
-// Verify the database file exists
-if (existsSync(dbFile)) {
-  console.log(`[Setup DB] ✅ Database file verified: ${dbFile}`);
-} else {
-  console.warn(`[Setup DB] ⚠️ Database file not found at expected path: ${dbFile}`);
-  console.warn(`[Setup DB] It may have been created elsewhere. Check prisma/ directory.`);
+if (!process.env.DIRECT_URL) {
+  // Prisma CLI (migrate) needs DIRECT_URL; fall back to DATABASE_URL, which then
+  // must be a direct/unpooled URL.
+  process.env.DIRECT_URL = dbUrl;
+  console.warn("[Setup DB] ⚠️  DIRECT_URL not set — falling back to DATABASE_URL for migrations.");
 }
 
-// Run seed to populate initial data (projects + admin user)
-console.log(`[Setup DB] Running database seed...`);
-try {
-  execSync("npx tsx prisma/seed.ts", {
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      DATABASE_URL: dbUrl,
-    },
-    cwd: projectRoot,
-  });
-  console.log(`[Setup DB] ✅ Database seeded successfully`);
-} catch (err) {
-  console.warn(`[Setup DB] ⚠️ Seed failed. If the Projects section is empty, run "npm run db:seed" and check the error above. Continuing...`);
-  // Don't exit — seed failure is non-fatal if the data is already there
+function redact(url) {
+  try {
+    const u = new URL(url);
+    return `${u.protocol}//${u.hostname}${u.pathname}`;
+  } catch {
+    return "<unparseable-url>";
+  }
 }
+
+console.log(`[Setup DB] Target database: ${redact(dbUrl)}`);
+
+// ── Apply pending migrations (non-destructive) ──
+console.log("[Setup DB] Applying migrations with `prisma migrate deploy`…");
+try {
+  execSync("npx prisma migrate deploy", {
+    stdio: "inherit",
+    cwd: projectRoot,
+    env: process.env,
+  });
+} catch {
+  console.error("[Setup DB] ❌ prisma migrate deploy failed — see output above.");
+  process.exit(1);
+}
+
+// ── Read-only summary ──
+try {
+  const { PrismaClient } = await import("@prisma/client");
+  const prisma = new PrismaClient();
+  try {
+    const [admins, projects, messages] = await Promise.all([
+      prisma.adminUser.count(),
+      prisma.project.count(),
+      prisma.contactMessage.count(),
+    ]);
+    console.log(
+      `[Setup DB] ✅ Database ready. Row counts → AdminUser: ${admins}, Project: ${projects}, ContactMessage: ${messages}`
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+} catch (err) {
+  console.warn(`[Setup DB] ⚠️  Could not read row counts (${err.message.split("\n")[0]}).`);
+  console.warn("[Setup DB]    Try regenerating the client first: npm run db:generate");
+}
+
+console.log("[Setup DB] ℹ️  Seeding is manual-only: npm run db:seed (never runs during build).");

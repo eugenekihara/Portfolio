@@ -1,61 +1,30 @@
 import { PrismaClient } from '@prisma/client'
-import path from 'path'
-import { existsSync, mkdirSync } from 'fs'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-function resolveDatabaseUrl(): string {
-  // Always resolve to the canonical database path at prisma/db/custom.db.
-  // This is the ONLY location the database should exist — the same path used
-  // by prisma CLI, setup-db.mjs, and the seed script.
-  // System env vars or stale .env files may point to wrong locations,
-  // so we compute the absolute path from the project root.
-  const dbPath = path.join(process.cwd(), 'prisma', 'db', 'custom.db')
-  return `file:${dbPath}`
-}
-
-function ensureDbDirectory(dbUrl: string): void {
-  // Extract the file path from the URL and ensure the directory exists
-  const filePath = dbUrl.replace(/^file:/, '')
-  const dir = path.dirname(filePath)
-
-  if (!existsSync(dir)) {
-    try {
-      mkdirSync(dir, { recursive: true })
-      console.log(`[DB] Created database directory: ${dir}`)
-    } catch (err) {
-      console.error(`[DB] Failed to create database directory: ${dir}`, err)
-    }
-  }
-}
-
+/**
+ * Singleton Prisma Client.
+ *
+ * The connection comes from the environment:
+ *  - DATABASE_URL — PostgreSQL connection string used at runtime
+ *    (on Neon/Vercel use the pooled URL, e.g. …-pooler…?sslmode=require&pgbouncer=true)
+ *  - DIRECT_URL — unpooled URL used by the Prisma CLI for migrations
+ *
+ * The old SQLite-specific path resolution was removed: the database no longer
+ * lives on the local filesystem and nothing may override DATABASE_URL here.
+ */
 function createPrismaClient() {
-  const dbUrl = resolveDatabaseUrl()
+  if (!process.env.DATABASE_URL) {
+    throw new Error(
+      '[DB] DATABASE_URL is not set. Add it to .env (local) or your hosting environment variables.'
+    )
+  }
 
-  // Ensure the database directory exists before connecting
-  ensureDbDirectory(dbUrl)
-
-  // Set the resolved URL so Prisma uses it
-  process.env.DATABASE_URL = dbUrl
-
-  const client = new PrismaClient({
+  return new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   })
-
-  // Test connection
-  client.$connect()
-    .then(() => {
-      console.log('[DB] ✅ Prisma connected successfully')
-    })
-    .catch((err) => {
-      console.error('[DB] ❌ Prisma connection failed:', err.message)
-      console.error('[DB] DATABASE_URL:', dbUrl)
-      console.error('[DB] CWD:', process.cwd())
-    })
-
-  return client
 }
 
 export const db =

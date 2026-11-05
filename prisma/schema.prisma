@@ -3,8 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+
+  // Migrations need a direct (unpooled) connection — required for Neon.
+  // Locally you can point both at the same direct (non-pooled) URL.
+  directUrl = env("DIRECT_URL")
 }
 
 model AdminUser {

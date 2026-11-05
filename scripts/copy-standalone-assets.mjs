@@ -1,46 +1,66 @@
-import { cpSync, existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { dirname, resolve, join } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
 
+/**
+ * Locate the standalone build root (the directory containing server.js).
+ * Next.js <= 15.3 emits .next/standalone/server.js directly; newer versions
+ * may nest the output under the workspace-relative project path, e.g.
+ * .next/standalone/my-app/server.js or .next/standalone/org/app/server.js.
+ */
+function findStandaloneRoot() {
+  const base = join(projectRoot, ".next", "standalone");
+  if (existsSync(join(base, "server.js"))) return base;
+
+  const queue = [base];
+  while (queue.length) {
+    const dir = queue.shift();
+    let entries;
+    try {
+      entries = readdirSync(dir);
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      const full = join(dir, entry);
+      let isDir = false;
+      try {
+        isDir = statSync(full).isDirectory();
+      } catch {
+        continue;
+      }
+      if (!isDir) {
+        if (entry === "server.js") return dir;
+        continue;
+      }
+      if (entry === "node_modules") continue; // never scan node_modules
+      queue.push(full);
+    }
+  }
+  return base; // fall back to the classic layout
+}
+
+// Copy static assets next to the standalone server.js (self-hosting only).
+// NOTE: the database is PostgreSQL accessed via environment variables at
+// runtime (DATABASE_URL / DIRECT_URL). No database file is bundled and no
+// .env is written into the build anymore — secrets come from the environment.
+const standaloneRoot = findStandaloneRoot();
+console.log(`Standalone root: ${standaloneRoot.replace(projectRoot, ".")}`);
+
 const copies = [
-  [".next/static", ".next/standalone/.next/static"],
-  ["public", ".next/standalone/public"],
-  ["prisma", ".next/standalone/prisma"],
+  [join(projectRoot, ".next/static"), join(standaloneRoot, ".next/static")],
+  [join(projectRoot, "public"), join(standaloneRoot, "public")],
 ];
 
-for (const [source, destination] of copies) {
-  const src = join(projectRoot, source);
-  const dst = join(projectRoot, destination);
+for (const [src, dst] of copies) {
   if (!existsSync(src)) {
-    console.log(`Skipping ${source} (not found)`);
+    console.log(`Skipping ${src.replace(projectRoot, ".")} (not found)`);
     continue;
   }
-
   mkdirSync(dirname(dst), { recursive: true });
   cpSync(src, dst, { recursive: true, force: true });
-  console.log(`Copied ${source} -> ${destination}`);
+  console.log(`Copied ${src.replace(projectRoot, ".")} -> ${dst.replace(projectRoot, ".")}`);
 }
-
-// Copy the database file to standalone build
-// Prisma CLI creates the DB at prisma/db/custom.db (relative to schema directory)
-const standaloneDbDir = join(projectRoot, ".next/standalone/prisma/db");
-mkdirSync(standaloneDbDir, { recursive: true });
-
-const dbSource = join(projectRoot, "prisma/db/custom.db");
-if (existsSync(dbSource)) {
-  cpSync(dbSource, join(standaloneDbDir, "custom.db"), { force: true });
-  console.log("Copied prisma/db/custom.db -> .next/standalone/prisma/db/custom.db");
-} else {
-  console.warn("WARNING: prisma/db/custom.db not found - database will be created on first run");
-  console.warn("Run 'npx prisma db push' to create the database before starting the server.");
-}
-
-// Create/update .env in standalone build with absolute path
-// Using absolute path ensures the runtime always finds the database at the correct location
-const standaloneDbPath = join(projectRoot, ".next/standalone/prisma/db/custom.db");
-const standaloneEnv = join(projectRoot, ".next/standalone/.env");
-writeFileSync(standaloneEnv, `DATABASE_URL=file:${standaloneDbPath}\nNEXTAUTH_SECRET=e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6\n`);
-console.log("Created .next/standalone/.env with absolute DATABASE_URL");
 
 console.log("Standalone assets copied.");
