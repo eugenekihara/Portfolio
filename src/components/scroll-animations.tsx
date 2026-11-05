@@ -357,59 +357,131 @@ export function HorizontalScroll({
   children,
   className = "",
   pinOffset = 0,
+  indicator = false,
 }: {
   children: React.ReactNode;
   className?: string;
   /** Distance in px from the top of the viewport where the cards stick (e.g. to clear a fixed nav). */
   pinOffset?: number;
+  /** Show a thin progress line and a "Scroll / Swipe" hint under the cards. */
+  indicator?: boolean;
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const outer = outerRef.current;
-    const sticky = stickyRef.current;
+    const shell = shellRef.current;
+    const scroller = scrollerRef.current;
     const track = trackRef.current;
-    if (!outer || !sticky || !track) return;
+    if (!outer || !shell || !scroller || !track) return;
 
-    // Desktop only, and only when the visitor has not asked for reduced motion.
-    // Otherwise the cards stay in normal flow and scroll sideways natively (swipe / trackpad).
+    // Desktop with motion allowed: vertical scrolling drives the row sideways (CSS sticky).
+    // Otherwise (touch, small screens, reduced motion) the row simply scrolls sideways natively.
     const mq = window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)");
 
     let trigger: ScrollTrigger | undefined;
     let setX: ((value: number) => void) | undefined;
     let raf = 0;
 
+    const showProgress = (p: number, scrollable: boolean) => {
+      if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
+      if (fadeRef.current) fadeRef.current.style.opacity = scrollable && p < 0.97 ? "1" : "0";
+      if (indicatorRef.current) indicatorRef.current.style.visibility = scrollable ? "visible" : "hidden";
+    };
+
+    // Native mode: progress follows the row's own scroll position.
+    const onNativeScroll = () => {
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      showProgress(max > 1 ? scroller.scrollLeft / max : 1, max > 1);
+    };
+
+    // Sticky mode: the browser must never scroll the (clipped) row itself.
+    const lockScroller = () => {
+      if (scroller.scrollLeft !== 0) scroller.scrollLeft = 0;
+    };
+
+    // A sideways trackpad swipe advances the gallery by scrolling the page,
+    // while ordinary vertical wheel/trackpad scrolling is left alone.
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      window.scrollBy({ top: e.deltaX, behavior: "instant" as ScrollBehavior });
+    };
+
+    // Keyboard: tabbing to an off-screen card scrolls the page just enough to reveal it.
+    const onFocusIn = (e: FocusEvent) => {
+      if (!trigger) return;
+      let item = e.target as HTMLElement | null;
+      while (item && item.parentElement !== track) item = item.parentElement;
+      if (!item) return;
+      const distance = trigger.end - trigger.start;
+      const x = -distance * trigger.progress;
+      const left = item.offsetLeft + x;
+      const right = left + item.offsetWidth;
+      if (left >= 0 && right <= scroller.clientWidth) return; // already fully visible
+      const padLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      const wanted = Math.min(distance, Math.max(0, item.offsetLeft - padLeft));
+      window.scrollTo({ top: trigger.start + wanted, behavior: "instant" as ScrollBehavior });
+    };
+
     const teardown = () => {
       trigger?.kill();
       trigger = undefined;
       setX = undefined;
+      scroller.removeEventListener("scroll", onNativeScroll);
+      scroller.removeEventListener("scroll", lockScroller);
+      scroller.removeEventListener("wheel", onWheel);
+      scroller.removeEventListener("focusin", onFocusIn);
       gsap.set(track, { clearProps: "transform" });
       outer.style.height = "";
-      sticky.style.overflowX = "";
+      scroller.style.overflowX = "";
     };
 
     // Sticky, not GSAP pin: nothing is moved or wrapped in the DOM, so the cards always keep
     // their natural height. The outer element is only made taller to create scroll distance.
     const setup = () => {
       teardown();
-      if (!mq.matches) return;
 
-      const distance = Math.max(0, track.scrollWidth - sticky.clientWidth);
-      if (distance < 1) return; // everything fits: nothing to scroll
+      if (!mq.matches) {
+        scroller.addEventListener("scroll", onNativeScroll, { passive: true });
+        onNativeScroll();
+        return;
+      }
 
-      sticky.style.overflowX = "hidden";
-      outer.style.height = `${sticky.offsetHeight + distance}px`;
+      const distance = Math.max(0, track.scrollWidth - scroller.clientWidth);
+      if (distance < 1) {
+        showProgress(1, false); // everything fits: nothing to scroll
+        return;
+      }
+
+      scroller.style.overflowX = "hidden";
+      outer.style.height = `${shell.offsetHeight + distance}px`;
+      showProgress(0, true);
 
       setX = gsap.quickTo(track, "x", { duration: 0.6, ease: "power3.out" }) as (value: number) => void;
       trigger = ScrollTrigger.create({
         trigger: outer,
         start: `top ${pinOffset}px`,
         end: `+=${distance}`,
-        onUpdate: (self) => setX?.(-distance * self.progress),
-        onRefresh: (self) => gsap.set(track, { x: -distance * self.progress }),
+        onUpdate: (self) => {
+          setX?.(-distance * self.progress);
+          showProgress(self.progress, true);
+        },
+        onRefresh: (self) => {
+          gsap.set(track, { x: -distance * self.progress });
+          showProgress(self.progress, true);
+        },
       });
+
+      scroller.addEventListener("scroll", lockScroller, { passive: true });
+      scroller.addEventListener("wheel", onWheel, { passive: false });
+      scroller.addEventListener("focusin", onFocusIn);
     };
 
     const schedule = () => {
@@ -435,17 +507,47 @@ export function HorizontalScroll({
 
   return (
     <div ref={outerRef}>
-      <div
-        ref={stickyRef}
-        style={{ top: pinOffset }}
-        className={`overflow-x-auto overflow-y-hidden overscroll-x-contain lg:sticky max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
-      >
-        <div
-          ref={trackRef}
-          className="flex gap-6 lg:gap-8 pl-6 lg:pl-12 pr-6 lg:pr-[25vw] will-change-transform items-stretch"
-        >
-          {children}
+      <div ref={shellRef} style={{ top: pinOffset }} className={`lg:sticky ${className}`}>
+        <div className="relative">
+          <div
+            ref={scrollerRef}
+            className="overflow-x-auto overflow-y-hidden overscroll-x-contain max-lg:snap-x max-lg:snap-mandatory max-lg:scroll-pl-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <div
+              ref={trackRef}
+              className="flex gap-7 lg:gap-14 py-2 pl-6 lg:pl-[max(3rem,calc((100%_-_80rem)/2_+_3rem))] pr-6 lg:pr-[22vw] will-change-transform items-start"
+            >
+              {children}
+            </div>
+          </div>
+          {/* Soft edge that hints there is more to the right */}
+          <div
+            ref={fadeRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-10 lg:w-24 bg-gradient-to-l from-[#0a0a0a] to-transparent transition-opacity duration-300"
+          />
         </div>
+
+        {indicator && (
+          <div
+            ref={indicatorRef}
+            aria-hidden="true"
+            className="mt-5 lg:mt-7 px-6 lg:px-[max(3rem,calc((100%_-_80rem)/2_+_3rem))] flex items-center gap-5 text-neutral-500"
+          >
+            <div className="relative h-px flex-1 bg-neutral-800">
+              <div
+                ref={barRef}
+                className="absolute inset-0 origin-left bg-[#8b4049]"
+                style={{ transform: "scaleX(0)" }}
+              />
+            </div>
+            <span className="flex items-center gap-2 text-caption font-bold tracking-[0.2em] uppercase">
+              <span className="hidden lg:inline">Scroll</span>
+              <span className="lg:hidden">Swipe</span>
+              <span>→</span>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

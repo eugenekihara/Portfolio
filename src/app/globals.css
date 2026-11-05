@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* Devices that cannot hover (touch): show hover-only content by default */
+@custom-variant no-hover (@media (hover: none));
 
 @theme inline {
   --color-background: var(--background);

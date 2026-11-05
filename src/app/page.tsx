@@ -1053,6 +1053,205 @@ interface ProjectData {
   order: number;
 }
 
+/* ─── Reveal cycle: hidden until the element scrolls into view, replays after it has been left ───
+ * Content is visible by default. It is only hidden ("armed") when a transition can actually run
+ * (motion allowed + IntersectionObserver available), and several independent checks reveal it
+ * again, so it can never stay hidden if one mechanism fails. */
+type RevealPhase = "visible" | "armed" | "revealed";
+
+function useRevealCycle<T extends HTMLElement>(ref: React.RefObject<T | null>, enterOffset = 60, leaveMargin = 100) {
+  const [phase, setPhase] = useState<RevealPhase>(() => {
+    if (typeof window === "undefined") return "visible";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return reduce || !("IntersectionObserver" in window) ? "visible" : "armed";
+  });
+  const animated = phase !== "visible";
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!animated || !el) return;
+
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Reveal once a meaningful part is on screen; re-arm (so it can replay) once it has left.
+      // leaveMargin clears the fixed nav (about 80px); the gap between the two thresholds stops flicker.
+      const inView = r.top < vh - enterOffset && r.bottom > leaveMargin + 60;
+      const gone = r.top > vh - 10 || r.bottom < leaveMargin;
+      setPhase((p) => (p === "armed" && inView ? "revealed" : p === "revealed" && gone ? "armed" : p));
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) queue();
+      },
+      { rootMargin: `0px 0px -${enterOffset}px 0px` }
+    );
+    io.observe(el);
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    // Failsafes for arrivals that produce no scroll event (hash links, restored scroll positions).
+    const timers = [0, 400, 1200, 3500].map((ms) => window.setTimeout(queue, ms));
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", queue);
+      window.removeEventListener("resize", queue);
+      timers.forEach(window.clearTimeout);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [animated, ref, enterOffset, leaveMargin]);
+
+  return phase;
+}
+
+/* Transition helper: hidden while armed; each piece waits for its own delay once revealed. */
+function reveal(phase: RevealPhase, delayMs: number, hiddenClass = "opacity-0 translate-y-4") {
+  return {
+    className: `transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+      phase === "armed" ? hiddenClass : "opacity-100 translate-y-0 translate-x-0"
+    }`,
+    style: { transitionDelay: phase === "revealed" ? `${delayMs}ms` : "0ms" },
+  };
+}
+
+/* ─── Projects heading: leads the entrance, replays when the section is revisited ─── */
+function ProjectsHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const phase = useRevealCycle(ref);
+  const eyebrow = reveal(phase, 0);
+  const tagline = reveal(phase, 380, "opacity-0 translate-y-4 sm:translate-x-6 sm:translate-y-0");
+  const rule = reveal(phase, 480, "opacity-100 scale-x-0");
+
+  return (
+    <div ref={ref} className="pt-20 lg:pt-28 pb-8 lg:pb-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+          <div>
+            <span
+              style={eyebrow.style}
+              className={`block text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049] ${eyebrow.className}`}
+            >
+              Selected Work
+            </span>
+            <h2 className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter">
+              {/* Masked slide-up, like the other headings on the site */}
+              <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
+                <span
+                  style={{ transitionDelay: phase === "revealed" ? "120ms" : "0ms" }}
+                  className={`block transition-transform duration-[1100ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+                    phase === "armed" ? "translate-y-[110%]" : "translate-y-0"
+                  }`}
+                >
+                  Projects
+                </span>
+              </span>
+            </h2>
+          </div>
+
+          <p
+            style={tagline.style}
+            className={`max-w-md text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2 ${tagline.className}`}
+          >
+            From the first user insight to the final interface, every project shows how I turn problems into practical digital experiences.
+          </p>
+        </div>
+
+        <div
+          aria-hidden="true"
+          style={rule.style}
+          className={`mt-6 lg:mt-8 h-px origin-left bg-[#8b4049] transition-transform duration-[1300ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+            phase === "armed" ? "scale-x-0" : "scale-x-100"
+          }`}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Projects gallery: editorial cards (hairline, large numeral, image first) ─── */
+function ProjectGallery({ projects }: { projects: ProjectData[] }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const phase = useRevealCycle(rowRef);
+  const total = String(projects.length).padStart(2, "0");
+
+  return (
+    <div ref={rowRef}>
+      <HorizontalScroll className="pb-10 lg:pb-14" pinOffset={104} indicator>
+        {projects.map((project, i) => {
+          const n = String(i + 1).padStart(2, "0");
+          // The heading goes first (about 0.4s), then the cards follow one after another.
+          const cardReveal = reveal(phase, 420 + Math.min(i, 5) * 140, "opacity-0 translate-y-10");
+          const lift =
+            "translate-y-4 opacity-0 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] " +
+            "group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-visible/card:translate-y-0 group-focus-visible/card:opacity-100 " +
+            "no-hover:translate-y-0 no-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-opacity";
+          return (
+            <Link
+              key={project.id}
+              href={`/projects/${project.slug}`}
+              style={cardReveal.style}
+              className={`group/card block flex-shrink-0 snap-start w-[78vw] sm:w-[52vw] md:w-[40vw] lg:w-[clamp(300px,31vw,560px)] outline-none ${cardReveal.className}`}
+            >
+              <article>
+                {/* Hairline index row: numeral left, understated category right */}
+                <div className="relative flex items-end justify-between gap-4 pb-3.5 border-b border-white/10">
+                  <span className="font-[family-name:var(--font-poppins)] text-[2rem] lg:text-[2.6rem] leading-[0.9] font-light tracking-tight tabular-nums text-white/90">
+                    {n}
+                    <span className="ml-2 align-top text-[0.65rem] font-normal tracking-[0.2em] text-neutral-600">/ {total}</span>
+                  </span>
+                  <span className="pb-0.5 text-[0.65rem] tracking-[0.24em] uppercase text-neutral-500 text-right">
+                    {project.category}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute -bottom-px left-0 h-px w-full origin-left scale-x-0 bg-[#8b4049] transition-transform duration-700 ease-out group-hover/card:scale-x-100 group-focus-visible/card:scale-x-100 no-hover:scale-x-100"
+                  />
+                </div>
+
+                {/* Image: the focus of the card, no heavy frame */}
+                <div className="relative mt-4 overflow-hidden bg-neutral-900 aspect-[4/5] lg:aspect-auto lg:h-[clamp(260px,54vh,600px)] ring-1 ring-inset ring-white/[0.06] group-focus-visible/card:ring-[#8b4049]">
+                  <img
+                    src={project.thumbnail}
+                    alt=""
+                    loading={i < 2 ? "eager" : "lazy"}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover/card:scale-[1.05] group-focus-visible/card:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
+                  />
+
+                  {/* Cinematic gradient: fades in on hover/focus, always present on touch devices */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/95 via-[#0a0a0a]/55 to-transparent opacity-0 transition-opacity duration-700 ease-out group-hover/card:opacity-100 group-focus-visible/card:opacity-100 no-hover:opacity-100 motion-reduce:transition-none"
+                  />
+
+                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 lg:p-7">
+                    <h3 className={`font-[family-name:var(--font-poppins)] text-[1.6rem] sm:text-3xl lg:text-[2.1rem] font-semibold tracking-tight leading-[1.05] text-white group-hover/card:delay-75 ${lift}`}>
+                      {project.title}
+                    </h3>
+                    <p className={`mt-3 max-w-[34ch] text-[0.9rem] leading-relaxed text-neutral-300 line-clamp-2 sm:line-clamp-3 group-hover/card:delay-150 ${lift}`}>
+                      {project.shortDescription}
+                    </p>
+                    <span className={`mt-5 inline-flex items-center gap-3 text-[0.7rem] font-semibold tracking-[0.24em] uppercase text-white group-hover/card:delay-200 ${lift}`}>
+                      <span aria-hidden="true" className="h-px w-8 bg-white/60 transition-[width] duration-500 group-hover/card:w-12" />
+                      View Project
+                      <span aria-hidden="true" className="inline-block text-sm leading-none transition-transform duration-300 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5">↗</span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            </Link>
+          );
+        })}
+      </HorizontalScroll>
+    </div>
+  );
+}
+
 function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1144,110 +1343,10 @@ function ProjectsSection() {
       id="projects"
       className="bg-[#0a0a0a] text-white overflow-x-clip"
     >
-      {/* Section Header — above the pinned area */}
-      <div className="pt-20 lg:pt-28 pb-8 lg:pb-10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <ScrollReveal>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
-              <div>
-                <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#8b4049]">
-                  Selected Work
-                </span>
-                <SplitTextReveal
-                  text="Projects"
-                  className="mt-4 text-[3.25rem] sm:text-[4rem] lg:text-[5.25rem] xl:text-[7rem] font-bold font-[family-name:var(--font-poppins)] leading-[0.85] tracking-tighter"
-                />
-              </div>
+      <ProjectsHeader />
 
-              <ScrollRevealRight className="max-w-md" delay={0.3}>
-                <p className="text-neutral-400 text-sm leading-relaxed sm:text-right sm:pb-2">
-                  From the first user insight to the final interface, every project shows how I turn problems into practical digital experiences.
-                </p>
-              </ScrollRevealRight>
-            </div>
-          </ScrollReveal>
-
-          <DrawLine className="mt-6 lg:mt-8" color="#8b4049" />
-        </div>
-      </div>
-
-      {/* Horizontal scrolling project cards */}
-      <HorizontalScroll className="pb-16 lg:pb-20" pinOffset={96}>
-        {projects.map((project, i) => {
-          const tag =
-            project.categoryTag && project.categoryTag !== project.category
-              ? project.categoryTag
-              : null;
-          const techs = project.technologies.split(",").map((t) => t.trim()).filter(Boolean);
-          return (
-            <Link
-              key={project.id}
-              href={`/projects/${project.slug}`}
-              aria-label={`${project.title}: view case study`}
-              className="group flex flex-shrink-0 snap-start w-[85vw] sm:w-[70vw] md:w-[55vw] lg:w-[42vw] xl:w-[36vw] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b4049]"
-            >
-              <article className="flex w-full flex-col border-2 border-neutral-700 group-hover:border-[#8b4049] group-focus-visible:border-[#8b4049] transition-colors duration-300">
-                {/* Image */}
-                <div className="relative overflow-hidden bg-neutral-900 aspect-[16/10]">
-                  <img
-                    src={project.thumbnail}
-                    alt=""
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute top-4 left-4 bg-[#0a0a0a] border-2 border-neutral-600 px-3 py-1.5">
-                    <span className="text-caption font-bold tracking-[0.2em] uppercase text-[#8b4049]">
-                      {project.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6 bg-[#0a0a0a] border-t-2 border-neutral-700 group-hover:border-[#8b4049] transition-colors duration-300">
-                  <p className="flex items-center gap-2 text-caption font-bold tracking-[0.2em] uppercase">
-                    <span className="text-[#8b4049]">0{i + 1}</span>
-                    {tag && (
-                      <>
-                        <span className="h-px w-4 bg-neutral-700" aria-hidden="true" />
-                        <span className="text-neutral-500">{tag}</span>
-                      </>
-                    )}
-                  </p>
-
-                  <h3 className="mt-3 text-2xl sm:text-3xl lg:text-[2.25rem] font-bold font-[family-name:var(--font-poppins)] tracking-tight leading-[1.05]">
-                    {project.title}
-                  </h3>
-
-                  <p className="mt-3 text-neutral-400 text-sm leading-relaxed line-clamp-3 flex-1">
-                    {project.shortDescription}
-                  </p>
-
-                  {techs.length > 0 && (
-                    <ul className="flex flex-wrap gap-2 mt-5" aria-label="Tools and skills">
-                      {techs.slice(0, 3).map((tech) => (
-                        <li
-                          key={tech}
-                          className="text-caption font-medium tracking-wider uppercase text-neutral-500 border border-neutral-800 px-2.5 py-1 group-hover:border-neutral-600 group-hover:text-neutral-400 transition-colors duration-300"
-                        >
-                          {tech}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <div className="mt-5 pt-4 border-t-2 border-neutral-800 flex items-center justify-between">
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 group-hover:text-white transition-colors duration-300">
-                      View Case Study
-                    </span>
-                    <div className="w-8 h-8 border-2 border-neutral-600 flex items-center justify-center group-hover:border-[#8b4049] group-hover:bg-[#8b4049] group-hover:text-white transition-all duration-300">
-                      <ArrowUpRight size={14} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-px group-hover:-translate-y-px" />
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </Link>
-          );
-        })}
-      </HorizontalScroll>
+      {/* Horizontal project gallery */}
+      <ProjectGallery projects={projects} />
     </section>
   );
 }
