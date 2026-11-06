@@ -1875,11 +1875,11 @@ function ContactSection() {
                     <span className="text-sm">kiharaeugene@gmail.com</span>
                   </a>
                   <a
-                    href="tel:+254712345678"
+                    href="tel:+254726832254"
                     className="flex items-center gap-3 text-foreground hover:text-accent transition-colors"
                   >
                     <Phone className="w-5 h-5 text-accent" />
-                    <span className="text-sm">+254 712 345 678</span>
+                    <span className="text-sm">+254 726 832 254</span>
                   </a>
                 </div>
               </div>
